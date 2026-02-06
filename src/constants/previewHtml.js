@@ -1,0 +1,167 @@
+import { PLACEHOLDER_IMG } from '../utils/placeholderImage'
+import { BLOG_CSS } from './blogCss'
+
+export const PREVIEW_HTML = {
+  fullWidth: `<section class="blog__full-width">
+  <h2 class="blog__full-width__heading">Lorem Ipsum Dolor Sit Amet</h2>
+  <div class="blog__full-width__body">
+    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <p>Ut enim ad minim veniam, quis nostrud <em>exercitation ullamco</em> laboris nisi ut aliquip ex ea commodo <a href="#">consequat link</a>.</p>
+  </div>
+  <figure class="blog__full-width__figure">
+    <img class="blog__full-width__image" src="${PLACEHOLDER_IMG(1200, 500, 'Full Width Image')}" alt="Placeholder image">
+  </figure>
+</section>`,
+
+  oneUp: `<section class="blog__one-up">
+  <h2 class="blog__one-up__heading">Consectetur Adipiscing Elit</h2>
+  <div class="blog__one-up__body">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt:</p>
+    <ul>
+      <li>Ut labore et dolore magna aliqua</li>
+      <li>Enim ad minim veniam quis nostrud</li>
+      <li>Exercitation ullamco laboris nisi</li>
+    </ul>
+    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.</p>
+  </div>
+  <figure class="blog__one-up__figure">
+    <img class="blog__one-up__image" src="${PLACEHOLDER_IMG(600, 400, '600×400')}" alt="Placeholder image">
+    <figcaption class="blog__one-up__label">Image Label Goes Here</figcaption>
+  </figure>
+</section>`,
+
+  twoUp: `<section class="blog__two-up">
+  <h2 class="blog__two-up__heading">Sed Do Eiusmod Tempor</h2>
+  <div class="blog__two-up__body">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <h3>Incididunt Ut Labore</h3>
+    <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+  </div>
+  <div class="blog__two-up__grid">
+    <figure class="blog__two-up__item">
+      <img class="blog__two-up__image" src="${PLACEHOLDER_IMG(500, 400, '500×400')}" alt="Placeholder image 1">
+      <figcaption class="blog__two-up__label">First Image Label</figcaption>
+    </figure>
+    <figure class="blog__two-up__item">
+      <img class="blog__two-up__image" src="${PLACEHOLDER_IMG(500, 400, '500×400')}" alt="Placeholder image 2">
+      <figcaption class="blog__two-up__label">Second Image Label</figcaption>
+    </figure>
+  </div>
+  <div class="blog__two-up__cta">
+    <a class="blog__two-up__cta-btn" href="#">Call to Action Button</a>
+  </div>
+</section>`,
+
+  threeUp: `<section class="blog__three-up">
+  <h2 class="blog__three-up__heading">Ut Labore Et Dolore Magna</h2>
+  <div class="blog__three-up__body">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit:</p>
+    <ol>
+      <li>Sed do eiusmod tempor incididunt</li>
+      <li>Ut labore et dolore magna aliqua</li>
+      <li>Ut enim ad minim veniam quis</li>
+    </ol>
+  </div>
+  <div class="blog__three-up__grid">
+    <figure class="blog__three-up__item">
+      <img class="blog__three-up__image" src="${PLACEHOLDER_IMG(350, 300, '350×300')}" alt="Placeholder image 1">
+      <figcaption class="blog__three-up__label">First Label</figcaption>
+    </figure>
+    <figure class="blog__three-up__item">
+      <img class="blog__three-up__image" src="${PLACEHOLDER_IMG(350, 300, '350×300')}" alt="Placeholder image 2">
+      <figcaption class="blog__three-up__label">Second Label</figcaption>
+    </figure>
+    <figure class="blog__three-up__item">
+      <img class="blog__three-up__image" src="${PLACEHOLDER_IMG(350, 300, '350×300')}" alt="Placeholder image 3">
+      <figcaption class="blog__three-up__label">Third Label</figcaption>
+    </figure>
+  </div>
+  <div class="blog__three-up__cta">
+    <a class="blog__three-up__cta-btn" href="#">Call to Action Button</a>
+  </div>
+</section>`,
+
+  video: `<section class="blog__video">
+  <h2 class="blog__video__heading">Quis Nostrud Exercitation</h2>
+  <div class="blog__video__body">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <blockquote>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</blockquote>
+    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.</p>
+  </div>
+  <div class="blog__video__wrapper">
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#e5e5e5;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span style="color:#a3a3a3;font-size:14px;">Video Embed Placeholder</span>
+    </div>
+  </div>
+</section>`,
+
+  threeByTwo: `<section class="blog__three-by-two">
+  <h2 class="blog__three-by-two__heading">Duis Aute Irure Dolor</h2>
+  <div class="blog__three-by-two__body">
+    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod <a href="#">tempor incididunt</a> ut labore.</p>
+  </div>
+  <div class="blog__three-by-two__grid">
+    <figure class="blog__three-by-two__item">
+      <img class="blog__three-by-two__image" src="${PLACEHOLDER_IMG(280, 220, '280×220')}" alt="Placeholder 1">
+      <figcaption class="blog__three-by-two__label">Label One</figcaption>
+    </figure>
+    <figure class="blog__three-by-two__item">
+      <img class="blog__three-by-two__image" src="${PLACEHOLDER_IMG(280, 220, '280×220')}" alt="Placeholder 2">
+      <figcaption class="blog__three-by-two__label">Label Two</figcaption>
+    </figure>
+    <figure class="blog__three-by-two__item">
+      <img class="blog__three-by-two__image" src="${PLACEHOLDER_IMG(280, 220, '280×220')}" alt="Placeholder 3">
+      <figcaption class="blog__three-by-two__label">Label Three</figcaption>
+    </figure>
+    <figure class="blog__three-by-two__item">
+      <img class="blog__three-by-two__image" src="${PLACEHOLDER_IMG(280, 220, '280×220')}" alt="Placeholder 4">
+      <figcaption class="blog__three-by-two__label">Label Four</figcaption>
+    </figure>
+    <figure class="blog__three-by-two__item">
+      <img class="blog__three-by-two__image" src="${PLACEHOLDER_IMG(280, 220, '280×220')}" alt="Placeholder 5">
+      <figcaption class="blog__three-by-two__label">Label Five</figcaption>
+    </figure>
+    <figure class="blog__three-by-two__item">
+      <img class="blog__three-by-two__image" src="${PLACEHOLDER_IMG(280, 220, '280×220')}" alt="Placeholder 6">
+      <figcaption class="blog__three-by-two__label">Label Six</figcaption>
+    </figure>
+  </div>
+  <div class="blog__three-by-two__cta">
+    <a class="blog__three-by-two__cta-btn" href="#">Call to Action Button</a>
+  </div>
+</section>`,
+
+  richText: `<section class="blog__rich-text">
+  <h2 class="blog__rich-text__heading">Excepteur Sint Occaecat</h2>
+  <div class="blog__rich-text__body">
+    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Sed do eiusmod tempor incididunt ut labore et dolore <em>magna aliqua</em>. Ut enim ad minim veniam, quis nostrud <a href="#">exercitation link</a>.</p>
+
+    <h3>Duis Aute Irure</h3>
+    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+    <h4>Excepteur Sint</h4>
+    <p>Excepteur sint occaecat cupidatat non proident:</p>
+
+    <ul>
+      <li>Sunt in culpa qui officia deserunt</li>
+      <li>Mollit anim id est laborum</li>
+      <li>Sed ut perspiciatis unde omnis</li>
+    </ul>
+
+    <p>Nemo enim ipsam voluptatem quia voluptas:</p>
+
+    <ol>
+      <li>Sit aspernatur aut odit aut fugit</li>
+      <li>Sed quia consequuntur magni dolores</li>
+      <li>Eos qui ratione voluptatem sequi</li>
+    </ol>
+
+    <blockquote>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.</blockquote>
+
+    <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
+  </div>
+</section>`,
+}
+
+export const PREVIEW_CSS = `<style>${BLOG_CSS}</style>`
