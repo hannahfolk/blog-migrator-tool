@@ -160,10 +160,16 @@ export const BLOG_CSS = `/* ============================================
 }
 
 .blog__one-up__image {
-  max-width: 100%;
+  max-width: 50%;
   height: auto;
   display: block;
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .blog__one-up__image {
+    max-width: 100%;
+  }
 }
 
 .blog__one-up__label {
@@ -436,4 +442,100 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__rich-text__body {
   /* Inherits shared rich text styles */
+}
+
+/* ----------------------------------------
+   HOTSPOT SECTION
+   ---------------------------------------- */
+.blog__hotspot {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 30px;
+  display: block;
+}
+
+.blog__hotspot__inner {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  width: fit-content;
+}
+
+.blog__hotspot__image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.blog__hotspot__item {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  text-decoration: none;
+  border: none;
+}
+
+.blog__hotspot__marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+  color: #000;
+  border-radius: 50%;
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+  animation: blog-pulse 2s infinite;
+}
+
+.blog__hotspot__item:hover .blog__hotspot__marker {
+  transform: scale(1.1);
+}
+
+.blog__hotspot__label {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: #fff;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.blog__hotspot__label::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
+}
+
+.blog__hotspot__item:hover .blog__hotspot__label {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+@keyframes blog-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
 }`

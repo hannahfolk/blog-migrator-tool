@@ -1,8 +1,8 @@
 import React from 'react'
-import { Square, Trash2 } from 'lucide-react'
+import { Square, Trash2, Pencil } from 'lucide-react'
 import { FIGMA_BLOCKS } from '../../constants'
 
-export function MappedSectionsList({ sections, onRemove }) {
+export function MappedSectionsList({ sections, onRemove, onEdit }) {
   if (sections.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-zinc-600 p-6">
@@ -17,7 +17,11 @@ export function MappedSectionsList({ sections, onRemove }) {
       {sections.map((selection, idx) => {
         const block = FIGMA_BLOCKS[selection.blockType]
         return (
-          <div key={selection.id} className="p-3 flex items-center gap-3">
+          <div
+            key={selection.id}
+            className="p-3 flex items-center gap-3 hover:bg-zinc-800/50 cursor-pointer transition-colors group"
+            onClick={() => onEdit && onEdit(selection)}
+          >
             <span className="text-xs text-zinc-600 w-4">{idx + 1}</span>
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -27,10 +31,33 @@ export function MappedSectionsList({ sections, onRemove }) {
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium">{block.label}</p>
+              <p className="text-xs text-zinc-500 truncate max-w-[150px]">
+                {selection.extractedContent?.headings?.[0]?.text ||
+                 selection.extractedContent?.paragraphs?.[0]?.text?.slice(0, 40) ||
+                 selection.extractedContent?.images?.[0]?.alt ||
+                 'Click to edit'}
+              </p>
             </div>
-            <button onClick={() => onRemove(selection.id)} className="text-zinc-600 hover:text-red-400">
-              <Trash2 size={14} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onEdit && onEdit(selection)
+                }}
+                className="text-zinc-600 hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+              >
+                <Pencil size={14} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onRemove(selection.id)
+                }}
+                className="text-zinc-600 hover:text-red-400 p-1"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
           </div>
         )
       })}

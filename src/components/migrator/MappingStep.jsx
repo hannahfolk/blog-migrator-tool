@@ -5,6 +5,7 @@ import { extractContentFromRect } from '../../utils'
 import { SelectionOverlay } from './SelectionOverlay'
 import { MappedSectionsList } from './MappedSectionsList'
 import { BlockPickerModal } from './BlockPickerModal'
+import { EditSectionModal } from './EditSectionModal'
 
 // Auto-scroll settings
 const SCROLL_ZONE_SIZE = 60 // pixels from edge to trigger scroll
@@ -23,6 +24,7 @@ export function MappingStep({
   const [currentRect, setCurrentRect] = useState(null)
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [editingSection, setEditingSection] = useState(null)
 
   const previewRef = useRef(null)
   const previewContainerRef = useRef(null)
@@ -293,6 +295,15 @@ export function MappingStep({
     setSelections(prev => prev.map(s => s.id === id ? { ...s, rect: newRect } : s))
   }, [setSelections])
 
+  const handleEditSection = useCallback((section) => {
+    setEditingSection(section)
+  }, [])
+
+  const handleSaveEdit = useCallback((updatedSection) => {
+    setSelections(prev => prev.map(s => s.id === updatedSection.id ? updatedSection : s))
+    setEditingSection(null)
+  }, [setSelections])
+
   return (
     <div className="h-full">
       <div className="max-w-[1800px] mx-auto p-4">
@@ -374,7 +385,7 @@ export function MappingStep({
               )}
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden h-[calc(100vh-280px)] overflow-y-auto">
-              <MappedSectionsList sections={selections} onRemove={handleRemoveSelection} />
+              <MappedSectionsList sections={selections} onRemove={handleRemoveSelection} onEdit={handleEditSection} />
             </div>
           </div>
         </div>
@@ -385,6 +396,14 @@ export function MappingStep({
           selectionCount={pendingSelections.length}
           onSelect={handleBlockSelect}
           onClose={handleModalClose}
+        />
+      )}
+
+      {editingSection && (
+        <EditSectionModal
+          selection={editingSection}
+          onSave={handleSaveEdit}
+          onClose={() => setEditingSection(null)}
         />
       )}
     </div>

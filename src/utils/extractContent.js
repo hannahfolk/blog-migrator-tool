@@ -12,6 +12,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
     links: [],
     lists: [],
     videos: [],
+    hotspots: [], // Hotspot sections with image + clickable areas
     rawHtml: ''
   }
 
@@ -24,31 +25,221 @@ export function extractContentFromRect(containerEl, selectionRect) {
   const selLeft = selectionRect.x
   const selRight = selectionRect.x + selectionRect.width
 
-  // Find all relevant elements
-  const allElements = containerEl.querySelectorAll('h1, h2, h3, h4, h5, h6, p, img, a, ul, ol, iframe, video, figure, figcaption, blockquote')
-
-  // Check each element to see if its center is within the selection
-  allElements.forEach(el => {
+  // Helper to check if element center is within selection
+  const isElementInSelection = (el) => {
     const elRect = el.getBoundingClientRect()
-
-    // Convert element bounds to container-relative coordinates (accounting for scroll)
     const elTop = elRect.top - containerBounds.top + containerEl.scrollTop
     const elBottom = elRect.bottom - containerBounds.top + containerEl.scrollTop
     const elLeft = elRect.left - containerBounds.left + containerEl.scrollLeft
     const elRight = elRect.right - containerBounds.left + containerEl.scrollLeft
-
-    // Check if element's center point is within selection bounds
     const elCenterY = (elTop + elBottom) / 2
     const elCenterX = (elLeft + elRight) / 2
-
-    const isWithinSelection = (
+    return (
       elCenterY >= selTop &&
       elCenterY <= selBottom &&
       elCenterX >= selLeft &&
       elCenterX <= selRight
     )
+  }
 
-    if (!isWithinSelection) return
+  // First, check for hotspot sections
+  const hotspotSections = containerEl.querySelectorAll('[class*="hotspot"]')
+  const processedHotspotImages = new Set() // Track images we've already added as hotspots
+  const processedHotspotElements = new Set() // Track elements we've already processed
+
+  hotspotSections.forEach(section => {
+    if (!isElementInSelection(section)) return
+
+    // Find the outermost hotspot container for this element
+    let hotspotContainer = section
+    let parent = section.parentElement
+    while (parent && parent !== containerEl) {
+      if (parent.className && parent.className.includes && parent.className.includes('hotspot')) {
+        hotspotContainer = parent
+      }
+      parent = parent.parentElement
+    }
+
+    // Skip if we've already processed this container
+    if (processedHotspotElements.has(hotspotContainer)) return
+    processedHotspotElements.add(hotspotContainer)
+
+    const img = hotspotContainer.querySelector('img')
+
+    // Look for hotspot markers - can be <a> tags or <div> tags with position styles
+    // Pattern 1: <a class="blog__hotspot__item"> with position styles
+    // Pattern 2: <div class="thb-hotspot"> with position styles (WordPress theme)
+    const hotspotMarkers = Array.from(hotspotContainer.querySelectorAll('a, div')).filter(el => {
+      const style = el.getAttribute('style') || ''
+      const className = el.className || ''
+
+      // Must have position styles
+      const hasPositionStyle = style.includes('left:') && style.includes('top:')
+      if (!hasPositionStyle) return false
+
+      // Must be a hotspot item class, not a child element like tooltip/content
+      const isHotspotItem = className.includes('hotspot__item') ||
+                            (className.includes('thb-hotspot') && !className.includes('thb-hotspot-'))
+      const isNotContainer = !className.includes('container')
+
+      // Make sure it's not nested inside another hotspot marker
+      const parentWithPosition = el.parentElement?.closest('[style*="left:"][style*="top:"]')
+      const isNotNested = !parentWithPosition || parentWithPosition === hotspotContainer
+
+      return isHotspotItem && isNotContainer && isNotNested
+    })
+
+    if (img && hotspotMarkers.length > 0) {
+      const imgSrc = img.getAttribute('src') || ''
+
+      // Skip if we've already added this image as a hotspot
+      if (processedHotspotImages.has(imgSrc)) return
+
+      // Try to find links from a preceding ordered list (WordPress pattern)
+      // The list is often in a separate row/container, so we need to traverse up
+      let precedingLinks = []
+
+      // Find the row-level container (look for common wrapper patterns)
+      let rowContainer = hotspotContainer
+      while (rowContainer && rowContainer !== containerEl) {
+        const className = rowContainer.className || ''
+        if (className.includes('row') || className.includes('wpb_row') || className.includes('vc_row')) {
+          break
+        }
+        rowContainer = rowContainer.parentElement
+      }
+
+      // Search previous siblings at the row level
+      if (rowContainer && rowContainer !== containerEl) {
+        let prevRow = rowContainer.previousElementSibling
+        for (let i = 0; i < 5 && prevRow; i++) {
+          const ol = prevRow.querySelector('ol')
+          if (ol) {
+            precedingLinks = Array.from(ol.querySelectorAll('li a')).map(a => ({
+              href: a.getAttribute('href') || '#',
+              text: a.textContent?.trim() || ''
+            }))
+            break
+          }
+          prevRow = prevRow.previousElementSibling
+        }
+
+        // If not found above, try looking below
+        if (precedingLinks.length === 0) {
+          let nextRow = rowContainer.nextElementSibling
+          for (let i = 0; i < 5 && nextRow; i++) {
+            const ol = nextRow.querySelector('ol')
+            if (ol) {
+              precedingLinks = Array.from(ol.querySelectorAll('li a')).map(a => ({
+                href: a.getAttribute('href') || '#',
+                text: a.textContent?.trim() || ''
+              }))
+              break
+            }
+            nextRow = nextRow.nextElementSibling
+          }
+        }
+      }
+
+      const hotspotData = {
+        image: {
+          src: imgSrc,
+          alt: img.getAttribute('alt') || '',
+          title: img.getAttribute('title') || ''
+        },
+        items: []
+      }
+
+      hotspotMarkers.forEach((marker, index) => {
+        const style = marker.getAttribute('style') || ''
+        const leftMatch = style.match(/left:\s*([\d.]+%?)/)
+        const topMatch = style.match(/top:\s*([\d.]+%?)/)
+
+        // Look for marker number - can be in various places
+        const markerContent = marker.querySelector('[class*="content"]') || marker.querySelector('[class*="marker"]')
+        // Look for label/tooltip - can be in various places
+        const labelEl = marker.querySelector('[class*="tooltip"] h6') ||
+                        marker.querySelector('[class*="tooltip"]') ||
+                        marker.querySelector('[class*="label"]')
+
+        // Get href from marker itself, or from preceding links list
+        let href = marker.getAttribute('href')
+        if (!href || href === '#') {
+          // Try to match by index to preceding links
+          if (precedingLinks[index]) {
+            href = precedingLinks[index].href
+          } else {
+            href = '#'
+          }
+        }
+
+        hotspotData.items.push({
+          href,
+          left: leftMatch ? leftMatch[1] : '0%',
+          top: topMatch ? topMatch[1] : '0%',
+          marker: markerContent?.textContent?.trim() || '',
+          label: labelEl?.textContent?.trim() || ''
+        })
+      })
+
+      if (hotspotData.image.src && hotspotData.items.length > 0) {
+        content.hotspots.push(hotspotData)
+        processedHotspotImages.add(hotspotData.image.src)
+      }
+    }
+  })
+
+  // Also check for images that have sibling/nearby hotspot links (different structure)
+  const figures = containerEl.querySelectorAll('figure')
+  figures.forEach(figure => {
+    if (!isElementInSelection(figure)) return
+
+    // Skip if already captured as a hotspot section
+    if (figure.closest('[class*="hotspot"]')) return
+
+    const img = figure.querySelector('img')
+    const hotspotLinks = figure.querySelectorAll('a[style*="left:"][style*="top:"]')
+
+    if (img && hotspotLinks.length > 0) {
+      const hotspotData = {
+        image: {
+          src: img.getAttribute('src') || '',
+          alt: img.getAttribute('alt') || '',
+          title: img.getAttribute('title') || ''
+        },
+        items: []
+      }
+
+      hotspotLinks.forEach(link => {
+        const style = link.getAttribute('style') || ''
+        const leftMatch = style.match(/left:\s*([\d.]+%?)/)
+        const topMatch = style.match(/top:\s*([\d.]+%?)/)
+
+        hotspotData.items.push({
+          href: link.getAttribute('href') || '#',
+          left: leftMatch ? leftMatch[1] : '0%',
+          top: topMatch ? topMatch[1] : '0%',
+          marker: '',
+          label: link.textContent?.trim() || ''
+        })
+      })
+
+      if (hotspotData.image.src && hotspotData.items.length > 0) {
+        content.hotspots.push(hotspotData)
+        processedHotspotImages.add(hotspotData.image.src)
+      }
+    }
+  })
+
+  // Find all relevant elements (excluding those already in hotspots)
+  const allElements = containerEl.querySelectorAll('h1, h2, h3, h4, h5, h6, p, img, a, ul, ol, iframe, video, figure, figcaption, blockquote')
+
+  // Check each element to see if its center is within the selection
+  allElements.forEach(el => {
+    if (!isElementInSelection(el)) return
+
+    // Skip elements that are part of a hotspot section
+    if (el.closest('[class*="hotspot"]')) return
 
     const tagName = el.tagName.toLowerCase()
 
@@ -92,11 +283,11 @@ export function extractContentFromRect(containerEl, selectionRect) {
       }
     }
 
-    // Images (including those in figures)
+    // Images (including those in figures) - skip if part of hotspot
     if (tagName === 'img') {
       const src = el.getAttribute('src') || ''
-      // Skip placeholder/data URI images
-      if (src && !src.startsWith('data:')) {
+      // Skip placeholder/data URI images and images already in hotspots
+      if (src && !src.startsWith('data:') && !processedHotspotImages.has(src)) {
         content.images.push({
           src,
           alt: el.getAttribute('alt') || ''
@@ -104,13 +295,18 @@ export function extractContentFromRect(containerEl, selectionRect) {
       }
     }
 
-    // Figures - extract image and caption
+    // Figures - extract image and caption (skip if hotspot)
     if (tagName === 'figure') {
+      // Check if this figure has hotspot links
+      const hasHotspots = el.querySelectorAll('a[style*="left:"][style*="top:"]').length > 0
+      if (hasHotspots) return
+
       const img = el.querySelector('img')
       const caption = el.querySelector('figcaption')
       if (img) {
         const src = img.getAttribute('src') || ''
-        if (src && !src.startsWith('data:')) {
+        // Skip images already processed as hotspots
+        if (src && !src.startsWith('data:') && !processedHotspotImages.has(src)) {
           content.images.push({
             src,
             alt: img.getAttribute('alt') || caption?.textContent?.trim() || ''
@@ -119,8 +315,12 @@ export function extractContentFromRect(containerEl, selectionRect) {
       }
     }
 
-    // Links (standalone, not within other elements we're capturing)
+    // Links (standalone, not within other elements we're capturing, not hotspot links)
     if (tagName === 'a' && !el.closest('p') && !el.closest('li')) {
+      // Skip hotspot-style positioned links
+      const style = el.getAttribute('style') || ''
+      if (style.includes('left:') && style.includes('top:')) return
+
       const href = el.getAttribute('href') || ''
       const text = el.textContent.trim()
       if (href && text) {
@@ -168,12 +368,48 @@ export function extractContentFromRect(containerEl, selectionRect) {
 }
 
 /**
+ * Generate hotspot HTML
+ */
+function generateHotspotHtml(hotspot) {
+  const linkCount = hotspot.items.length
+  let html = `<section class="blog__hotspot blog__hotspot--${linkCount}-link${linkCount !== 1 ? 's' : ''}">
+  <figure class="blog__hotspot__inner">
+    <img src="${hotspot.image.src}" alt="${hotspot.image.alt || ''}"${hotspot.image.title ? ` title="${hotspot.image.title}"` : ''} class="blog__hotspot__image">`
+
+  hotspot.items.forEach((item, index) => {
+    html += `
+    <a class="blog__hotspot__item" href="${item.href}" style="left: ${item.left}; top: ${item.top};">
+      <span class="blog__hotspot__marker">${item.marker || index + 1}</span>
+      <span class="blog__hotspot__label">${item.label}</span>
+    </a>`
+  })
+
+  html += `
+  </figure>
+</section>`
+
+  return html
+}
+
+/**
  * Generate HTML output from extracted content based on block type
  * Only includes elements that were actually found - no placeholders
  */
 export function generateSectionHtml(selection, blockType, blockConfig) {
   const content = selection.extractedContent || {}
   const prefix = blockConfig.prefix
+
+  // Check if we have meaningful text content
+  const hasHeadings = content.headings?.length > 0
+  const hasParagraphs = content.paragraphs?.length > 0
+  const hasLists = content.lists?.length > 0
+  const hasTextContent = hasHeadings || hasParagraphs || hasLists
+
+  // Only generate pure hotspot HTML if hotspot is the ONLY content
+  // (no headings, paragraphs, or lists alongside it)
+  if (content.hotspots?.length > 0 && !hasTextContent) {
+    return content.hotspots.map(hotspot => generateHotspotHtml(hotspot)).join('\n\n')
+  }
 
   // Start building the section
   let html = `<section class="${prefix}">`
@@ -189,9 +425,6 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   }
 
   // Add body content only if paragraphs or lists were found
-  const hasParagraphs = content.paragraphs?.length > 0
-  const hasLists = content.lists?.length > 0
-
   if (hasParagraphs || hasLists) {
     html += `
   <div class="${prefix}__body">`
@@ -224,9 +457,16 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
 
   // Handle different block types for images/media
   const images = content.images || []
+  const hotspots = content.hotspots || []
 
+  // For fullWidth and oneUp, prefer hotspots if available, otherwise use regular images
   if (blockType === 'fullWidth') {
-    if (images.length > 0) {
+    if (hotspots.length > 0) {
+      // Include hotspot HTML within the section
+      hotspots.forEach(hotspot => {
+        html += '\n' + generateHotspotHtml(hotspot)
+      })
+    } else if (images.length > 0) {
       const img = images[0]
       html += `
   <figure class="${prefix}__figure">
@@ -236,7 +476,12 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   }
 
   if (blockType === 'oneUp') {
-    if (images.length > 0) {
+    if (hotspots.length > 0) {
+      // Include hotspot HTML within the section
+      hotspots.forEach(hotspot => {
+        html += '\n' + generateHotspotHtml(hotspot)
+      })
+    } else if (images.length > 0) {
       const img = images[0]
       html += `
   <figure class="${prefix}__figure">
@@ -303,7 +548,12 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     }
   }
 
-  // Rich text doesn't need any additional elements beyond heading and body
+  // Rich text - include hotspots if present
+  if (blockType === 'richText' && hotspots.length > 0) {
+    hotspots.forEach(hotspot => {
+      html += '\n' + generateHotspotHtml(hotspot)
+    })
+  }
 
   html += `
 </section>`
