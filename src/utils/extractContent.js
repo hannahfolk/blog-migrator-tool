@@ -497,6 +497,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
 
   if (['twoUp', 'threeUp', 'threeByTwo'].includes(blockType)) {
     const expectedCount = blockType === 'twoUp' ? 2 : blockType === 'threeUp' ? 3 : 6
+    const links = content.links || []
 
     if (images.length > 0) {
       html += `
@@ -504,6 +505,9 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
 
       // Use available images, up to the expected count
       const imagesToUse = images.slice(0, expectedCount)
+      // Check if we have individual CTAs for each image
+      const hasIndividualCTAs = blockConfig.hasCTA && links.length >= imagesToUse.length
+
       imagesToUse.forEach((img, i) => {
         html += `
     <figure class="${prefix}__item">
@@ -511,6 +515,11 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
         if (img.alt) {
           html += `
       <figcaption class="${prefix}__label">${img.alt}</figcaption>`
+        }
+        // Add individual CTA if we have one for each image
+        if (hasIndividualCTAs && links[i]) {
+          html += `
+      <a class="${prefix}__cta-btn" href="${links[i].href}">${links[i].text}</a>`
         }
         html += `
     </figure>`
@@ -520,9 +529,9 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   </div>`
     }
 
-    // Add CTA if block supports it and we found a link
-    if (blockConfig.hasCTA && content.links?.length > 0) {
-      const ctaLink = content.links[0]
+    // Add single shared CTA if block supports it and we have exactly 1 link
+    if (blockConfig.hasCTA && links.length === 1) {
+      const ctaLink = links[0]
       html += `
   <div class="${prefix}__cta">
     <a class="${prefix}__cta-btn" href="${ctaLink.href}">${ctaLink.text}</a>
