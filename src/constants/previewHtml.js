@@ -96,6 +96,34 @@ export const PREVIEW_HTML = {
   </div>
 </section>`,
 
+  twoByTwo: `<section class="blog__two-by-two">
+  <h2 class="blog__two-by-two__heading">Amet Consectetur Adipiscing</h2>
+  <div class="blog__two-by-two__body">
+    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod tempor incididunt.</p>
+  </div>
+  <div class="blog__two-by-two__grid">
+    <figure class="blog__two-by-two__item">
+      <img class="blog__two-by-two__image" src="${PLACEHOLDER_IMG(400, 300, '400×300')}" alt="Placeholder 1">
+      <figcaption class="blog__two-by-two__label">Label One</figcaption>
+    </figure>
+    <figure class="blog__two-by-two__item">
+      <img class="blog__two-by-two__image" src="${PLACEHOLDER_IMG(400, 300, '400×300')}" alt="Placeholder 2">
+      <figcaption class="blog__two-by-two__label">Label Two</figcaption>
+    </figure>
+    <figure class="blog__two-by-two__item">
+      <img class="blog__two-by-two__image" src="${PLACEHOLDER_IMG(400, 300, '400×300')}" alt="Placeholder 3">
+      <figcaption class="blog__two-by-two__label">Label Three</figcaption>
+    </figure>
+    <figure class="blog__two-by-two__item">
+      <img class="blog__two-by-two__image" src="${PLACEHOLDER_IMG(400, 300, '400×300')}" alt="Placeholder 4">
+      <figcaption class="blog__two-by-two__label">Label Four</figcaption>
+    </figure>
+  </div>
+  <div class="blog__two-by-two__cta">
+    <a class="blog__two-by-two__cta-btn" href="#">Call to Action Button</a>
+  </div>
+</section>`,
+
   threeByTwo: `<section class="blog__three-by-two">
   <h2 class="blog__three-by-two__heading">Duis Aute Irure Dolor</h2>
   <div class="blog__three-by-two__body">
@@ -130,6 +158,24 @@ export const PREVIEW_HTML = {
   <div class="blog__three-by-two__cta">
     <a class="blog__three-by-two__cta-btn" href="#">Call to Action Button</a>
   </div>
+</section>`,
+
+  hotspot: `<section class="blog__hotspot blog__hotspot--3-links">
+  <figure class="blog__hotspot__inner">
+    <img src="${PLACEHOLDER_IMG(800, 500, 'Hotspot Image')}" alt="Hotspot placeholder" class="blog__hotspot__image">
+    <a class="blog__hotspot__item" href="#" style="left: 25%; top: 40%;">
+      <span class="blog__hotspot__marker">1</span>
+      <span class="blog__hotspot__label">First Item</span>
+    </a>
+    <a class="blog__hotspot__item" href="#" style="left: 55%; top: 55%;">
+      <span class="blog__hotspot__marker">2</span>
+      <span class="blog__hotspot__label">Second Item</span>
+    </a>
+    <a class="blog__hotspot__item" href="#" style="left: 78%; top: 30%;">
+      <span class="blog__hotspot__marker">3</span>
+      <span class="blog__hotspot__label">Third Item</span>
+    </a>
+  </figure>
 </section>`,
 
   richText: `<section class="blog__rich-text">

@@ -1,4 +1,45 @@
 /**
+ * Get the highest-resolution image URL from an <img> element.
+ * Checks srcset, data-src/data-lazy-src (lazy loading), and falls back to src.
+ */
+function getBestImageSrc(img) {
+  // Check srcset for the largest available image
+  const srcset = img.getAttribute('srcset')
+  if (srcset) {
+    const candidates = srcset.split(',').map(entry => {
+      const parts = entry.trim().split(/\s+/)
+      const url = parts[0]
+      const descriptor = parts[1] || ''
+      // Parse width descriptor (e.g. "800w") or pixel density (e.g. "2x")
+      let size = 0
+      if (descriptor.endsWith('w')) {
+        size = parseInt(descriptor)
+      } else if (descriptor.endsWith('x')) {
+        size = parseFloat(descriptor) * 1000 // weight density higher
+      }
+      return { url, size }
+    }).filter(c => c.url)
+
+    if (candidates.length > 0) {
+      // Pick the largest
+      candidates.sort((a, b) => b.size - a.size)
+      const best = candidates[0].url
+      if (best && !best.startsWith('data:')) return best
+    }
+  }
+
+  // Check common lazy-load attributes
+  const lazySrc = img.getAttribute('data-src')
+    || img.getAttribute('data-lazy-src')
+    || img.getAttribute('data-original')
+    || img.getAttribute('data-full-src')
+  if (lazySrc && !lazySrc.startsWith('data:')) return lazySrc
+
+  // Fall back to src
+  return img.getAttribute('src') || ''
+}
+
+/**
  * Extract content from DOM elements within a given rectangle
  * The rect coordinates are relative to the container's scrollable content
  */
@@ -90,7 +131,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
     })
 
     if (img && hotspotMarkers.length > 0) {
-      const imgSrc = img.getAttribute('src') || ''
+      const imgSrc = getBestImageSrc(img)
 
       // Skip if we've already added this image as a hotspot
       if (processedHotspotImages.has(imgSrc)) return
@@ -203,7 +244,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
     if (img && hotspotLinks.length > 0) {
       const hotspotData = {
         image: {
-          src: img.getAttribute('src') || '',
+          src: getBestImageSrc(img),
           alt: img.getAttribute('alt') || '',
           title: img.getAttribute('title') || ''
         },
@@ -283,14 +324,19 @@ export function extractContentFromRect(containerEl, selectionRect) {
       }
     }
 
-    // Images (including those in figures) - skip if part of hotspot
-    if (tagName === 'img') {
-      const src = el.getAttribute('src') || ''
+    // Images - skip if inside a <figure> (the figure handler captures it with its caption)
+    if (tagName === 'img' && !el.closest('figure')) {
+      const src = getBestImageSrc(el)
       // Skip placeholder/data URI images and images already in hotspots
       if (src && !src.startsWith('data:') && !processedHotspotImages.has(src)) {
+        // Look for a caption sibling — an adjacent element with a class ending in "caption"
+        const captionSibling = el.nextElementSibling?.className?.match(/caption/i)
+          ? el.nextElementSibling
+          : el.parentElement?.querySelector('[class$="caption"], [class*="caption"]')
         content.images.push({
           src,
-          alt: el.getAttribute('alt') || ''
+          alt: el.getAttribute('alt') || '',
+          caption: captionSibling?.textContent?.trim() || ''
         })
       }
     }
@@ -302,14 +348,15 @@ export function extractContentFromRect(containerEl, selectionRect) {
       if (hasHotspots) return
 
       const img = el.querySelector('img')
-      const caption = el.querySelector('figcaption')
+      const captionEl = el.querySelector('figcaption') || el.querySelector('[class$="caption"], [class*="caption"]')
       if (img) {
-        const src = img.getAttribute('src') || ''
+        const src = getBestImageSrc(img)
         // Skip images already processed as hotspots
         if (src && !src.startsWith('data:') && !processedHotspotImages.has(src)) {
           content.images.push({
             src,
-            alt: img.getAttribute('alt') || caption?.textContent?.trim() || ''
+            alt: img.getAttribute('alt') || '',
+            caption: captionEl?.textContent?.trim() || ''
           })
         }
       }
@@ -483,20 +530,22 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       })
     } else if (images.length > 0) {
       const img = images[0]
+      const captionText = img.caption || ''
       html += `
   <figure class="${prefix}__figure">
     <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">`
-      if (img.alt) {
+      if (captionText) {
         html += `
-    <figcaption class="${prefix}__label">${img.alt}</figcaption>`
+    <figcaption class="${prefix}__label">${captionText}</figcaption>`
       }
       html += `
   </figure>`
     }
   }
 
-  if (['twoUp', 'threeUp', 'threeByTwo'].includes(blockType)) {
-    const expectedCount = blockType === 'twoUp' ? 2 : blockType === 'threeUp' ? 3 : 6
+  if (['twoUp', 'threeUp', 'twoByTwo', 'threeByTwo'].includes(blockType)) {
+    const expectedCounts = { twoUp: 2, threeUp: 3, twoByTwo: 4, threeByTwo: 6 }
+    const expectedCount = expectedCounts[blockType]
     const links = content.links || []
 
     if (images.length > 0) {
@@ -509,12 +558,13 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       const hasIndividualCTAs = blockConfig.hasCTA && links.length >= imagesToUse.length
 
       imagesToUse.forEach((img, i) => {
+        const captionText = img.caption || ''
         html += `
     <figure class="${prefix}__item">
       <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">`
-        if (img.alt) {
+        if (captionText) {
           html += `
-      <figcaption class="${prefix}__label">${img.alt}</figcaption>`
+      <figcaption class="${prefix}__label">${captionText}</figcaption>`
         }
         // Add individual CTA if we have one for each image
         if (hasIndividualCTAs && links[i]) {

@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { FIGMA_BLOCKS } from '../../constants'
-import { generateSectionHtml } from '../../utils'
+import { generateSectionHtml, useLocalStorage } from '../../utils'
 import { InputStep } from './InputStep'
 import { MappingStep } from './MappingStep'
 import { OutputStep } from './OutputStep'
 
 export function MigratorPage() {
   const [step, setStep] = useState('input')
-  const [inputHtml, setInputHtml] = useState('')
+  const [inputHtml, setInputHtml] = useLocalStorage('migrator:inputHtml', '')
   const [selections, setSelections] = useState([])
   const [generatedHtml, setGeneratedHtml] = useState('')
 

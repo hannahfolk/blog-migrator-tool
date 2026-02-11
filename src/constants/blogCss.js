@@ -174,7 +174,7 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__one-up__label {
   display: block;
-  margin-top: 16px;
+  margin-top: 0.5rem;
   font-size: 16px;
   text-align: center;
 }
@@ -216,8 +216,13 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__two-up__label {
   display: block;
-  margin-top: 16px;
+  margin-top: 0.5rem;
   font-size: 16px;
+  text-align: center;
+}
+
+.blog__two-up__item .blog__two-up__cta-btn {
+  margin-top: 0.5rem;
 }
 
 .blog__two-up__cta {
@@ -286,8 +291,13 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__three-up__label {
   display: block;
-  margin-top: 16px;
+  margin-top: 0.5rem;
   font-size: 16px;
+  text-align: center;
+}
+
+.blog__three-up__item .blog__three-up__cta-btn {
+  margin-top: 0.5rem;
 }
 
 .blog__three-up__cta {
@@ -353,6 +363,79 @@ export const BLOG_CSS = `/* ============================================
 }
 
 /* ----------------------------------------
+   2 x 2 SECTION
+   ---------------------------------------- */
+.blog__two-by-two {
+  margin-bottom: 60px;
+}
+
+.blog__two-by-two__heading {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.blog__two-by-two__body {
+  margin-bottom: 24px;
+}
+
+.blog__two-by-two__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.blog__two-by-two__item {
+  margin: 0;
+}
+
+.blog__two-by-two__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.blog__two-by-two__label {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 16px;
+  text-align: center;
+}
+
+.blog__two-by-two__item .blog__two-by-two__cta-btn {
+  margin-top: 0.5rem;
+}
+
+.blog__two-by-two__cta {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.blog__two-by-two__cta-btn {
+  display: block;
+  width: 100%;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  text-align: center;
+  padding: 15px;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background-color 0.3s ease;
+}
+
+.blog__two-by-two__cta-btn:hover {
+  background-color: #333333;
+}
+
+@media (max-width: 768px) {
+  .blog__two-by-two__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------
    3 x 2 SECTION
    ---------------------------------------- */
 .blog__three-by-two {
@@ -388,8 +471,13 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__three-by-two__label {
   display: block;
-  margin-top: 12px;
+  margin-top: 0.5rem;
   font-size: 14px;
+  text-align: center;
+}
+
+.blog__three-by-two__item .blog__three-by-two__cta-btn {
+  margin-top: 0.5rem;
 }
 
 .blog__three-by-two__cta {

@@ -1,4 +1,4 @@
-import { Image, Layout, Play, LayoutGrid, FileText } from 'lucide-react'
+import { Image, Layout, Play, LayoutGrid, FileText, Target } from 'lucide-react'
 
 export const FIGMA_BLOCKS = {
   fullWidth: {
@@ -50,14 +50,24 @@ export const FIGMA_BLOCKS = {
     hasCTA: false,
     prefix: 'blog__video'
   },
+  twoByTwo: {
+    label: '2 x 2',
+    icon: LayoutGrid,
+    color: '#14b8a6',
+    description: 'Heading + body + 4 images in 2x2 grid + CTA',
+    hasImages: true,
+    imageCount: 4,
+    hasCTA: true,
+    prefix: 'blog__two-by-two'
+  },
   threeByTwo: {
     label: '3 x 2',
     icon: LayoutGrid,
     color: '#06b6d4',
-    description: 'Heading + body + 6 images in 3x2 grid',
+    description: 'Heading + body + 6 images in 3x2 grid + CTA',
     hasImages: true,
     imageCount: 6,
-    hasCTA: false,
+    hasCTA: true,
     prefix: 'blog__three-by-two'
   },
   richText: {
@@ -68,5 +78,14 @@ export const FIGMA_BLOCKS = {
     hasImages: false,
     hasCTA: false,
     prefix: 'blog__rich-text'
+  },
+  hotspot: {
+    label: 'Hotspot',
+    icon: Target,
+    color: '#f97316',
+    description: 'Image with clickable hotspot markers',
+    hasImages: false,
+    hasCTA: false,
+    prefix: 'blog__hotspot'
   },
 }

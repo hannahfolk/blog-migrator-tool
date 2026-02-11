@@ -1,11 +1,20 @@
-import { useState } from 'react'
-import { Copy, Check } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Copy, Check, ArrowUp } from 'lucide-react'
 import { FIGMA_BLOCKS, BLOG_CSS } from '../../constants'
 import { copyToClipboard } from '../../utils'
 import { SectionCard } from './SectionCard'
 
 export function ReferencePage() {
   const [copiedAll, setCopiedAll] = useState(false)
+  const [showBackToTop, setShowBackToTop] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 200)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleCopyAllCss = async () => {
     const success = await copyToClipboard(BLOG_CSS)
@@ -33,13 +42,14 @@ export function ReferencePage() {
       </div>
 
       {/* Summary Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 mb-8">
         {Object.entries(FIGMA_BLOCKS).map(([key, section]) => {
           const Icon = section.icon
           return (
-            <div
+            <button
               key={key}
-              className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-center"
+              onClick={() => document.getElementById(`section-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-center hover:border-zinc-600 transition-colors cursor-pointer"
             >
               <div
                 className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2"
@@ -48,7 +58,7 @@ export function ReferencePage() {
                 <Icon size={18} style={{ color: section.color }} />
               </div>
               <p className="text-sm font-medium text-white">{section.label}</p>
-            </div>
+            </button>
           )
         })}
       </div>
@@ -56,7 +66,7 @@ export function ReferencePage() {
       {/* Section Cards */}
       <div className="space-y-6">
         {Object.entries(FIGMA_BLOCKS).map(([key, section]) => (
-          <SectionCard key={key} sectionKey={key} section={section} />
+          <SectionCard key={key} id={`section-${key}`} sectionKey={key} section={section} />
         ))}
       </div>
 
@@ -96,6 +106,16 @@ export function ReferencePage() {
           </div>
         </div>
       </div>
+      {/* Back to Top */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={`fixed bottom-6 right-6 flex items-center gap-2 bg-zinc-800 border border-zinc-700 hover:border-zinc-500 px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white transition-all ${
+          showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        <ArrowUp size={14} />
+        Back to Top
+      </button>
     </div>
   )
 }

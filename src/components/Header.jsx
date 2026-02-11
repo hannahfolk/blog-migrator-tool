@@ -1,4 +1,4 @@
-import { Wand2, Book } from 'lucide-react'
+import { Wand2, Book, PenTool } from 'lucide-react'
 
 export function Header({ activeTab, setActiveTab }) {
   return (
@@ -27,6 +27,15 @@ export function Header({ activeTab, setActiveTab }) {
               >
                 <Book size={16} />
                 Section Reference
+              </button>
+              <button
+                onClick={() => setActiveTab('builder')}
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === 'builder' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <PenTool size={16} />
+                Post Builder
               </button>
             </div>
           </div>

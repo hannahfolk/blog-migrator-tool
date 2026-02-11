@@ -42,6 +42,13 @@ export function EditSectionModal({ selection, onSave, onClose }) {
     }))
   }
 
+  const updateImageCaption = (index, value) => {
+    setEditedContent(prev => ({
+      ...prev,
+      images: prev.images?.map((img, i) => i === index ? { ...img, caption: value } : img) || []
+    }))
+  }
+
   if (!selection) return null
 
   return (
@@ -126,16 +133,28 @@ export function EditSectionModal({ selection, onSave, onClose }) {
                     alt={img.alt}
                     className="w-20 h-20 object-cover rounded"
                   />
-                  <div className="flex-1">
-                    <label className="block text-xs text-zinc-500 mb-1">Alt Text / Caption</label>
-                    <input
-                      type="text"
-                      value={img.alt}
-                      onChange={(e) => updateImageAlt(idx, e.target.value)}
-                      placeholder="Image description"
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-indigo-500"
-                    />
-                    <p className="text-xs text-zinc-600 mt-1 truncate">{img.src}</p>
+                  <div className="flex-1 space-y-2">
+                    <div>
+                      <label className="block text-xs text-zinc-500 mb-1">Alt Text</label>
+                      <input
+                        type="text"
+                        value={img.alt}
+                        onChange={(e) => updateImageAlt(idx, e.target.value)}
+                        placeholder="Image description for accessibility"
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-zinc-500 mb-1">Caption</label>
+                      <input
+                        type="text"
+                        value={img.caption || ''}
+                        onChange={(e) => updateImageCaption(idx, e.target.value)}
+                        placeholder="Visible caption text"
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                    <p className="text-xs text-zinc-600 truncate">{img.src}</p>
                   </div>
                 </div>
               ))}

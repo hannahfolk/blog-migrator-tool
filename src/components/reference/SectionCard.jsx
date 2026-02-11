@@ -3,7 +3,7 @@ import { Copy, Check } from 'lucide-react'
 import { FIGMA_BLOCKS, BLOG_CSS, HTML_TEMPLATES, PREVIEW_HTML } from '../../constants'
 import { copyToClipboard } from '../../utils'
 
-export function SectionCard({ sectionKey, section }) {
+export function SectionCard({ id, sectionKey, section }) {
   const [copied, setCopied] = useState(false)
   const [activeTab, setActiveTab] = useState('preview')
   const Icon = section.icon
@@ -18,8 +18,10 @@ export function SectionCard({ sectionKey, section }) {
       twoUp: '2-UP SECTION',
       threeUp: '3-UP SECTION',
       video: 'VIDEO SECTION',
+      twoByTwo: '2 x 2 SECTION',
       threeByTwo: '3 x 2 SECTION',
       richText: 'RICH TEXT SECTION',
+      hotspot: 'HOTSPOT SECTION',
     }
 
     const marker = startMarkers[sectionKey]
@@ -53,7 +55,7 @@ export function SectionCard({ sectionKey, section }) {
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+    <div id={id} className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden scroll-mt-4">
       {/* Header */}
       <div className="p-4 border-b border-zinc-800 flex items-center gap-3">
         <div
@@ -82,7 +84,9 @@ export function SectionCard({ sectionKey, section }) {
             ...(sectionKey === 'twoUp' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
             ...(sectionKey === 'threeUp' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
             ...(sectionKey === 'video' ? ['__wrapper', '__iframe'] : []),
+            ...(sectionKey === 'twoByTwo' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
             ...(sectionKey === 'threeByTwo' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
+            ...(sectionKey === 'hotspot' ? ['__inner', '__image', '__item', '__marker', '__label'] : []),
           ].map((suffix, idx) => (
             <code
               key={idx}
