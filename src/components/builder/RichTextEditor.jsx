@@ -28,6 +28,67 @@ export function RichTextEditor({ value, onChange, placeholder = 'Start typing...
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const cleanPastedHtml = useCallback((html) => {
+    let cleaned = html
+      // Strip all style attributes (removes background-color, color, font-family, etc.)
+      .replace(/\s*style="[^"]*"/gi, '')
+      // Strip class attributes
+      .replace(/\s*class="[^"]*"/gi, '')
+      // Strip id attributes
+      .replace(/\s*id="[^"]*"/gi, '')
+      // Strip data- attributes
+      .replace(/\s*data-[a-z-]+="[^"]*"/gi, '')
+      // Replace <b> with <strong>, <i> with <em>
+      .replace(/<b(\s|>)/gi, '<strong$1')
+      .replace(/<\/b>/gi, '</strong>')
+      .replace(/<i(\s|>)/gi, '<em$1')
+      .replace(/<\/i>/gi, '</em>')
+      // Replace <div> with <p>
+      .replace(/<div(\s|>)/gi, '<p$1')
+      .replace(/<\/div>/gi, '</p>')
+      // Strip <span> wrappers (Google Docs, Word, etc. add styled spans)
+      .replace(/<\/?span[^>]*>/gi, '')
+      // Strip <font> tags
+      .replace(/<\/?font[^>]*>/gi, '')
+      // Strip <meta>, <style>, <link> tags and their content
+      .replace(/<(meta|style|link)[^>]*>([^<]*<\/\1>)?/gi, '')
+      // Strip comments
+      .replace(/<!--[\s\S]*?-->/g, '')
+      // Collapse multiple <br> into one
+      .replace(/(<br\s*\/?>[\s]*){2,}/gi, '</p><p>')
+      // Remove empty paragraphs (including those with only &nbsp; or whitespace)
+      .replace(/<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '')
+      // Collapse runs of whitespace
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+
+    return cleaned
+  }, [])
+
+  const handlePaste = useCallback((e) => {
+    e.preventDefault()
+
+    // Prefer HTML from clipboard, fall back to plain text
+    const html = e.clipboardData.getData('text/html')
+    const text = e.clipboardData.getData('text/plain')
+
+    let content
+    if (html) {
+      content = cleanPastedHtml(html)
+    } else {
+      // Convert plain text newlines to paragraphs
+      content = text
+        .split(/\n\n+/)
+        .map(p => p.trim())
+        .filter(Boolean)
+        .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+        .join('')
+    }
+
+    // Insert at cursor position
+    document.execCommand('insertHTML', false, content)
+  }, [cleanPastedHtml])
+
   const handleInput = useCallback(() => {
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML)
@@ -78,12 +139,26 @@ export function RichTextEditor({ value, onChange, placeholder = 'Start typing...
 
       {/* Editor area */}
       <div className="relative">
+        <style>{`
+          .rte-editor strong, .rte-editor b { font-weight: 700; }
+          .rte-editor em, .rte-editor i { font-style: italic; }
+          .rte-editor h3 { font-size: 1.25rem; font-weight: 700; margin: 0.75rem 0 0.25rem; }
+          .rte-editor h4 { font-size: 1.1rem; font-weight: 600; margin: 0.5rem 0 0.25rem; }
+          .rte-editor ul { list-style: disc; padding-left: 1.5rem; margin: 0.5rem 0; }
+          .rte-editor ol { list-style: decimal; padding-left: 1.5rem; margin: 0.5rem 0; }
+          .rte-editor li { margin: 0.15rem 0; }
+          .rte-editor blockquote { border-left: 3px solid #6366f1; padding-left: 0.75rem; margin: 0.5rem 0; color: #a1a1aa; font-style: italic; }
+          .rte-editor a { color: #818cf8; text-decoration: underline; }
+          .rte-editor hr { border: none; border-top: 1px solid #3f3f46; margin: 0.75rem 0; }
+          .rte-editor p { margin: 0.35rem 0; }
+        `}</style>
         <div
           ref={editorRef}
           contentEditable
           onInput={handleInput}
+          onPaste={handlePaste}
           data-placeholder={placeholder}
-          className="min-h-[120px] max-h-[300px] overflow-y-auto p-3 text-sm text-zinc-200 bg-zinc-900 focus:outline-none [&:empty]:before:content-[attr(data-placeholder)] [&:empty]:before:text-zinc-600"
+          className="rte-editor min-h-[120px] max-h-[300px] overflow-y-auto p-3 text-sm text-zinc-200 bg-zinc-900 focus:outline-none [&:empty]:before:content-[attr(data-placeholder)] [&:empty]:before:text-zinc-600 [&_*]:!bg-transparent"
         />
       </div>
     </div>

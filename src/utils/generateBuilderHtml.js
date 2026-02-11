@@ -47,6 +47,21 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
 }
 
+function getValidHotspots(img) {
+  return (img.hotspots || []).filter(h => h.href && h.label)
+}
+
+function generateImageHotspotHtml(validHotspots, indent) {
+  const lines = []
+  validHotspots.forEach((item, index) => {
+    lines.push(`${indent}<a class="blog__hotspot__item" href="${escapeHtml(item.href)}" style="left: ${item.left}; top: ${item.top};">`)
+    lines.push(`${indent}  <span class="blog__hotspot__marker">${index + 1}</span>`)
+    lines.push(`${indent}  <span class="blog__hotspot__label">${escapeHtml(item.label)}</span>`)
+    lines.push(`${indent}</a>`)
+  })
+  return lines
+}
+
 /**
  * Generate HTML for a single builder section.
  * Uses exact BEM class names matching blogCss.js.
@@ -85,16 +100,20 @@ export function generateBuilderSectionHtml(section) {
   switch (section.blockType) {
     case 'fullWidth':
       if (section.images?.[0]?.src) {
-        parts.push(`  <figure class="${prefix}__figure">`)
+        const fwHotspots = getValidHotspots(section.images[0])
+        parts.push(`  <figure class="${prefix}__figure"${fwHotspots.length ? ' style="position: relative;"' : ''}>`)
         parts.push(`    <img class="${prefix}__image" src="${escapeHtml(section.images[0].src)}" alt="${escapeHtml(section.images[0].alt || '')}">`)
+        if (fwHotspots.length) parts.push(...generateImageHotspotHtml(fwHotspots, '    '))
         parts.push(`  </figure>`)
       }
       break
 
     case 'oneUp':
       if (section.images?.[0]?.src) {
-        parts.push(`  <figure class="${prefix}__figure">`)
+        const ouHotspots = getValidHotspots(section.images[0])
+        parts.push(`  <figure class="${prefix}__figure"${ouHotspots.length ? ' style="position: relative;"' : ''}>`)
         parts.push(`    <img class="${prefix}__image" src="${escapeHtml(section.images[0].src)}" alt="${escapeHtml(section.images[0].alt || '')}">`)
+        if (ouHotspots.length) parts.push(...generateImageHotspotHtml(ouHotspots, '    '))
         if (section.images[0].label) {
           parts.push(`    <figcaption class="${prefix}__label">${escapeHtml(section.images[0].label)}</figcaption>`)
         }
@@ -114,8 +133,10 @@ export function generateBuilderSectionHtml(section) {
         parts.push(`  <div class="${prefix}__grid">`)
         images.forEach((img, i) => {
           if (img.src) {
-            parts.push(`    <figure class="${prefix}__item">`)
+            const imgHotspots = getValidHotspots(img)
+            parts.push(`    <figure class="${prefix}__item"${imgHotspots.length ? ' style="position: relative;"' : ''}>`)
             parts.push(`      <img class="${prefix}__image" src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt || '')}">`)
+            if (imgHotspots.length) parts.push(...generateImageHotspotHtml(imgHotspots, '      '))
             if (img.label) {
               parts.push(`      <figcaption class="${prefix}__label">${escapeHtml(img.label)}</figcaption>`)
             }

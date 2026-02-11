@@ -1,6 +1,7 @@
 import { FIGMA_BLOCKS } from '../../constants'
 import { RichTextEditor } from './RichTextEditor'
 import { HotspotEditor } from './HotspotEditor'
+import { ImageHotspots } from './ImageHotspots'
 
 function ImageField({ image, index, onChange, showLabel = true }) {
   return (
@@ -31,6 +32,12 @@ function ImageField({ image, index, onChange, showLabel = true }) {
           className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
         />
       )}
+      <ImageHotspots
+        src={image.src || ''}
+        alt={image.alt || ''}
+        hotspots={image.hotspots || []}
+        onChange={(hotspots) => onChange({ ...image, hotspots })}
+      />
     </div>
   )
 }
@@ -62,7 +69,7 @@ export function SectionForm({ section, onChange }) {
       {/* Heading */}
       <div>
         <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
-          Section Heading
+          Section Heading <span className="normal-case font-normal text-zinc-600">(renders as h2)</span>
         </label>
         <input
           type="text"
