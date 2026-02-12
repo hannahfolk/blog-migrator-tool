@@ -63,6 +63,38 @@ export function SectionForm({ section, onChange }) {
   }
 
   const showLabel = section.blockType !== 'fullWidth'
+  const isHr = section.blockType === 'hr'
+
+  if (isHr) {
+    return (
+      <div className="space-y-4 p-4">
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+            Line Color
+          </label>
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={section.hrColor || '#191c1f'}
+              onChange={(e) => updateField('hrColor', e.target.value)}
+              className="w-10 h-10 rounded cursor-pointer border border-zinc-700 bg-transparent"
+            />
+            <input
+              type="text"
+              value={section.hrColor || '#191c1f'}
+              onChange={(e) => updateField('hrColor', e.target.value)}
+              placeholder="#191c1f"
+              className="w-32 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 font-mono placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+            />
+          </div>
+          <div
+            className="mt-3 rounded"
+            style={{ height: '1px', backgroundColor: section.hrColor || '#191c1f' }}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4 p-4">

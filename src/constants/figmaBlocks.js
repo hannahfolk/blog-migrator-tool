@@ -1,4 +1,4 @@
-import { Image, Layout, Play, LayoutGrid, FileText, Target } from 'lucide-react'
+import { Image, Layout, Play, LayoutGrid, FileText, Target, Minus } from 'lucide-react'
 
 export const FIGMA_BLOCKS = {
   fullWidth: {
@@ -87,5 +87,14 @@ export const FIGMA_BLOCKS = {
     hasImages: false,
     hasCTA: false,
     prefix: 'blog__hotspot'
+  },
+  hr: {
+    label: 'Divider',
+    icon: Minus,
+    color: '#a1a1aa',
+    description: 'Horizontal line with custom color',
+    hasImages: false,
+    hasCTA: false,
+    prefix: 'blog__divider'
   },
 }

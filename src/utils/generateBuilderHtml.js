@@ -1,16 +1,84 @@
 import { FIGMA_BLOCKS } from '../constants'
 
+const FONT_WEIGHT_MAP = {
+  '200': 'light',
+  '300': 'light',
+  '400': 'regular',
+  'normal': 'regular',
+  '500': 'medium',
+  '600': 'semibold',
+  '700': 'bold',
+  'bold': 'bold',
+}
+
+/**
+ * Convert inline font-weight styles to fp-font-weight--* utility classes.
+ * Handles tags that have style="font-weight: 400;" (with or without other styles).
+ * Strips the font-weight from the style and adds the class.
+ */
+export function convertFontWeightToClasses(html) {
+  if (!html) return html
+
+  return html.replace(/<([a-z][a-z0-9]*)((?:\s+[^>]*?)?)(\s*\/?)>/gi, (match, tag, attrs, selfClose) => {
+    // Extract style attribute
+    const styleMatch = attrs.match(/\s*style="([^"]*)"/i)
+    if (!styleMatch) return match
+
+    const styleStr = styleMatch[1]
+    // Look for font-weight in the style
+    const fwMatch = styleStr.match(/font-weight:\s*([^;]+)/i)
+    if (!fwMatch) return match
+
+    const weightValue = fwMatch[1].trim()
+    const className = FONT_WEIGHT_MAP[weightValue]
+    if (!className) return match
+
+    const fpClass = `fp-font-weight--${className}`
+
+    // Remove font-weight from style
+    let newStyle = styleStr
+      .replace(/font-weight:\s*[^;]+;?\s*/i, '')
+      .trim()
+      .replace(/;\s*$/, '')
+
+    // Remove style attr if empty, otherwise update it
+    let newAttrs = attrs
+    if (!newStyle) {
+      newAttrs = attrs.replace(/\s*style="[^"]*"/i, '')
+    } else {
+      newAttrs = attrs.replace(/style="[^"]*"/i, `style="${newStyle}"`)
+    }
+
+    // Add the class — merge with existing class attr or add new one
+    const classMatch = newAttrs.match(/class="([^"]*)"/i)
+    if (classMatch) {
+      const existing = classMatch[1]
+      if (!existing.includes(fpClass)) {
+        newAttrs = newAttrs.replace(/class="([^"]*)"/i, `class="${existing} ${fpClass}"`)
+      }
+    } else {
+      newAttrs += ` class="${fpClass}"`
+    }
+
+    return `<${tag}${newAttrs}${selfClose}>`
+  })
+}
+
 /**
  * Sanitize contenteditable HTML output:
  * - <b> → <strong>, <i> → <em>
  * - <div> → <p> (common contenteditable artifact)
- * - Strip inline styles
+ * - Convert font-weight styles to utility classes
+ * - Strip remaining inline styles
  * - Normalize whitespace
  */
 export function sanitizeBodyHtml(html) {
   if (!html || !html.trim()) return ''
 
-  let cleaned = html
+  // Convert font-weight styles to classes before stripping styles
+  let cleaned = convertFontWeightToClasses(html)
+
+  cleaned = cleaned
     // Replace <b> with <strong>
     .replace(/<b(\s|>)/gi, '<strong$1')
     .replace(/<\/b>/gi, '</strong>')
@@ -20,10 +88,8 @@ export function sanitizeBodyHtml(html) {
     // Replace <div> with <p> (contenteditable wraps lines in divs)
     .replace(/<div(\s|>)/gi, '<p$1')
     .replace(/<\/div>/gi, '</p>')
-    // Strip inline styles
+    // Strip remaining inline styles (font-weight already converted to classes)
     .replace(/\s*style="[^"]*"/gi, '')
-    // Strip class attributes (contenteditable shouldn't add BEM classes to body content)
-    .replace(/\s*class="[^"]*"/gi, '')
     // Collapse multiple <br> into paragraph breaks
     .replace(/(<br\s*\/?>){2,}/gi, '</p><p>')
     // Remove empty paragraphs
@@ -55,8 +121,8 @@ function generateImageHotspotHtml(validHotspots, indent) {
   const lines = []
   validHotspots.forEach((item, index) => {
     lines.push(`${indent}<a class="blog__hotspot__item" href="${escapeHtml(item.href)}" style="left: ${item.left}; top: ${item.top};">`)
-    lines.push(`${indent}  <span class="blog__hotspot__marker">${index + 1}</span>`)
-    lines.push(`${indent}  <span class="blog__hotspot__label">${escapeHtml(item.label)}</span>`)
+    lines.push(`${indent}  <span class="blog__hotspot__marker fp-font-weight--bold">${index + 1}</span>`)
+    lines.push(`${indent}  <span class="blog__hotspot__label fp-font-weight--semibold">${escapeHtml(item.label)}</span>`)
     lines.push(`${indent}</a>`)
   })
   return lines
@@ -77,13 +143,20 @@ export function generateBuilderSectionHtml(section) {
     return generateHotspotSectionHtml(section, prefix)
   }
 
+  // HR is a simple divider
+  if (section.blockType === 'hr') {
+    const color = section.hrColor || '#191c1f'
+    return `<hr class="${prefix}" style="border: none; border-top: 1px solid ${color};">`
+  }
+
   const parts = []
 
   parts.push(`<section class="${prefix}">`)
 
-  // Heading
+  // Heading — preserve the original tag level (default to h2 for backwards compat)
   if (section.heading && section.heading.trim()) {
-    parts.push(`  <h2 class="${prefix}__heading">${escapeHtml(section.heading.trim())}</h2>`)
+    const tag = section.headingTag || 'h2'
+    parts.push(`  <${tag} class="${prefix}__heading fp-font-weight--semibold">${escapeHtml(section.heading.trim())}</${tag}>`)
   }
 
   // Body
@@ -141,7 +214,7 @@ export function generateBuilderSectionHtml(section) {
               parts.push(`      <figcaption class="${prefix}__label">${escapeHtml(img.label)}</figcaption>`)
             }
             if (hasPerImageCtas && ctas[i]) {
-              parts.push(`      <a class="${prefix}__cta-btn" href="${escapeHtml(ctas[i].href)}">${escapeHtml(ctas[i].text)}</a>`)
+              parts.push(`      <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${escapeHtml(ctas[i].href)}">${escapeHtml(ctas[i].text)}</a>`)
             }
             parts.push(`    </figure>`)
           }
@@ -151,7 +224,7 @@ export function generateBuilderSectionHtml(section) {
       // Single CTA spans full width
       if (ctas.length === 1) {
         parts.push(`  <div class="${prefix}__cta">`)
-        parts.push(`    <a class="${prefix}__cta-btn" href="${escapeHtml(ctas[0].href)}">${escapeHtml(ctas[0].text)}</a>`)
+        parts.push(`    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${escapeHtml(ctas[0].href)}">${escapeHtml(ctas[0].text)}</a>`)
         parts.push(`  </div>`)
       }
       break
@@ -201,8 +274,8 @@ function generateHotspotSectionHtml(section, prefix) {
 
   validItems.forEach((item, index) => {
     parts.push(`    <a class="${prefix}__item" href="${escapeHtml(item.href)}" style="left: ${item.left}; top: ${item.top};">`)
-    parts.push(`      <span class="${prefix}__marker">${index + 1}</span>`)
-    parts.push(`      <span class="${prefix}__label">${escapeHtml(item.label)}</span>`)
+    parts.push(`      <span class="${prefix}__marker fp-font-weight--bold">${index + 1}</span>`)
+    parts.push(`      <span class="${prefix}__label fp-font-weight--semibold">${escapeHtml(item.label)}</span>`)
     parts.push(`    </a>`)
   })
 

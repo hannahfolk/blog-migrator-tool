@@ -20,6 +20,7 @@ function createSection(blockType) {
     videoTitle: '',
     hotspots: [],
     hotspotImage: { src: '', alt: '' },
+    hrColor: '#191c1f',
   }
 }
 

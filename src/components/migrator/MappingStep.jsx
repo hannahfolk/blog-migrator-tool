@@ -304,6 +304,25 @@ export function MappingStep({
     setEditingSection(null)
   }, [setSelections])
 
+  const handleReorder = useCallback((fromIndex, toIndex) => {
+    setSelections(prev => {
+      const updated = [...prev]
+      const [moved] = updated.splice(fromIndex, 1)
+      updated.splice(toIndex, 0, moved)
+      return updated
+    })
+  }, [setSelections])
+
+  const handleAddDivider = useCallback(() => {
+    setSelections(prev => [...prev, {
+      id: Date.now(),
+      blockType: 'hr',
+      hrColor: '#e8e8e8',
+      rect: null,
+      extractedContent: {}
+    }])
+  }, [setSelections])
+
   return (
     <div className="h-full">
       <div className="max-w-[1800px] mx-auto p-4">
@@ -385,7 +404,7 @@ export function MappingStep({
               )}
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden h-[calc(100vh-280px)] overflow-y-auto">
-              <MappedSectionsList sections={selections} onRemove={handleRemoveSelection} onEdit={handleEditSection} />
+              <MappedSectionsList sections={selections} onRemove={handleRemoveSelection} onEdit={handleEditSection} onReorder={handleReorder} onAddDivider={handleAddDivider} />
             </div>
           </div>
         </div>

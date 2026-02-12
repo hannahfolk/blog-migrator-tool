@@ -5,11 +5,13 @@ import { FIGMA_BLOCKS } from '../../constants'
 export function EditSectionModal({ selection, onSave, onClose }) {
   const [blockType, setBlockType] = useState(selection?.blockType || 'fullWidth')
   const [editedContent, setEditedContent] = useState(selection?.extractedContent || {})
+  const [hrColor, setHrColor] = useState(selection?.hrColor || '#191c1f')
 
   useEffect(() => {
     if (selection) {
       setBlockType(selection.blockType)
       setEditedContent(selection.extractedContent || {})
+      setHrColor(selection.hrColor || '#191c1f')
     }
   }, [selection])
 
@@ -17,7 +19,8 @@ export function EditSectionModal({ selection, onSave, onClose }) {
     onSave({
       ...selection,
       blockType,
-      extractedContent: editedContent
+      extractedContent: editedContent,
+      hrColor
     })
   }
 
@@ -31,7 +34,7 @@ export function EditSectionModal({ selection, onSave, onClose }) {
   const updateParagraph = (index, value) => {
     setEditedContent(prev => ({
       ...prev,
-      paragraphs: prev.paragraphs?.map((p, i) => i === index ? { ...p, text: value, html: value } : p) || []
+      paragraphs: prev.paragraphs?.map((p, i) => i === index ? { ...p, html: value } : p) || []
     }))
   }
 
@@ -46,6 +49,16 @@ export function EditSectionModal({ selection, onSave, onClose }) {
     setEditedContent(prev => ({
       ...prev,
       images: prev.images?.map((img, i) => i === index ? { ...img, caption: value } : img) || []
+    }))
+  }
+
+  const updateHotspotItem = (hotspotIdx, itemIdx, field, value) => {
+    setEditedContent(prev => ({
+      ...prev,
+      hotspots: prev.hotspots?.map((h, hi) => hi === hotspotIdx ? {
+        ...h,
+        items: h.items.map((item, ii) => ii === itemIdx ? { ...item, [field]: value } : item)
+      } : h) || []
     }))
   }
 
@@ -86,6 +99,32 @@ export function EditSectionModal({ selection, onSave, onClose }) {
             </div>
           </div>
 
+          {/* HR Color */}
+          {blockType === 'hr' && (
+            <div>
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Line Color</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={hrColor}
+                  onChange={(e) => setHrColor(e.target.value)}
+                  className="w-10 h-10 rounded cursor-pointer border border-zinc-700 bg-transparent"
+                />
+                <input
+                  type="text"
+                  value={hrColor}
+                  onChange={(e) => setHrColor(e.target.value)}
+                  placeholder="#191c1f"
+                  className="w-32 bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm font-mono focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+              <div
+                className="mt-3 rounded"
+                style={{ height: '1px', backgroundColor: hrColor }}
+              />
+            </div>
+          )}
+
           {/* Headings */}
           {editedContent.headings?.length > 0 && (
             <div>
@@ -113,10 +152,10 @@ export function EditSectionModal({ selection, onSave, onClose }) {
               {editedContent.paragraphs.map((para, idx) => (
                 <textarea
                   key={idx}
-                  value={para.text}
+                  value={para.html || para.text}
                   onChange={(e) => updateParagraph(idx, e.target.value)}
                   rows={3}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 mb-2 resize-none"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-indigo-500 mb-2 resize-none"
                 />
               ))}
             </div>
@@ -167,7 +206,7 @@ export function EditSectionModal({ selection, onSave, onClose }) {
               <label className="block text-sm font-medium text-zinc-400 mb-2">Hotspots</label>
               {editedContent.hotspots.map((hotspot, idx) => (
                 <div key={idx} className="p-3 bg-zinc-800/50 rounded-lg">
-                  <div className="flex gap-3 mb-2">
+                  <div className="flex gap-3 mb-3">
                     <img
                       src={hotspot.image.src}
                       alt={hotspot.image.alt}
@@ -178,13 +217,28 @@ export function EditSectionModal({ selection, onSave, onClose }) {
                       <p className="text-xs text-zinc-500">{hotspot.items.length} clickable areas</p>
                     </div>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-3">
                     {hotspot.items.map((item, itemIdx) => (
-                      <div key={itemIdx} className="flex items-center gap-2 text-xs text-zinc-400">
-                        <span className="w-5 h-5 bg-white text-black rounded-full flex items-center justify-center font-bold">
+                      <div key={itemIdx} className="flex items-start gap-2">
+                        <span className="w-5 h-5 mt-1.5 shrink-0 bg-white text-black rounded-full flex items-center justify-center font-bold text-xs">
                           {item.marker || itemIdx + 1}
                         </span>
-                        <span>{item.label}</span>
+                        <div className="flex-1 space-y-1.5">
+                          <input
+                            type="text"
+                            value={item.label}
+                            onChange={(e) => updateHotspotItem(idx, itemIdx, 'label', e.target.value)}
+                            placeholder="Label"
+                            className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-indigo-500"
+                          />
+                          <input
+                            type="text"
+                            value={item.href}
+                            onChange={(e) => updateHotspotItem(idx, itemIdx, 'href', e.target.value)}
+                            placeholder="URL (e.g. https://...)"
+                            className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-xs text-zinc-400 font-mono focus:outline-none focus:border-indigo-500"
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -204,7 +258,7 @@ export function EditSectionModal({ selection, onSave, onClose }) {
                     {list.items.map((item, itemIdx) => (
                       <li key={itemIdx} className="flex items-start gap-2">
                         <span className="text-zinc-500">{list.type === 'ul' ? '•' : `${itemIdx + 1}.`}</span>
-                        <span>{item}</span>
+                        <span dangerouslySetInnerHTML={{ __html: item }} />
                       </li>
                     ))}
                   </ul>

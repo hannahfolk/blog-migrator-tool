@@ -6,6 +6,7 @@ import { copyToClipboard } from '../../utils'
 export function OutputStep({
   selections,
   generatedHtml,
+  onHtmlChange,
   onReset,
   onBackToMapping
 }) {
@@ -78,9 +79,18 @@ export function OutputStep({
               </button>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden h-[calc(100vh-320px)]">
-              <pre className="p-4 text-xs text-zinc-400 overflow-auto h-full font-mono whitespace-pre-wrap">
-                {activeTab === 'html' ? generatedHtml : BLOG_CSS}
-              </pre>
+              {activeTab === 'html' ? (
+                <textarea
+                  value={generatedHtml}
+                  onChange={(e) => onHtmlChange(e.target.value)}
+                  className="w-full h-full p-4 text-xs text-zinc-400 bg-zinc-900 overflow-auto font-mono whitespace-pre-wrap resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+                  spellCheck={false}
+                />
+              ) : (
+                <pre className="p-4 text-xs text-zinc-400 overflow-auto h-full font-mono whitespace-pre-wrap">
+                  {BLOG_CSS}
+                </pre>
+              )}
             </div>
           </div>
 

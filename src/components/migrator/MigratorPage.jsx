@@ -18,11 +18,8 @@ export function MigratorPage() {
   }
 
   const handleGenerate = () => {
-    // Sort selections by vertical position (top to bottom)
-    const sortedSelections = [...selections].sort((a, b) => a.rect.y - b.rect.y)
-
-    // Generate HTML for each selection using extracted content
-    const htmlSections = sortedSelections.map(selection => {
+    // Generate HTML for each selection in list order (user controls order via drag-and-drop)
+    const htmlSections = selections.map(selection => {
       const block = FIGMA_BLOCKS[selection.blockType]
       return generateSectionHtml(selection, selection.blockType, block)
     })
@@ -57,6 +54,7 @@ export function MigratorPage() {
     <OutputStep
       selections={selections}
       generatedHtml={generatedHtml}
+      onHtmlChange={setGeneratedHtml}
       onReset={handleReset}
       onBackToMapping={() => setStep('map')}
     />

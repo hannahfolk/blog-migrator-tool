@@ -1,3 +1,5 @@
+import { convertFontWeightToClasses } from './generateBuilderHtml'
+
 /**
  * Get the highest-resolution image URL from an <img> element.
  * Checks srcset, data-src/data-lazy-src (lazy loading), and falls back to src.
@@ -319,7 +321,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
       if (text) {
         content.paragraphs.push({
           text,
-          html: `<blockquote>${el.innerHTML}</blockquote>`
+          html: `<blockquote>${convertFontWeightToClasses(el.innerHTML)}</blockquote>`
         })
       }
     }
@@ -378,8 +380,8 @@ export function extractContentFromRect(containerEl, selectionRect) {
     // Lists
     if (tagName === 'ul' || tagName === 'ol') {
       const items = Array.from(el.querySelectorAll(':scope > li'))
-        .map(li => li.textContent.trim())
-        .filter(text => text)
+        .map(li => li.innerHTML.trim())
+        .filter(html => html)
       if (items.length > 0) {
         content.lists.push({
           type: tagName,
@@ -426,8 +428,8 @@ function generateHotspotHtml(hotspot) {
   hotspot.items.forEach((item, index) => {
     html += `
     <a class="blog__hotspot__item" href="${item.href}" style="left: ${item.left}; top: ${item.top};">
-      <span class="blog__hotspot__marker">${item.marker || index + 1}</span>
-      <span class="blog__hotspot__label">${item.label}</span>
+      <span class="blog__hotspot__marker fp-font-weight--bold">${item.marker || index + 1}</span>
+      <span class="blog__hotspot__label fp-font-weight--semibold">${item.label}</span>
     </a>`
   })
 
@@ -446,6 +448,12 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   const content = selection.extractedContent || {}
   const prefix = blockConfig.prefix
 
+  // HR is a simple divider
+  if (blockType === 'hr') {
+    const color = selection.hrColor || '#191c1f'
+    return `<hr class="${prefix}" style="border: none; border-top: 1px solid ${color};">`
+  }
+
   // Check if we have meaningful text content
   const hasHeadings = content.headings?.length > 0
   const hasParagraphs = content.paragraphs?.length > 0
@@ -461,14 +469,13 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   // Start building the section
   let html = `<section class="${prefix}">`
 
-  // Add heading only if found (prefer h2, then h1, then any heading)
-  const heading = content.headings?.find(h => h.level === 2)
-    || content.headings?.find(h => h.level === 1)
-    || content.headings?.[0]
+  // Add heading only if found — use the first heading and preserve its original tag
+  const heading = content.headings?.[0]
 
   if (heading) {
+    const tag = `h${heading.level}`
     html += `
-  <h2 class="${prefix}__heading">${heading.text}</h2>`
+  <${tag} class="${prefix}__heading fp-font-weight--semibold">${heading.text}</${tag}>`
   }
 
   // Add body content only if paragraphs or lists were found
@@ -480,7 +487,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     if (hasParagraphs) {
       content.paragraphs.forEach(p => {
         html += `
-    <p>${p.html || p.text}</p>`
+    <p>${convertFontWeightToClasses(p.html || p.text)}</p>`
       })
     }
 
@@ -491,7 +498,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     <${list.type}>`
         list.items.forEach(item => {
           html += `
-      <li>${item}</li>`
+      <li>${convertFontWeightToClasses(item)}</li>`
         })
         html += `
     </${list.type}>`
@@ -569,7 +576,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
         // Add individual CTA if we have one for each image
         if (hasIndividualCTAs && links[i]) {
           html += `
-      <a class="${prefix}__cta-btn" href="${links[i].href}">${links[i].text}</a>`
+      <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${links[i].href}">${links[i].text}</a>`
         }
         html += `
     </figure>`
@@ -584,7 +591,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       const ctaLink = links[0]
       html += `
   <div class="${prefix}__cta">
-    <a class="${prefix}__cta-btn" href="${ctaLink.href}">${ctaLink.text}</a>
+    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${ctaLink.href}">${ctaLink.text}</a>
   </div>`
     }
   }

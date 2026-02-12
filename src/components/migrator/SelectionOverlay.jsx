@@ -119,7 +119,7 @@ export function SelectionOverlay({
   return (
     <>
       {/* Confirmed selections with block types */}
-      {selections.map((selection) => {
+      {selections.filter(s => s.rect).map((selection) => {
         const block = FIGMA_BLOCKS[selection.blockType]
         return (
           <div

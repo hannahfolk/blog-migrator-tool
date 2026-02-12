@@ -1,3 +1,5 @@
+import { tokens as t } from './designTokens'
+
 export const BLOG_CSS = `/* ============================================
    FASHIONPHILE BLOG SECTIONS - COMPLETE CSS
    ============================================ */
@@ -7,7 +9,7 @@ export const BLOG_CSS = `/* ============================================
    These apply to all __body elements
    ---------------------------------------- */
 [class*="__body"] {
-  line-height: 1.6;
+  line-height: ${t.lineHeightLg};
 }
 
 [class*="__body"] p {
@@ -29,7 +31,7 @@ export const BLOG_CSS = `/* ============================================
 
 [class*="__body"] strong,
 [class*="__body"] b {
-  font-weight: 600;
+  font-weight: ${t.fontWeightSemibold};
 }
 
 [class*="__body"] em,
@@ -37,30 +39,44 @@ export const BLOG_CSS = `/* ============================================
   font-style: italic;
 }
 
+[class*="__body"] h1 {
+  font-size: ${t.h1};
+  font-weight: ${t.fontWeightSemibold};
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+[class*="__body"] h2 {
+  font-size: ${t.h2};
+  font-weight: ${t.fontWeightSemibold};
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+}
+
 [class*="__body"] h3 {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: ${t.h3};
+  font-weight: ${t.fontWeightSemibold};
   margin-top: 1.5em;
   margin-bottom: 0.75em;
 }
 
 [class*="__body"] h4 {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: ${t.h4};
+  font-weight: ${t.fontWeightSemibold};
   margin-top: 1.25em;
   margin-bottom: 0.5em;
 }
 
 [class*="__body"] h5 {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: ${t.h5};
+  font-weight: ${t.fontWeightSemibold};
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
 
 [class*="__body"] h6 {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: ${t.h6};
+  font-weight: ${t.fontWeightSemibold};
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
@@ -98,32 +114,43 @@ export const BLOG_CSS = `/* ============================================
 [class*="__body"] blockquote {
   margin: 1em 0;
   padding-left: 1em;
-  border-left: 3px solid #d4d4d4;
+  border-left: 0.1875rem solid ${t.colorGrey3};
   font-style: italic;
-  color: #525252;
+  color: ${t.colorGrey7};
 }
 
 [class*="__body"] hr {
   border: none;
-  border-top: 1px solid #e5e5e5;
+  border-top: 0.0625rem solid ${t.colorGrey2};
   margin: 1.5em 0;
 }
+
+/* ----------------------------------------
+   HEADING SIZES BY TAG
+   The HTML tag determines the font-size,
+   regardless of which block it belongs to.
+   ---------------------------------------- */
+h1[class*="__heading"] { font-size: ${t.h1}; }
+h2[class*="__heading"] { font-size: ${t.h2}; }
+h3[class*="__heading"] { font-size: ${t.h3}; }
+h4[class*="__heading"] { font-size: ${t.h4}; }
+h5[class*="__heading"] { font-size: ${t.h5}; }
+h6[class*="__heading"] { font-size: ${t.h6}; }
 
 /* ----------------------------------------
    FULL WIDTH SECTION
    ---------------------------------------- */
 .blog__full-width {
-  margin-bottom: 60px;
+  margin-bottom: 3.75rem;
 }
 
 .blog__full-width__heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
 }
 
 .blog__full-width__body {
-  margin-bottom: 24px;
+  margin-bottom: ${t.h4};
 }
 
 .blog__full-width__figure {
@@ -141,17 +168,16 @@ export const BLOG_CSS = `/* ============================================
    1-UP SECTION
    ---------------------------------------- */
 .blog__one-up {
-  margin-bottom: 60px;
+  margin-bottom: 3.75rem;
 }
 
 .blog__one-up__heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
 }
 
 .blog__one-up__body {
-  margin-bottom: 24px;
+  margin-bottom: ${t.h4};
 }
 
 .blog__one-up__figure {
@@ -166,7 +192,7 @@ export const BLOG_CSS = `/* ============================================
   margin: 0 auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .blog__one-up__image {
     max-width: 100%;
   }
@@ -175,7 +201,7 @@ export const BLOG_CSS = `/* ============================================
 .blog__one-up__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: 16px;
+  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -183,22 +209,21 @@ export const BLOG_CSS = `/* ============================================
    2-UP SECTION
    ---------------------------------------- */
 .blog__two-up {
-  margin-bottom: 60px;
+  margin-bottom: 3.75rem;
 }
 
 .blog__two-up__heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
 }
 
 .blog__two-up__body {
-  margin-bottom: 24px;
+  margin-bottom: ${t.h4};
 }
 
 .blog__two-up__grid {
   display: flex;
-  gap: 30px;
+  gap: 1.875rem;
 }
 
 .blog__two-up__item {
@@ -209,7 +234,7 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__two-up__image {
   width: 100%;
-  max-width: 600px;
+  max-width: 37.5rem;
   height: auto;
   display: block;
 }
@@ -217,7 +242,7 @@ export const BLOG_CSS = `/* ============================================
 .blog__two-up__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: 16px;
+  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -227,28 +252,27 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__two-up__cta {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 1.875rem;
 }
 
 .blog__two-up__cta-btn {
   display: block;
   width: 100%;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background-color: ${t.colorBlack};
+  color: ${t.colorWhite};
   text-align: center;
-  padding: 15px;
+  padding: ${t.headerFontBody};
   text-transform: uppercase;
   text-decoration: none;
-  font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
 
 .blog__two-up__cta-btn:hover {
-  background-color: #333333;
+  background-color: ${t.colorGrey8};
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .blog__two-up__grid {
     flex-direction: column;
   }
@@ -258,22 +282,21 @@ export const BLOG_CSS = `/* ============================================
    3-UP SECTION
    ---------------------------------------- */
 .blog__three-up {
-  margin-bottom: 60px;
+  margin-bottom: 3.75rem;
 }
 
 .blog__three-up__heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
 }
 
 .blog__three-up__body {
-  margin-bottom: 24px;
+  margin-bottom: ${t.h4};
 }
 
 .blog__three-up__grid {
   display: flex;
-  gap: 30px;
+  gap: 1.875rem;
 }
 
 .blog__three-up__item {
@@ -284,7 +307,7 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__three-up__image {
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
   height: auto;
   display: block;
 }
@@ -292,7 +315,7 @@ export const BLOG_CSS = `/* ============================================
 .blog__three-up__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: 16px;
+  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -302,28 +325,27 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__three-up__cta {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 1.875rem;
 }
 
 .blog__three-up__cta-btn {
   display: block;
   width: 100%;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background-color: ${t.colorBlack};
+  color: ${t.colorWhite};
   text-align: center;
-  padding: 15px;
+  padding: ${t.headerFontBody};
   text-transform: uppercase;
   text-decoration: none;
-  font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
 
 .blog__three-up__cta-btn:hover {
-  background-color: #333333;
+  background-color: ${t.colorGrey8};
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .blog__three-up__grid {
     flex-direction: column;
   }
@@ -333,17 +355,16 @@ export const BLOG_CSS = `/* ============================================
    VIDEO SECTION
    ---------------------------------------- */
 .blog__video {
-  margin-bottom: 60px;
+  margin-bottom: 3.75rem;
 }
 
 .blog__video__heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
 }
 
 .blog__video__body {
-  margin-bottom: 24px;
+  margin-bottom: ${t.h4};
 }
 
 .blog__video__wrapper {
@@ -366,23 +387,22 @@ export const BLOG_CSS = `/* ============================================
    2 x 2 SECTION
    ---------------------------------------- */
 .blog__two-by-two {
-  margin-bottom: 60px;
+  margin-bottom: 3.75rem;
 }
 
 .blog__two-by-two__heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
 }
 
 .blog__two-by-two__body {
-  margin-bottom: 24px;
+  margin-bottom: ${t.h4};
 }
 
 .blog__two-by-two__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+  gap: 1.875rem;
 }
 
 .blog__two-by-two__item {
@@ -398,7 +418,7 @@ export const BLOG_CSS = `/* ============================================
 .blog__two-by-two__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: 16px;
+  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -408,28 +428,27 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__two-by-two__cta {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 1.875rem;
 }
 
 .blog__two-by-two__cta-btn {
   display: block;
   width: 100%;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background-color: ${t.colorBlack};
+  color: ${t.colorWhite};
   text-align: center;
-  padding: 15px;
+  padding: ${t.headerFontBody};
   text-transform: uppercase;
   text-decoration: none;
-  font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
 
 .blog__two-by-two__cta-btn:hover {
-  background-color: #333333;
+  background-color: ${t.colorGrey8};
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .blog__two-by-two__grid {
     grid-template-columns: 1fr;
   }
@@ -439,23 +458,22 @@ export const BLOG_CSS = `/* ============================================
    3 x 2 SECTION
    ---------------------------------------- */
 .blog__three-by-two {
-  margin-bottom: 60px;
+  margin-bottom: 3.75rem;
 }
 
 .blog__three-by-two__heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
 }
 
 .blog__three-by-two__body {
-  margin-bottom: 24px;
+  margin-bottom: ${t.h4};
 }
 
 .blog__three-by-two__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  gap: 1.875rem;
 }
 
 .blog__three-by-two__item {
@@ -472,7 +490,7 @@ export const BLOG_CSS = `/* ============================================
 .blog__three-by-two__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: 14px;
+  font-size: ${t.bodyMd};
   text-align: center;
 }
 
@@ -482,34 +500,33 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__three-by-two__cta {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 1.875rem;
 }
 
 .blog__three-by-two__cta-btn {
   display: block;
   width: 100%;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background-color: ${t.colorBlack};
+  color: ${t.colorWhite};
   text-align: center;
-  padding: 15px;
+  padding: ${t.headerFontBody};
   text-transform: uppercase;
   text-decoration: none;
-  font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
 
 .blog__three-by-two__cta-btn:hover {
-  background-color: #333333;
+  background-color: ${t.colorGrey8};
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .blog__three-by-two__grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .blog__three-by-two__grid {
     grid-template-columns: 1fr;
   }
@@ -519,13 +536,12 @@ export const BLOG_CSS = `/* ============================================
    RICH TEXT SECTION
    ---------------------------------------- */
 .blog__rich-text {
-  margin-bottom: 60px;
+  margin-bottom: 3.75rem;
 }
 
 .blog__rich-text__heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
 }
 
 .blog__rich-text__body {
@@ -533,12 +549,21 @@ export const BLOG_CSS = `/* ============================================
 }
 
 /* ----------------------------------------
+   DIVIDER (HR)
+   ---------------------------------------- */
+.blog__divider {
+  border: none;
+  height: 0.0625rem;
+  margin: 3.75rem 0;
+}
+
+/* ----------------------------------------
    HOTSPOT SECTION
    ---------------------------------------- */
 .blog__hotspot {
   width: 100%;
-  max-width: 1000px;
-  margin: 0 auto 30px;
+  max-width: 62.5rem;
+  margin: 0 auto 1.875rem;
   display: block;
 }
 
@@ -568,15 +593,14 @@ export const BLOG_CSS = `/* ============================================
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  background-color: #fff;
-  color: #000;
+  width: 1.875rem;
+  height: 1.875rem;
+  background-color: ${t.colorWhite};
+  color: ${t.colorBlack};
   border-radius: 50%;
-  font-weight: bold;
   font-family: sans-serif;
-  font-size: 14px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  font-size: ${t.bodyMd};
+  box-shadow: 0 0.125rem 0.3125rem rgba(0,0,0,0.3);
   transition: transform 0.2s ease;
   animation: blog-pulse 2s infinite;
 }
@@ -587,18 +611,17 @@ export const BLOG_CSS = `/* ============================================
 
 .blog__hotspot__label {
   position: absolute;
-  bottom: 40px;
+  bottom: 2.5rem;
   left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  background: #fff;
-  color: #333;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
+  transform: translateX(-50%) translateY(0.625rem);
+  background: ${t.colorWhite};
+  color: ${t.colorGrey8};
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: ${t.bodySm};
   text-transform: uppercase;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.15);
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
@@ -610,10 +633,10 @@ export const BLOG_CSS = `/* ============================================
   position: absolute;
   top: 100%;
   left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
+  margin-left: -0.3125rem;
+  border-width: 0.3125rem;
   border-style: solid;
-  border-color: #fff transparent transparent transparent;
+  border-color: ${t.colorWhite} transparent transparent transparent;
 }
 
 .blog__hotspot__item:hover .blog__hotspot__label {
@@ -624,6 +647,6 @@ export const BLOG_CSS = `/* ============================================
 
 @keyframes blog-pulse {
   0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  70% { box-shadow: 0 0 0 0.625rem rgba(255, 255, 255, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
 }`

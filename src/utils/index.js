@@ -1,5 +1,5 @@
 export { copyToClipboard } from './clipboard'
 export { PLACEHOLDER_IMG } from './placeholderImage'
 export { extractContentFromRect, generateSectionHtml } from './extractContent'
-export { generateBuilderSectionHtml, sanitizeBodyHtml } from './generateBuilderHtml'
+export { generateBuilderSectionHtml, sanitizeBodyHtml, convertFontWeightToClasses } from './generateBuilderHtml'
 export { useLocalStorage } from './useLocalStorage'
