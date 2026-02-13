@@ -15,10 +15,10 @@ export const FIGMA_BLOCKS = {
     label: '1-Up',
     icon: Image,
     color: '#8b5cf6',
-    description: 'Heading + body + single image with label',
+    description: 'Heading + body + single image with label + CTA',
     hasImages: true,
     imageCount: 1,
-    hasCTA: false,
+    hasCTA: true,
     prefix: 'blog__one-up'
   },
   twoUp: {

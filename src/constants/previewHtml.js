@@ -27,6 +27,7 @@ export const PREVIEW_HTML = {
   <figure class="blog__one-up__figure">
     <img class="blog__one-up__image" src="${PLACEHOLDER_IMG(600, 400, '600×400')}" alt="Placeholder image">
     <figcaption class="blog__one-up__label">Image Label Goes Here</figcaption>
+    <a class="blog__one-up__cta-btn fp-font-weight--semibold" href="#">Call to Action Button</a>
   </figure>
 </section>`,
 

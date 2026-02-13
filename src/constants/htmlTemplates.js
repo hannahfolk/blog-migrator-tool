@@ -24,6 +24,7 @@ export const HTML_TEMPLATES = {
   <figure class="blog__one-up__figure">
     <img class="blog__one-up__image" src="image-url.jpg" alt="Image description">
     <figcaption class="blog__one-up__label">Image Label</figcaption>
+    <a class="blog__one-up__cta-btn fp-font-weight--semibold" href="link-url">Call to Action</a>
   </figure>
 </section>`,
 

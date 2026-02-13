@@ -4,7 +4,7 @@ import { convertFontWeightToClasses } from './generateBuilderHtml'
  * Get the highest-resolution image URL from an <img> element.
  * Checks srcset, data-src/data-lazy-src (lazy loading), and falls back to src.
  */
-function getBestImageSrc(img) {
+export function getBestImageSrc(img) {
   // Check srcset for the largest available image
   const srcset = img.getAttribute('srcset')
   if (srcset) {
@@ -538,12 +538,17 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     } else if (images.length > 0) {
       const img = images[0]
       const captionText = img.caption || ''
+      const links = content.links || []
       html += `
   <figure class="${prefix}__figure">
     <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">`
       if (captionText) {
         html += `
     <figcaption class="${prefix}__label">${captionText}</figcaption>`
+      }
+      if (links.length > 0) {
+        html += `
+    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${links[0].href}">${links[0].text}</a>`
       }
       html += `
   </figure>`

@@ -1,4 +1,5 @@
 import { Header } from './components/Header'
+import { AutoMigratorPage } from './components/auto-migrator'
 import { MigratorPage } from './components/migrator'
 import { ReferencePage } from './components/reference'
 import { BuilderPage } from './components/builder'
@@ -12,6 +13,7 @@ export default function App() {
       <Header activeTab={activeMainTab} setActiveTab={setActiveMainTab} />
 
       <main>
+        {activeMainTab === 'auto-migrator' && <AutoMigratorPage />}
         {activeMainTab === 'migrator' && <MigratorPage />}
         {activeMainTab === 'reference' && <ReferencePage />}
         {activeMainTab === 'builder' && <BuilderPage />}

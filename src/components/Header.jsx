@@ -1,4 +1,4 @@
-import { Wand2, Book, PenTool } from 'lucide-react'
+import { Zap, Wand2, Book, PenTool } from 'lucide-react'
 
 export function Header({ activeTab, setActiveTab }) {
   return (
@@ -10,6 +10,15 @@ export function Header({ activeTab, setActiveTab }) {
 
             {/* Main Tabs */}
             <div className="flex gap-1 bg-zinc-800 rounded-lg p-1">
+              <button
+                onClick={() => setActiveTab('auto-migrator')}
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === 'auto-migrator' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Zap size={16} />
+                Auto Migrator
+              </button>
               <button
                 onClick={() => setActiveTab('migrator')}
                 className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
