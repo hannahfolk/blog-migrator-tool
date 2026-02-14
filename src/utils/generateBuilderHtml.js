@@ -1,5 +1,43 @@
 import { FIGMA_BLOCKS } from '../constants'
 
+/**
+ * Process all links in generated HTML:
+ * 1. Rewrite blog.fashionphile.com URLs to relative paths
+ * 2. Rewrite sign-in/sign-up links to canonical paths
+ * 3. Add target="_blank" rel="noopener noreferrer" to external links
+ */
+export function processLinks(html) {
+  if (!html) return html
+
+  // 1. Rewrite blog domain to relative paths
+  let processed = html.replace(
+    /href="https?:\/\/blog\.fashionphile\.com\//gi,
+    'href="/'
+  )
+
+  // 2. Rewrite sign-in / sign-up links
+  processed = processed.replace(/href="([^"]*)"/gi, (match, href) => {
+    const lower = href.toLowerCase()
+    if (/sign[-_]?in|log[-_]?in/i.test(lower)) return 'href="/pages/sign-in"'
+    if (/sign[-_]?up|register|create[-_]?account/i.test(lower)) return 'href="/pages/sign-up"'
+    return match
+  })
+
+  // 3. Add accessibility to external links (absolute http/https URLs)
+  processed = processed.replace(/<a\s+([^>]*)>/gi, (match, attrs) => {
+    const hrefMatch = attrs.match(/href="([^"]*)"/i)
+    if (!hrefMatch) return match
+    const href = hrefMatch[1]
+    if (!/^https?:\/\//i.test(href)) return match
+    let newAttrs = attrs
+    if (!/target=/i.test(newAttrs)) newAttrs += ' target="_blank"'
+    if (!/rel=/i.test(newAttrs)) newAttrs += ' rel="noopener noreferrer"'
+    return `<a ${newAttrs}>`
+  })
+
+  return processed
+}
+
 const FONT_WEIGHT_MAP = {
   '200': 'light',
   '300': 'light',
@@ -143,6 +181,20 @@ export function generateBuilderSectionHtml(section) {
     return generateHotspotSectionHtml(section, prefix)
   }
 
+  // Author byline — simple text section
+  if (section.blockType === 'authorByline') {
+    const parts = []
+    parts.push(`<section class="${prefix}">`)
+    if (section.authorName?.trim()) {
+      parts.push(`  <p class="${prefix}__text"><span class="${prefix}__prefix">By: </span>${escapeHtml(section.authorName.trim())}</p>`)
+    }
+    if (section.authorTitle?.trim()) {
+      parts.push(`  <p class="${prefix}__title">${escapeHtml(section.authorTitle.trim())}</p>`)
+    }
+    parts.push(`</section>`)
+    return parts.join('\n')
+  }
+
   // HR is a simple divider
   if (section.blockType === 'hr') {
     const color = section.hrColor || '#191c1f'
@@ -253,7 +305,7 @@ export function generateBuilderSectionHtml(section) {
 
   parts.push(`</section>`)
 
-  return parts.join('\n')
+  return processLinks(parts.join('\n'))
 }
 
 function generateHotspotSectionHtml(section, prefix) {
@@ -282,5 +334,5 @@ function generateHotspotSectionHtml(section, prefix) {
   parts.push(`  </figure>`)
   parts.push(`</section>`)
 
-  return parts.join('\n')
+  return processLinks(parts.join('\n'))
 }

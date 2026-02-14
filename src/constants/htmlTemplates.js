@@ -3,7 +3,7 @@ export const HTML_TEMPLATES = {
   <h2 class="blog__full-width__heading">Section Heading</h2>
   <div class="blog__full-width__body">
     <p>Body copy goes here. The body is a rich text container that supports various formatting.</p>
-    <p>You can include multiple paragraphs, <strong>bold text</strong>, <em>italic text</em>, and <a href="#">links</a>.</p>
+    <p>You can include multiple paragraphs, <strong>bold text</strong>, <em>italic text</em>, and <a href="#" target="_blank" rel="noopener noreferrer">links</a>.</p>
   </div>
   <figure class="blog__full-width__figure">
     <img class="blog__full-width__image" src="image-url.jpg" alt="Image description">
@@ -24,7 +24,7 @@ export const HTML_TEMPLATES = {
   <figure class="blog__one-up__figure">
     <img class="blog__one-up__image" src="image-url.jpg" alt="Image description">
     <figcaption class="blog__one-up__label">Image Label</figcaption>
-    <a class="blog__one-up__cta-btn fp-font-weight--semibold" href="link-url">Call to Action</a>
+    <a class="blog__one-up__cta-btn fp-font-weight--semibold" href="link-url" target="_blank" rel="noopener noreferrer">Call to Action</a>
   </figure>
 </section>`,
 
@@ -180,10 +180,15 @@ export const HTML_TEMPLATES = {
   </figure>
 </section>`,
 
+  authorByline: `<section class="blog__author-byline">
+  <p class="blog__author-byline__text"><span class="blog__author-byline__prefix">By: </span>Author Name</p>
+  <p class="blog__author-byline__title">Staff Writer, FASHIONPHILE</p>
+</section>`,
+
   richText: `<section class="blog__rich-text">
   <h2 class="blog__rich-text__heading">Section Heading</h2>
   <div class="blog__rich-text__body">
-    <p>First paragraph with <strong>bold</strong> and <em>italic</em> text, plus <a href="#">links</a>.</p>
+    <p>First paragraph with <strong>bold</strong> and <em>italic</em> text, plus <a href="#" target="_blank" rel="noopener noreferrer">links</a>.</p>
 
     <h3>Subheading (H3)</h3>
     <p>Paragraph under the subheading.</p>

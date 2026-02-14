@@ -64,6 +64,38 @@ export function SectionForm({ section, onChange }) {
 
   const showLabel = section.blockType !== 'fullWidth'
   const isHr = section.blockType === 'hr'
+  const isAuthorByline = section.blockType === 'authorByline'
+
+  if (isAuthorByline) {
+    return (
+      <div className="space-y-4 p-4">
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+            Author Name
+          </label>
+          <input
+            type="text"
+            value={section.authorName || ''}
+            onChange={(e) => updateField('authorName', e.target.value)}
+            placeholder="e.g. Jane Doe"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+            Author Title
+          </label>
+          <input
+            type="text"
+            value={section.authorTitle || ''}
+            onChange={(e) => updateField('authorTitle', e.target.value)}
+            placeholder="e.g. Staff Writer, FASHIONPHILE"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+      </div>
+    )
+  }
 
   if (isHr) {
     return (

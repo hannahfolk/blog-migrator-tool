@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Sparkles, ArrowRight, Eye } from 'lucide-react'
-import { PREVIEW_CSS } from '../../constants'
+import { INPUT_PREVIEW_CSS } from '../../constants'
 
 export function InputStep({ inputHtml, setInputHtml, onNext }) {
   const inputPreviewRef = useRef(null)
@@ -57,7 +57,7 @@ export function InputStep({ inputHtml, setInputHtml, onNext }) {
                 <div
                   ref={inputPreviewRef}
                   className="p-6 bg-white text-black overflow-auto h-full prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: PREVIEW_CSS + inputHtml }}
+                  dangerouslySetInnerHTML={{ __html: INPUT_PREVIEW_CSS + inputHtml }}
                 />
               )}
             </div>

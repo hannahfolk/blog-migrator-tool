@@ -21,6 +21,8 @@ function createSection(blockType) {
     hotspots: [],
     hotspotImage: { src: '', alt: '' },
     hrColor: '#191c1f',
+    authorName: '',
+    authorTitle: '',
   }
 }
 

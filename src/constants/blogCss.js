@@ -125,6 +125,26 @@ export const BLOG_CSS = `/* ============================================
   margin: 1.5em 0;
 }
 
+.fp-font-weight--light {
+  font-weight: ${t.fontWeightLight}
+}
+
+.fp-font-weight--regular {
+  font-weight: ${t.fontWeightRegular}
+}
+
+.fp-font-weight--medium {
+  font-weight: ${t.fontWeightMedium}
+}
+
+.fp-font-weight--semibold {
+  font-weight: ${t.fontWeightSemibold}
+}
+
+.fp-font-weight--bold {
+  font-weight: ${t.fontWeightBold}
+}
+
 /* ----------------------------------------
    HEADING SIZES BY TAG
    The HTML tag determines the font-size,
@@ -141,7 +161,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    FULL WIDTH SECTION
    ---------------------------------------- */
 .blog__full-width {
-  margin-bottom: 3.75rem;
+  margin-bottom: 2rem;
 }
 
 .blog__full-width__heading {
@@ -168,7 +188,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    1-UP SECTION
    ---------------------------------------- */
 .blog__one-up {
-  margin-bottom: 3.75rem;
+  margin-bottom: 2rem;
 }
 
 .blog__one-up__heading {
@@ -227,7 +247,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    2-UP SECTION
    ---------------------------------------- */
 .blog__two-up {
-  margin-bottom: 3.75rem;
+  margin-bottom: 2rem;
 }
 
 .blog__two-up__heading {
@@ -300,7 +320,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    3-UP SECTION
    ---------------------------------------- */
 .blog__three-up {
-  margin-bottom: 3.75rem;
+  margin-bottom: 2rem;
 }
 
 .blog__three-up__heading {
@@ -373,7 +393,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    VIDEO SECTION
    ---------------------------------------- */
 .blog__video {
-  margin-bottom: 3.75rem;
+  margin-bottom: 2rem;
 }
 
 .blog__video__heading {
@@ -405,7 +425,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    2 x 2 SECTION
    ---------------------------------------- */
 .blog__two-by-two {
-  margin-bottom: 3.75rem;
+  margin-bottom: 2rem;
 }
 
 .blog__two-by-two__heading {
@@ -476,7 +496,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    3 x 2 SECTION
    ---------------------------------------- */
 .blog__three-by-two {
-  margin-bottom: 3.75rem;
+  margin-bottom: 2rem;
 }
 
 .blog__three-by-two__heading {
@@ -554,7 +574,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    RICH TEXT SECTION
    ---------------------------------------- */
 .blog__rich-text {
-  margin-bottom: 3.75rem;
+  margin-bottom: 2rem;
 }
 
 .blog__rich-text__heading {
@@ -573,6 +593,30 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   border: none;
   height: 0.0625rem;
   margin: 3.75rem 0;
+}
+
+/* ----------------------------------------
+   AUTHOR BYLINE SECTION
+   ---------------------------------------- */
+.blog__author-byline {
+  margin-bottom: 2rem;
+}
+
+.blog__author-byline__text {
+  font-size: ${t.bodyXs};
+  line-height: ${t.lineHeightLg};
+  margin: 0;
+}
+
+.blog__author-byline__prefix {
+  color: ${t.colorGrey6};
+}
+
+.blog__author-byline__title {
+  font-size: ${t.bodyXs};
+  line-height: ${t.lineHeightLg};
+  margin: 0;
+  color: ${t.colorGrey6};
 }
 
 /* ----------------------------------------

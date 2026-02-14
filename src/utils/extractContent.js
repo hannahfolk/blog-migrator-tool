@@ -1,4 +1,20 @@
-import { convertFontWeightToClasses } from './generateBuilderHtml'
+import { convertFontWeightToClasses, processLinks } from './generateBuilderHtml'
+
+/**
+ * Convert <strong> and <b> tags to <span class="fp-font-weight--medium">.
+ * Also runs convertFontWeightToClasses for inline style conversion.
+ * Used in migrator output so that bold text uses utility classes instead of semantic tags.
+ */
+function cleanInlineHtml(html) {
+  if (!html) return html
+  let cleaned = convertFontWeightToClasses(html)
+  cleaned = cleaned
+    .replace(/<strong(?=[\s>])([^>]*)>/gi, '<span class="fp-font-weight--medium"$1>')
+    .replace(/<\/strong>/gi, '</span>')
+    .replace(/<b(?=[\s>])([^>]*)>/gi, '<span class="fp-font-weight--medium"$1>')
+    .replace(/<\/b>/gi, '</span>')
+  return cleaned
+}
 
 /**
  * Get the highest-resolution image URL from an <img> element.
@@ -59,6 +75,10 @@ export function extractContentFromRect(containerEl, selectionRect) {
     rawHtml: ''
   }
 
+  // Use the first child (preview content div) for content queries
+  // to avoid matching SelectionOverlay elements (which are siblings)
+  const contentEl = containerEl.firstElementChild || containerEl
+
   // Get container's position for offset calculations
   const containerBounds = containerEl.getBoundingClientRect()
 
@@ -85,8 +105,23 @@ export function extractContentFromRect(containerEl, selectionRect) {
     )
   }
 
+  // Lenient overlap check — any overlap between element and selection
+  const doesElementOverlap = (el) => {
+    const elRect = el.getBoundingClientRect()
+    const elTop = elRect.top - containerBounds.top + containerEl.scrollTop
+    const elBottom = elRect.bottom - containerBounds.top + containerEl.scrollTop
+    const elLeft = elRect.left - containerBounds.left + containerEl.scrollLeft
+    const elRight = elRect.right - containerBounds.left + containerEl.scrollLeft
+    return (
+      elTop < selBottom &&
+      elBottom > selTop &&
+      elLeft < selRight &&
+      elRight > selLeft
+    )
+  }
+
   // First, check for hotspot sections
-  const hotspotSections = containerEl.querySelectorAll('[class*="hotspot"]')
+  const hotspotSections = contentEl.querySelectorAll('[class*="hotspot"]')
   const processedHotspotImages = new Set() // Track images we've already added as hotspots
   const processedHotspotElements = new Set() // Track elements we've already processed
 
@@ -233,7 +268,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
   })
 
   // Also check for images that have sibling/nearby hotspot links (different structure)
-  const figures = containerEl.querySelectorAll('figure')
+  const figures = contentEl.querySelectorAll('figure')
   figures.forEach(figure => {
     if (!isElementInSelection(figure)) return
 
@@ -274,8 +309,25 @@ export function extractContentFromRect(containerEl, selectionRect) {
     }
   })
 
+  // Extract author byline elements — split by <br> to handle bare text nodes
+  const authorBylineEls = contentEl.querySelectorAll('.article-author')
+  const processedAuthorEls = new Set()
+  authorBylineEls.forEach(authorEl => {
+    if (!doesElementOverlap(authorEl)) return
+    processedAuthorEls.add(authorEl)
+    // Split innerHTML by <br> to get each line (handles bare text nodes)
+    const lines = authorEl.innerHTML.split(/<br\s*\/?>/).map(line => {
+      const temp = document.createElement('div')
+      temp.innerHTML = line.trim()
+      return temp.textContent.trim()
+    }).filter(Boolean)
+    lines.forEach(line => {
+      content.paragraphs.push({ text: line, html: line })
+    })
+  })
+
   // Find all relevant elements (excluding those already in hotspots)
-  const allElements = containerEl.querySelectorAll('h1, h2, h3, h4, h5, h6, p, img, a, ul, ol, iframe, video, figure, figcaption, blockquote')
+  const allElements = contentEl.querySelectorAll('h1, h2, h3, h4, h5, h6, p, img, a, ul, ol, iframe, video, figure, figcaption, blockquote')
 
   // Check each element to see if its center is within the selection
   allElements.forEach(el => {
@@ -283,6 +335,9 @@ export function extractContentFromRect(containerEl, selectionRect) {
 
     // Skip elements that are part of a hotspot section
     if (el.closest('[class*="hotspot"]')) return
+
+    // Skip elements inside an already-processed author byline
+    if (el.closest('.article-author') && processedAuthorEls.size > 0) return
 
     const tagName = el.tagName.toLowerCase()
 
@@ -321,7 +376,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
       if (text) {
         content.paragraphs.push({
           text,
-          html: `<blockquote>${convertFontWeightToClasses(el.innerHTML)}</blockquote>`
+          html: `<blockquote>${cleanInlineHtml(el.innerHTML)}</blockquote>`
         })
       }
     }
@@ -413,6 +468,41 @@ export function extractContentFromRect(containerEl, selectionRect) {
     }
   })
 
+  // Supplemental pass: capture text from non-standard elements (span, div, etc.)
+  // that the standard tag-based queries above missed.
+  // Intentionally exclude content.links — link text (e.g. author names in <a> tags)
+  // should still be captured as paragraph text.
+  const alreadyCaptured = new Set()
+  content.headings.forEach(h => alreadyCaptured.add(h.text))
+  content.paragraphs.forEach(p => alreadyCaptured.add(p.text))
+
+  const extraSelector = 'span, div, small, label, a'
+  const extraEls = contentEl.querySelectorAll(extraSelector)
+  extraEls.forEach(el => {
+    if (!isElementInSelection(el)) return
+    if (el.closest('[class*="hotspot"]')) return
+    // Skip elements inside an already-processed author byline
+    if (el.closest('.article-author') && processedAuthorEls.size > 0) return
+    // Skip wrappers that contain block-level children
+    if (el.querySelector('p, h1, h2, h3, h4, h5, h6, ul, ol, figure, img, iframe, video')) return
+    // Skip if this element is a parent of another matched extra element with text
+    // (prefer the leaf text, not the wrapper)
+    const childExtra = el.querySelector(extraSelector)
+    if (childExtra && isElementInSelection(childExtra) && childExtra.textContent.trim() === el.textContent.trim()) return
+    const text = el.textContent.trim()
+    if (!text) return
+    // Skip if already captured as a paragraph or heading
+    if (alreadyCaptured.has(text)) return
+    // Skip if this text is a substring of already captured text
+    let isSubstring = false
+    for (const captured of alreadyCaptured) {
+      if (captured.includes(text)) { isSubstring = true; break }
+    }
+    if (isSubstring) return
+    alreadyCaptured.add(text)
+    content.paragraphs.push({ text, html: el.innerHTML })
+  })
+
   return content
 }
 
@@ -448,6 +538,23 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   const content = selection.extractedContent || {}
   const prefix = blockConfig.prefix
 
+  // Author byline — simple text section
+  if (blockType === 'authorByline') {
+    const paras = content.paragraphs || []
+    let html = `<section class="${prefix}">`
+    if (paras[0]) {
+      const raw = paras[0].html || paras[0].text
+      // Wrap "By:" prefix in a grey span, keep author name black
+      const bylineHtml = raw.replace(/^(By:\s*)/i, `<span class="${prefix}__prefix">$1</span>`)
+      html += `\n  <p class="${prefix}__text">${bylineHtml}</p>`
+    }
+    if (paras[1]) {
+      html += `\n  <p class="${prefix}__title">${paras[1].html || paras[1].text}</p>`
+    }
+    html += `\n</section>`
+    return html
+  }
+
   // HR is a simple divider
   if (blockType === 'hr') {
     const color = selection.hrColor || '#191c1f'
@@ -463,7 +570,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   // Only generate pure hotspot HTML if hotspot is the ONLY content
   // (no headings, paragraphs, or lists alongside it)
   if (content.hotspots?.length > 0 && !hasTextContent) {
-    return content.hotspots.map(hotspot => generateHotspotHtml(hotspot)).join('\n\n')
+    return processLinks(content.hotspots.map(hotspot => generateHotspotHtml(hotspot)).join('\n\n'))
   }
 
   // Start building the section
@@ -474,20 +581,40 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
 
   if (heading) {
     const tag = `h${heading.level}`
+    const rawHtml = heading.html || ''
+    const hasStrong = /<strong[\s>]/i.test(rawHtml) || /<b(?=[\s>])/i.test(rawHtml)
+    const weightClass = hasStrong ? 'fp-font-weight--medium' : 'fp-font-weight--semibold'
+    // If heading had <strong>, use HTML with strong/b stripped; otherwise plain text
+    const headingContent = hasStrong
+      ? rawHtml.replace(/<strong[^>]*>/gi, '').replace(/<\/strong>/gi, '').replace(/<b(?=[\s>])[^>]*>/gi, '').replace(/<\/b>/gi, '')
+      : heading.text
     html += `
-  <${tag} class="${prefix}__heading fp-font-weight--semibold">${heading.text}</${tag}>`
+  <${tag} class="${prefix}__heading ${weightClass}">${headingContent}</${tag}>`
   }
 
-  // Add body content only if paragraphs or lists were found
-  if (hasParagraphs || hasLists) {
+  // Extra headings beyond the first (e.g. h5 subheading after an h4 section header)
+  const extraHeadings = content.headings?.slice(1) || []
+  const hasExtraHeadings = extraHeadings.length > 0
+
+  // Add body content only if paragraphs, lists, or extra headings were found
+  if (hasParagraphs || hasLists || hasExtraHeadings) {
     html += `
   <div class="${prefix}__body">`
+
+    // Add extra headings as subheadings inside the body
+    if (hasExtraHeadings) {
+      extraHeadings.forEach(h => {
+        const subTag = `h${h.level}`
+        html += `
+    <${subTag}>${cleanInlineHtml(h.html || h.text)}</${subTag}>`
+      })
+    }
 
     // Add paragraphs
     if (hasParagraphs) {
       content.paragraphs.forEach(p => {
         html += `
-    <p>${convertFontWeightToClasses(p.html || p.text)}</p>`
+    <p>${cleanInlineHtml(p.html || p.text)}</p>`
       })
     }
 
@@ -498,7 +625,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     <${list.type}>`
         list.items.forEach(item => {
           html += `
-      <li>${convertFontWeightToClasses(item)}</li>`
+      <li>${cleanInlineHtml(item)}</li>`
         })
         html += `
     </${list.type}>`
@@ -629,5 +756,5 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   html += `
 </section>`
 
-  return html
+  return processLinks(html)
 }

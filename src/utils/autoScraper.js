@@ -1,5 +1,5 @@
 import { detectSections } from './sectionDetector'
-import { generateSectionHtml } from './extractContent'
+import { generateSectionHtml, getBestImageSrc } from './extractContent'
 import { FIGMA_BLOCKS } from '../constants/figmaBlocks'
 
 const PROXY_URL = '/.netlify/functions/fetch-page'
@@ -162,19 +162,32 @@ export function processPost(postHtml, postUrl) {
     Array.from(tagEls).map(a => a.textContent.trim()).filter(Boolean)
   ))
 
-  // Extract featured image
-  const featuredImg = doc.querySelector('.post-thumbnail img')
-    || doc.querySelector('.wp-post-image')
-    || doc.querySelector('meta[property="og:image"]')
-    || doc.querySelector('article img')
+  // Extract featured image — scope search to article/post area to avoid sidebar images
   let imageSrc = ''
   let imageAlt = ''
-  if (featuredImg) {
-    if (featuredImg.tagName === 'META') {
-      imageSrc = featuredImg.content || ''
-    } else {
-      imageSrc = featuredImg.getAttribute('src') || ''
-      imageAlt = featuredImg.getAttribute('alt') || ''
+  const articleEl = doc.querySelector('article') || doc.querySelector('.post') || doc.querySelector('.hentry')
+  const featuredSearchEl = articleEl || doc
+
+  // Try post-specific selectors scoped to the article first
+  const featuredImgSelectors = [
+    '.post-thumbnail img',
+    '.featured-image img',
+    'img.wp-post-image',
+    '.entry-content img:first-of-type',
+  ]
+  for (const selector of featuredImgSelectors) {
+    const img = featuredSearchEl.querySelector(selector)
+    if (img) {
+      imageSrc = getBestImageSrc(img) || img.getAttribute('src') || ''
+      imageAlt = img.getAttribute('alt') || ''
+      if (imageSrc) break
+    }
+  }
+  // Fall back to og:image meta tag (page-specific)
+  if (!imageSrc) {
+    const ogImage = doc.querySelector('meta[property="og:image"]')
+    if (ogImage) {
+      imageSrc = ogImage.content || ogImage.getAttribute('content') || ''
     }
   }
 
@@ -200,6 +213,33 @@ export function processPost(postHtml, postUrl) {
 
   // Auto-detect sections
   const sections = detectSections(contentEl)
+
+  // Check for author byline outside .entry-content (e.g. in article footer)
+  const hasAuthorByline = sections.some(s => s.blockType === 'authorByline')
+  if (!hasAuthorByline) {
+    const articleScope = doc.querySelector('article') || doc
+    const authorEl = articleScope.querySelector('.article-author')
+    if (authorEl) {
+      const lines = authorEl.innerHTML.split(/<br\s*\/?>/).map(line => {
+        const temp = doc.createElement('div')
+        temp.innerHTML = line.trim()
+        return temp.textContent.trim()
+      }).filter(Boolean)
+      if (lines.length > 0) {
+        const authorContent = {
+          headings: [], paragraphs: [], images: [], links: [], lists: [], videos: [], hotspots: [],
+        }
+        lines.forEach(line => {
+          authorContent.paragraphs.push({ text: line, html: line })
+        })
+        sections.push({
+          id: `section-${sections.length + 1}`,
+          blockType: 'authorByline',
+          extractedContent: authorContent,
+        })
+      }
+    }
+  }
 
   // Generate HTML for each section
   const htmlParts = sections.map(section => {
@@ -484,3 +524,4 @@ async function discoverViaRestApi(origin, maxPosts, signal, onProgress) {
   console.log(`[AutoMigrator] REST API: ${urls.length} posts across ${page - 1} pages`)
   return urls
 }
+

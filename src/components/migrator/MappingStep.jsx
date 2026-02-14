@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { MousePointer2, Move, ArrowRight, Command } from 'lucide-react'
-import { PREVIEW_CSS } from '../../constants'
+import { INPUT_PREVIEW_CSS } from '../../constants'
 import { extractContentFromRect } from '../../utils'
 import { SelectionOverlay } from './SelectionOverlay'
 import { MappedSectionsList } from './MappedSectionsList'
@@ -381,7 +381,7 @@ export function MappingStep({
                 ref={previewRef}
                 className="p-6 bg-white text-black min-h-full prose prose-sm max-w-none"
                 style={{ pointerEvents: 'none' }}
-                dangerouslySetInnerHTML={{ __html: PREVIEW_CSS + inputHtml }}
+                dangerouslySetInnerHTML={{ __html: INPUT_PREVIEW_CSS + inputHtml }}
               />
               <div className="absolute inset-0 pointer-events-none">
                 <SelectionOverlay

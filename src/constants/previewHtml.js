@@ -1,12 +1,13 @@
 import { PLACEHOLDER_IMG } from '../utils/placeholderImage'
 import { BLOG_CSS } from './blogCss'
+import { tokens as t } from './designTokens'
 
 export const PREVIEW_HTML = {
   fullWidth: `<section class="blog__full-width">
   <h2 class="blog__full-width__heading">Lorem Ipsum Dolor Sit Amet</h2>
   <div class="blog__full-width__body">
     <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-    <p>Ut enim ad minim veniam, quis nostrud <em>exercitation ullamco</em> laboris nisi ut aliquip ex ea commodo <a href="#">consequat link</a>.</p>
+    <p>Ut enim ad minim veniam, quis nostrud <em>exercitation ullamco</em> laboris nisi ut aliquip ex ea commodo <a href="#" target="_blank" rel="noopener noreferrer">consequat link</a>.</p>
   </div>
   <figure class="blog__full-width__figure">
     <img class="blog__full-width__image" src="${PLACEHOLDER_IMG(1200, 500, 'Full Width Image')}" alt="Placeholder image">
@@ -128,7 +129,7 @@ export const PREVIEW_HTML = {
   threeByTwo: `<section class="blog__three-by-two">
   <h2 class="blog__three-by-two__heading">Duis Aute Irure Dolor</h2>
   <div class="blog__three-by-two__body">
-    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod <a href="#">tempor incididunt</a> ut labore.</p>
+    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod <a href="#" target="_blank" rel="noopener noreferrer">tempor incididunt</a> ut labore.</p>
   </div>
   <div class="blog__three-by-two__grid">
     <figure class="blog__three-by-two__item">
@@ -179,10 +180,15 @@ export const PREVIEW_HTML = {
   </figure>
 </section>`,
 
+  authorByline: `<section class="blog__author-byline">
+  <p class="blog__author-byline__text"><span class="blog__author-byline__prefix">By: </span>Jane Doe</p>
+  <p class="blog__author-byline__title">Staff Writer, FASHIONPHILE</p>
+</section>`,
+
   richText: `<section class="blog__rich-text">
   <h2 class="blog__rich-text__heading">Excepteur Sint Occaecat</h2>
   <div class="blog__rich-text__body">
-    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Sed do eiusmod tempor incididunt ut labore et dolore <em>magna aliqua</em>. Ut enim ad minim veniam, quis nostrud <a href="#">exercitation link</a>.</p>
+    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Sed do eiusmod tempor incididunt ut labore et dolore <em>magna aliqua</em>. Ut enim ad minim veniam, quis nostrud <a href="#" target="_blank" rel="noopener noreferrer">exercitation link</a>.</p>
 
     <h3>Duis Aute Irure</h3>
     <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
@@ -212,3 +218,30 @@ export const PREVIEW_HTML = {
 }
 
 export const PREVIEW_CSS = `<style>${BLOG_CSS}</style>`
+
+// Bare-minimum CSS for the raw input HTML preview in the Migrator.
+// Matches heading sizes, font weights, and body styles from the output CSS
+// so users can easily spot formatting when drawing selection boxes.
+// Internal only — not meant for download or copying.
+export const INPUT_PREVIEW_CSS = `<style>
+h1 { font-size: ${t.h1}; font-weight: ${t.fontWeightSemibold}; line-height: ${t.lineHeightMd}; margin: 0.75em 0; }
+h2 { font-size: ${t.h2}; font-weight: ${t.fontWeightSemibold}; line-height: ${t.lineHeightMd}; margin: 0.75em 0; }
+h3 { font-size: ${t.h3}; font-weight: ${t.fontWeightSemibold}; line-height: ${t.lineHeightMd}; margin: 0.75em 0; }
+h4 { font-size: ${t.h4}; font-weight: ${t.fontWeightSemibold}; line-height: ${t.lineHeightMd}; margin: 0.75em 0; }
+h5 { font-size: ${t.h5}; font-weight: ${t.fontWeightSemibold}; line-height: ${t.lineHeightMd}; margin: 0.75em 0; }
+h6 { font-size: ${t.h6}; font-weight: ${t.fontWeightSemibold}; line-height: ${t.lineHeightMd}; margin: 0.75em 0; }
+p { line-height: ${t.lineHeightLg}; margin-bottom: 1em; }
+p:last-child { margin-bottom: 0; }
+strong, b { font-weight: ${t.fontWeightSemibold}; }
+em, i { font-style: italic; }
+a { color: inherit; text-decoration: underline; }
+ul, ol { margin-bottom: 1em; padding-left: 1.5em; }
+ul { list-style-type: disc; }
+ol { list-style-type: decimal; }
+li { margin-bottom: 0.5em; line-height: ${t.lineHeightLg}; }
+blockquote { margin: 1em 0; padding-left: 1em; border-left: 0.1875rem solid ${t.colorGrey3}; font-style: italic; color: ${t.colorGrey7}; }
+hr { border: none; border-top: 0.0625rem solid ${t.colorGrey2}; margin: 1.5em 0; }
+img { max-width: 100%; height: auto; }
+.row.wpb_row.row-fluid { margin-bottom: 2rem; }
+a.btn { display: inline-block; background-color: ${t.colorBlack}; color: ${t.colorWhite}; text-align: center; padding: ${t.headerFontBody}; text-transform: uppercase; text-decoration: none; letter-spacing: 0.0625rem; }
+</style>`

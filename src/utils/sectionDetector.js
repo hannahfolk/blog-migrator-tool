@@ -49,12 +49,37 @@ export function detectSections(contentEl) {
     }
 
     // --- Boundary: headings start new section ---
-    if (tag === 'h2' || tag === 'h3') {
+    if (['h2', 'h3', 'h4', 'h5'].includes(tag)) {
       emitSection()
+      const origLevel = parseInt(tag[1])
+      // Remap: h3 → h2, h4 → h2; h5 stays h5
+      const level = (origLevel === 3 || origLevel === 4) ? 2 : origLevel
       current.headings.push({
-        level: parseInt(tag[1]),
+        level,
         text: el.textContent.trim(),
         html: el.innerHTML,
+      })
+      continue
+    }
+
+    // --- Author byline detection ---
+    if (el.classList?.contains('article-author') || el.querySelector?.('.article-author')) {
+      emitSection()
+      const authorEl = el.classList?.contains('article-author') ? el : el.querySelector('.article-author')
+      const authorContent = createEmptyContent()
+      // Split by <br> to handle bare text nodes (e.g. "By: Name<br>Title")
+      const lines = authorEl.innerHTML.split(/<br\s*\/?>/).map(line => {
+        const temp = document.createElement('div')
+        temp.innerHTML = line.trim()
+        return temp.textContent.trim()
+      }).filter(Boolean)
+      lines.forEach(line => {
+        authorContent.paragraphs.push({ text: line, html: line })
+      })
+      sections.push({
+        id: `section-${++sectionCounter}`,
+        blockType: 'authorByline',
+        extractedContent: authorContent,
       })
       continue
     }
@@ -229,6 +254,7 @@ export function detectSections(contentEl) {
             src,
             alt: imgEl.getAttribute('alt') || '',
             caption: '',
+            className: imgEl.className || '',
           })
           continue
         }
@@ -273,6 +299,7 @@ export function detectSections(contentEl) {
           src,
           alt: el.getAttribute('alt') || '',
           caption: '',
+          className: el.className || '',
         })
       }
       continue
@@ -476,9 +503,15 @@ function determineBlockType(content, columnHint) {
     if (columnHint === 4 && imageCount === 4) return 'twoByTwo'
   }
 
-  // Fall back to image count heuristics
-  if (imageCount === 1 && !hasLinks && !hasHeading && !hasBody) return 'fullWidth'
-  if (imageCount === 1) return 'oneUp'
+  // Single image: use attachment class to distinguish full-width vs one-up
+  if (imageCount === 1) {
+    const imgClass = content.images[0]?.className || ''
+    if (imgClass.includes('attachment-full')) return 'fullWidth'
+    if (imgClass.includes('attachment-medium')) return 'oneUp'
+    // Fallback: no attachment class — use content heuristic
+    if (!hasLinks && !hasHeading && !hasBody) return 'fullWidth'
+    return 'oneUp'
+  }
   if (imageCount === 2) return 'twoUp'
   if (imageCount === 3) return 'threeUp'
   if (imageCount === 4) return 'twoByTwo'
@@ -506,6 +539,7 @@ function extractSingleImage(container) {
     src,
     alt: img.getAttribute('alt') || '',
     caption: captionEl?.textContent?.trim() || '',
+    className: img.className || '',
   }
 }
 
@@ -518,10 +552,12 @@ function extractImagesFromElement(container) {
       const figure = img.closest('figure')
       const captionEl = figure?.querySelector('figcaption')
         || figure?.querySelector('[class*="caption"]')
+        || img.parentElement?.closest('[class*="single_image"]')?.querySelector('figcaption')
       images.push({
         src,
         alt: img.getAttribute('alt') || '',
         caption: captionEl?.textContent?.trim() || '',
+        className: img.className || '',
       })
     }
   })
@@ -581,14 +617,13 @@ function extractLinksFromElement(container) {
 
 function extractHeadingsFromElement(container) {
   const headings = []
-  container.querySelectorAll('h2, h3, h4').forEach(h => {
+  container.querySelectorAll('h2, h3, h4, h5, h6').forEach(h => {
     const text = h.textContent.trim()
     if (text) {
-      headings.push({
-        level: parseInt(h.tagName[1]),
-        text,
-        html: h.innerHTML,
-      })
+      const origLevel = parseInt(h.tagName[1])
+      // Remap: h3 → h2, h4 → h2; h5/h6 stay as-is
+      const level = (origLevel === 3 || origLevel === 4) ? 2 : origLevel
+      headings.push({ level, text, html: h.innerHTML })
     }
   })
   return headings

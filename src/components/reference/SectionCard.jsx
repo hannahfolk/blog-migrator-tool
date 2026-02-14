@@ -22,6 +22,7 @@ export function SectionCard({ id, sectionKey, section }) {
       threeByTwo: '3 x 2 SECTION',
       richText: 'RICH TEXT SECTION',
       hotspot: 'HOTSPOT SECTION',
+      authorByline: 'AUTHOR BYLINE SECTION',
     }
 
     const marker = startMarkers[sectionKey]
@@ -77,8 +78,7 @@ export function SectionCard({ id, sectionKey, section }) {
         <div className="flex flex-wrap gap-1.5">
           {[
             '',
-            '__heading',
-            '__body',
+            ...(!['hr', 'authorByline', 'hotspot'].includes(sectionKey) ? ['__heading', '__body'] : []),
             ...(sectionKey === 'fullWidth' ? ['__figure', '__image'] : []),
             ...(sectionKey === 'oneUp' ? ['__figure', '__image', '__label'] : []),
             ...(sectionKey === 'twoUp' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
@@ -87,6 +87,7 @@ export function SectionCard({ id, sectionKey, section }) {
             ...(sectionKey === 'twoByTwo' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
             ...(sectionKey === 'threeByTwo' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
             ...(sectionKey === 'hotspot' ? ['__inner', '__image', '__item', '__marker', '__label'] : []),
+            ...(sectionKey === 'authorByline' ? ['__text', '__prefix', '__title'] : []),
           ].map((suffix, idx) => (
             <code
               key={idx}
