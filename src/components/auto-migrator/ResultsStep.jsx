@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { Download, RotateCcw, CheckCircle, AlertCircle } from 'lucide-react'
 import { PostDetailRow } from './PostDetailRow'
 import { downloadCsv } from '../../utils/csvExport'
 
 export function ResultsStep({ results, onStartOver }) {
+  const [env, setEnv] = useState('staging')
   const successCount = results.filter(r => !r.error).length
   const errorCount = results.filter(r => r.error).length
 
@@ -26,7 +28,21 @@ export function ResultsStep({ results, onStartOver }) {
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center bg-zinc-800 rounded-lg overflow-hidden text-sm">
+            <button
+              onClick={() => setEnv('staging')}
+              className={`px-3 py-2 font-medium transition-colors ${env === 'staging' ? 'bg-yellow-500 text-black' : 'text-zinc-400 hover:text-white'}`}
+            >
+              Staging
+            </button>
+            <button
+              onClick={() => setEnv('production')}
+              className={`px-3 py-2 font-medium transition-colors ${env === 'production' ? 'bg-yellow-500 text-black' : 'text-zinc-400 hover:text-white'}`}
+            >
+              Production
+            </button>
+          </div>
           <button
             onClick={onStartOver}
             className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
@@ -35,7 +51,7 @@ export function ResultsStep({ results, onStartOver }) {
             Start Over
           </button>
           <button
-            onClick={() => downloadCsv(results)}
+            onClick={() => downloadCsv(results, env)}
             className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
           >
             <Download size={14} />

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { normalizeUrl } from '../../utils/autoScraper'
 
 export function UrlInputStep({ blogUrl, setBlogUrl, onStart }) {
-  const [maxPosts, setMaxPosts] = useState(500)
+  const [maxPosts, setMaxPosts] = useState(600)
   const [delayMs, setDelayMs] = useState(500)
   const [showConfig, setShowConfig] = useState(false)
 
@@ -68,7 +68,7 @@ export function UrlInputStep({ blogUrl, setBlogUrl, onStart }) {
               <input
                 type="number"
                 min={1}
-                max={500}
+                max={600}
                 value={maxPosts}
                 onChange={e => setMaxPosts(Number(e.target.value))}
                 className="w-full bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-yellow-500/50"

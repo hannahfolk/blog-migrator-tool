@@ -157,7 +157,7 @@ export function processPost(postHtml, postUrl) {
     || ''
 
   // Extract tags/categories
-  const tagEls = doc.querySelectorAll('.tag-links a, .post-tags a, [rel="tag"], .entry-tags a, .cat-links a, .entry-categories a')
+  const tagEls = doc.querySelectorAll('.thb-article-tags a, .tag-links a, .post-tags a, [rel="tag"], .entry-tags a, .cat-links a, .entry-categories a')
   const tags = Array.from(new Set(
     Array.from(tagEls).map(a => a.textContent.trim()).filter(Boolean)
   ))
@@ -266,7 +266,7 @@ export function processPost(postHtml, postUrl) {
  */
 export async function scrapeWordPressBlog({
   blogUrl,
-  maxPosts = 500,
+  maxPosts = 600,
   delayMs = 500,
   signal,
   onProgress,
@@ -291,9 +291,8 @@ export async function scrapeWordPressBlog({
     const { html: sitemapXml } = await fetchPage(sitemapUrl, signal)
     const sitemapUrls = parseSitemapUrls(sitemapXml, baseUrl)
     if (sitemapUrls.length > 0) {
-      console.log(`[AutoMigrator] Sitemap found ${sitemapUrls.length} post URLs`)
+      console.log(`[AutoMigrator] Sitemap found ${sitemapUrls.length} post URLs — importing all`)
       for (const url of sitemapUrls) {
-        if (allPostUrls.length >= maxPosts) break
         allPostUrls.push(url)
       }
       discovered = true

@@ -94,6 +94,20 @@ export function detectSections(contentEl) {
       // Column widths tell us the intended layout.
       // ==============================================
       if (className.includes('wpb_row') || className.includes('vc_row')) {
+        // Check if this is a full-width wrapper row (single medium-12 column)
+        // containing inner rows/text columns. If so, unwrap and recurse
+        // into the wrapper's children for better section detection.
+        if (!className.includes('vc_inner')) {
+          const wrapperEl = getFullWidthWrapperEl(el)
+          if (wrapperEl && wrapperEl.querySelector('.wpb_row, .wpb_text_column')) {
+            emitSection()
+            const innerSections = detectSections(wrapperEl)
+            innerSections.forEach(s => { s.id = `section-${++sectionCounter}` })
+            sections.push(...innerSections)
+            continue
+          }
+        }
+
         const rowResult = processWpbRow(el)
         if (rowResult) {
           // If this row only has headings or body text, merge into accumulator
@@ -380,6 +394,18 @@ export function detectSections(contentEl) {
 // ===================================================================
 // WPBakery / Visual Composer row processing
 // ===================================================================
+
+/**
+ * Check if a wpb_row is a full-width wrapper (single medium-12 column).
+ * Returns the inner wpb_wrapper element, or null if not a wrapper.
+ */
+function getFullWidthWrapperEl(rowEl) {
+  const columns = rowEl.querySelectorAll(':scope > .wpb_column, :scope > [class*="vc_column_container"]')
+  if (columns.length !== 1) return null
+  const cls = columns[0].className || ''
+  if (!cls.includes('medium-12')) return null
+  return columns[0].querySelector('.wpb_wrapper') || null
+}
 
 /**
  * Process a WPBakery row div.
