@@ -153,6 +153,7 @@ const MATRIXIFY_HEADERS = [
   'Blog: Handle',
   'Blog: Commentable',
   'Blog: Created At',
+  'Metafield: seo.hidden [number_integer]',
 ]
 
 /**
@@ -191,6 +192,7 @@ export function generateCsv(results, env = 'staging') {
       escapeCsvValue('academy'),             // Blog: Handle
       escapeCsvValue('no'),                  // Blog: Commentable
       escapeCsvValue(formatDatePST(r.publishedAt)), // Blog: Created At
+      escapeCsvValue('1'),                   // Metafield: seo.hidden
     ]
   })
 
