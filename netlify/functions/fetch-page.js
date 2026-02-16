@@ -1,11 +1,12 @@
-export default async function handler(req) {
-  const url = new URL(req.url, 'http://localhost').searchParams.get('url')
+export async function handler(event) {
+  const url = event.queryStringParameters?.url
 
   if (!url) {
-    return new Response(JSON.stringify({ error: 'Missing ?url= parameter' }), {
-      status: 400,
+    return {
+      statusCode: 400,
       headers: { 'Content-Type': 'application/json' },
-    })
+      body: JSON.stringify({ error: 'Missing ?url= parameter' }),
+    }
   }
 
   // Validate URL scheme
@@ -13,17 +14,19 @@ export default async function handler(req) {
   try {
     parsed = new URL(url)
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid URL' }), {
-      status: 400,
+    return {
+      statusCode: 400,
       headers: { 'Content-Type': 'application/json' },
-    })
+      body: JSON.stringify({ error: 'Invalid URL' }),
+    }
   }
 
   if (!['http:', 'https:'].includes(parsed.protocol)) {
-    return new Response(JSON.stringify({ error: 'Only http/https URLs are allowed' }), {
-      status: 400,
+    return {
+      statusCode: 400,
       headers: { 'Content-Type': 'application/json' },
-    })
+      body: JSON.stringify({ error: 'Only http/https URLs are allowed' }),
+    }
   }
 
   try {
@@ -42,33 +45,29 @@ export default async function handler(req) {
     clearTimeout(timeout)
 
     if (!res.ok) {
-      return new Response(
-        JSON.stringify({ error: `Upstream returned ${res.status}` }),
-        { status: 502, headers: { 'Content-Type': 'application/json' } }
-      )
+      return {
+        statusCode: 502,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: `Upstream returned ${res.status}` }),
+      }
     }
 
     const html = await res.text()
 
-    return new Response(
-      JSON.stringify({ html, finalUrl: res.url }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      }
-    )
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({ html, finalUrl: res.url }),
+    }
   } catch (err) {
     const message = err.name === 'AbortError' ? 'Request timed out (15s)' : err.message
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 502, headers: { 'Content-Type': 'application/json' } }
-    )
+    return {
+      statusCode: 502,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: message }),
+    }
   }
-}
-
-export const config = {
-  path: '/.netlify/functions/fetch-page',
 }
