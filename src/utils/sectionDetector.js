@@ -147,12 +147,23 @@ export function detectSections(contentEl) {
         continue
       }
 
-      // Gallery block → treat all images as one batch
+      // Gallery block
       if (className.includes('wp-block-gallery') || className.includes('gallery')) {
-        emitSection()
         const imgs = extractImagesFromElement(el)
-        if (imgs.length > 0) {
+        if (imgs.length === 1) {
+          // Single-image gallery: treat as individual image, keep with current section
+          handleImageBoundary(imgs[0])
+        } else if (imgs.length > 1) {
+          // Only emit first if current section already has images
+          if (current.images.length > 0) {
+            emitSection()
+          }
           current.images.push(...imgs)
+          // Extract gallery column hint (gallery-columns-N)
+          const colMatch = className.match(/gallery-columns-(\d+)/)
+          if (colMatch) {
+            current.columnHint = parseInt(colMatch[1])
+          }
           emitSection()
         }
         continue
@@ -208,6 +219,18 @@ export function detectSections(contentEl) {
             blockType: 'video',
             extractedContent: videoContent,
           })
+          continue
+        }
+      }
+
+      // WPBakery text column — recurse into inner wrapper for proper section detection
+      if (className.includes('wpb_text_column')) {
+        const innerWrapper = el.querySelector(':scope > .wpb_wrapper')
+        if (innerWrapper) {
+          emitSection()
+          const innerSections = detectSections(innerWrapper)
+          innerSections.forEach(s => { s.id = `section-${++sectionCounter}` })
+          sections.push(...innerSections)
           continue
         }
       }
@@ -445,6 +468,10 @@ function detectColumnLayout(rowEl) {
   const firstCol = columns[0]
   const cls = firstCol.className || ''
 
+  // WPBakery fractional: medium-1/N (e.g. medium-1/5)
+  const fracMatch = cls.match(/medium-(\d+)\/(\d+)/)
+  if (fracMatch) return parseInt(fracMatch[2])
+
   // WPBakery: medium-N where N is the column span out of 12
   const mediumMatch = cls.match(/medium-(\d+)/)
   if (mediumMatch) {
@@ -526,7 +553,8 @@ function determineBlockType(content, columnHint) {
     if (columnHint === 3 && imageCount === 3) return 'threeUp'
     if (columnHint === 2 && imageCount === 4) return 'twoByTwo'
     if (columnHint === 3 && imageCount === 6) return 'threeByTwo'
-    if (columnHint === 4 && imageCount === 4) return 'twoByTwo'
+    if (columnHint === 4 && imageCount === 4) return 'fourUp'
+    if (columnHint === 5 && imageCount === 5) return 'fiveUp'
   }
 
   // Single image: use attachment class to distinguish full-width vs one-up
@@ -540,8 +568,9 @@ function determineBlockType(content, columnHint) {
   }
   if (imageCount === 2) return 'twoUp'
   if (imageCount === 3) return 'threeUp'
-  if (imageCount === 4) return 'twoByTwo'
-  if (imageCount >= 5) return 'threeByTwo'
+  if (imageCount === 4) return 'fourUp'
+  if (imageCount === 5) return 'fiveUp'
+  if (imageCount >= 6) return 'threeByTwo'
 
   return 'richText'
 }

@@ -1,5 +1,6 @@
 import { useRef, useCallback, useState } from 'react'
 import { Trash2 } from 'lucide-react'
+import { ShopifyImageInput } from './ShopifyImageInput'
 
 export function HotspotEditor({ hotspotImage, hotspots, onChange }) {
   const imageRef = useRef(null)
@@ -83,20 +84,28 @@ export function HotspotEditor({ hotspotImage, hotspots, onChange }) {
           Hotspot Image
         </label>
         <div className="space-y-2 bg-zinc-800/50 rounded-lg p-3">
-          <input
-            type="text"
+          <ShopifyImageInput
             value={hotspotImage?.src || ''}
-            onChange={(e) => updateImage('src', e.target.value)}
-            placeholder="Image URL"
-            className={inputClass}
+            onChange={(src) => updateImage('src', src)}
+            onLocalPreview={(src, previewSrc) => {
+              onChange({
+                hotspotImage: { ...hotspotImage, src, _previewSrc: previewSrc },
+                hotspots,
+              })
+            }}
           />
-          <input
-            type="text"
-            value={hotspotImage?.alt || ''}
-            onChange={(e) => updateImage('alt', e.target.value)}
-            placeholder="Alt text"
-            className={inputClass}
-          />
+          <div>
+            <label className="block text-[10px] font-medium text-zinc-500 mb-1">
+              Alt text {hotspotImage?.src && <span className="text-red-400">*</span>}
+            </label>
+            <input
+              type="text"
+              value={hotspotImage?.alt || ''}
+              onChange={(e) => updateImage('alt', e.target.value)}
+              placeholder="Alt text"
+              className={`${inputClass} ${hotspotImage?.src && !hotspotImage?.alt?.trim() ? '!border-red-500' : ''}`}
+            />
+          </div>
         </div>
       </div>
 
@@ -112,7 +121,7 @@ export function HotspotEditor({ hotspotImage, hotspots, onChange }) {
           >
             <img
               ref={imageRef}
-              src={hotspotImage.src}
+              src={hotspotImage._previewSrc || hotspotImage.src}
               alt={hotspotImage.alt || ''}
               className="w-full block"
               draggable={false}

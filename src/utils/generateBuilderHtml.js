@@ -143,6 +143,34 @@ export function sanitizeBodyHtml(html) {
   return cleaned
 }
 
+/**
+ * Convert a YouTube or Vimeo URL to its embed form.
+ * Passes through URLs that are already embed URLs or unrecognized.
+ */
+function toEmbedUrl(url) {
+  if (!url) return url
+  let match
+
+  // youtube.com/watch?v=ID
+  match = url.match(/(?:youtube\.com\/watch\?.*v=)([\w-]+)/i)
+  if (match) return `https://www.youtube.com/embed/${match[1]}`
+
+  // youtu.be/ID
+  match = url.match(/youtu\.be\/([\w-]+)/i)
+  if (match) return `https://www.youtube.com/embed/${match[1]}`
+
+  // youtube.com/embed/ID — already correct
+  if (/youtube\.com\/embed\//i.test(url)) return url
+
+  // vimeo.com/ID
+  match = url.match(/vimeo\.com\/(\d+)/i)
+  if (match && !/player\.vimeo\.com/i.test(url)) {
+    return `https://player.vimeo.com/video/${match[1]}`
+  }
+
+  return url
+}
+
 function escapeHtml(str) {
   return str
     .replace(/&/g, '&amp;')
@@ -242,12 +270,17 @@ export function generateBuilderSectionHtml(section) {
         if (section.images[0].label) {
           parts.push(`    <figcaption class="${prefix}__label">${escapeHtml(section.images[0].label)}</figcaption>`)
         }
+        if (section.ctas?.[0]?.text && section.ctas?.[0]?.href) {
+          parts.push(`    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${escapeHtml(section.ctas[0].href)}">${escapeHtml(section.ctas[0].text)}</a>`)
+        }
         parts.push(`  </figure>`)
       }
       break
 
     case 'twoUp':
     case 'threeUp':
+    case 'fourUp':
+    case 'fiveUp':
     case 'twoByTwo':
     case 'threeByTwo': {
       const images = section.images || []
@@ -284,10 +317,11 @@ export function generateBuilderSectionHtml(section) {
 
     case 'video':
       if (section.videoUrl) {
+        const embedUrl = toEmbedUrl(section.videoUrl)
         parts.push(`  <div class="${prefix}__wrapper">`)
         parts.push(`    <iframe`)
         parts.push(`      class="${prefix}__iframe"`)
-        parts.push(`      src="${escapeHtml(section.videoUrl)}"`)
+        parts.push(`      src="${escapeHtml(embedUrl)}"`)
         parts.push(`      title="${escapeHtml(section.videoTitle || 'Video')}"`)
         parts.push(`      frameborder="0"`)
         parts.push(`      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"`)

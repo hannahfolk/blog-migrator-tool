@@ -98,6 +98,66 @@ export const PREVIEW_HTML = {
   </div>
 </section>`,
 
+  fourUp: `<section class="blog__four-up">
+  <h2 class="blog__four-up__heading">Amet Consectetur Adipiscing</h2>
+  <div class="blog__four-up__body">
+    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod tempor incididunt.</p>
+  </div>
+  <div class="blog__four-up__grid">
+    <figure class="blog__four-up__item">
+      <img class="blog__four-up__image" src="${PLACEHOLDER_IMG(250, 200, '250×200')}" alt="Placeholder 1">
+      <figcaption class="blog__four-up__label">Label One</figcaption>
+    </figure>
+    <figure class="blog__four-up__item">
+      <img class="blog__four-up__image" src="${PLACEHOLDER_IMG(250, 200, '250×200')}" alt="Placeholder 2">
+      <figcaption class="blog__four-up__label">Label Two</figcaption>
+    </figure>
+    <figure class="blog__four-up__item">
+      <img class="blog__four-up__image" src="${PLACEHOLDER_IMG(250, 200, '250×200')}" alt="Placeholder 3">
+      <figcaption class="blog__four-up__label">Label Three</figcaption>
+    </figure>
+    <figure class="blog__four-up__item">
+      <img class="blog__four-up__image" src="${PLACEHOLDER_IMG(250, 200, '250×200')}" alt="Placeholder 4">
+      <figcaption class="blog__four-up__label">Label Four</figcaption>
+    </figure>
+  </div>
+  <div class="blog__four-up__cta">
+    <a class="blog__four-up__cta-btn" href="#">Call to Action Button</a>
+  </div>
+</section>`,
+
+  fiveUp: `<section class="blog__five-up">
+  <h2 class="blog__five-up__heading">Amet Consectetur Adipiscing</h2>
+  <div class="blog__five-up__body">
+    <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod tempor incididunt.</p>
+  </div>
+  <div class="blog__five-up__grid">
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="${PLACEHOLDER_IMG(200, 160, '200×160')}" alt="Placeholder 1">
+      <figcaption class="blog__five-up__label">Label One</figcaption>
+    </figure>
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="${PLACEHOLDER_IMG(200, 160, '200×160')}" alt="Placeholder 2">
+      <figcaption class="blog__five-up__label">Label Two</figcaption>
+    </figure>
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="${PLACEHOLDER_IMG(200, 160, '200×160')}" alt="Placeholder 3">
+      <figcaption class="blog__five-up__label">Label Three</figcaption>
+    </figure>
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="${PLACEHOLDER_IMG(200, 160, '200×160')}" alt="Placeholder 4">
+      <figcaption class="blog__five-up__label">Label Four</figcaption>
+    </figure>
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="${PLACEHOLDER_IMG(200, 160, '200×160')}" alt="Placeholder 5">
+      <figcaption class="blog__five-up__label">Label Five</figcaption>
+    </figure>
+  </div>
+  <div class="blog__five-up__cta">
+    <a class="blog__five-up__cta-btn" href="#">Call to Action Button</a>
+  </div>
+</section>`,
+
   twoByTwo: `<section class="blog__two-by-two">
   <h2 class="blog__two-by-two__heading">Amet Consectetur Adipiscing</h2>
   <div class="blog__two-by-two__body">

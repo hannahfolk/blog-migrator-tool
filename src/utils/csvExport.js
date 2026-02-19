@@ -24,10 +24,7 @@ function urlToHandle(url) {
   }
 }
 
-const SHOPIFY_CDN = {
-  staging: 'https://cdn.shopify.com/s/files/1/0618/5153/3389/files/',
-  production: 'https://cdn.shopify.com/s/files/1/0894/3186/7695/files/',
-}
+import { SHOPIFY_CDN } from '../constants/shopifyCdn'
 
 /**
  * Extract the filename from a WordPress / wp.com image URL,
@@ -66,7 +63,6 @@ function transformImageUrl(url, env) {
   if (!filename) return url
 
   const base = SHOPIFY_CDN[env] || SHOPIFY_CDN.staging
-
   if (env === 'production') {
     // Replace dots in the stem with underscores, keep the extension dot
     const lastDot = filename.lastIndexOf('.')

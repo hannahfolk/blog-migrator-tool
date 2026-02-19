@@ -50,6 +50,26 @@ export const FIGMA_BLOCKS = {
     hasCTA: false,
     prefix: 'blog__video'
   },
+  fourUp: {
+    label: '4-Up',
+    icon: Layout,
+    color: '#0ea5e9',
+    description: 'Heading + body + 4 images with labels + CTA',
+    hasImages: true,
+    imageCount: 4,
+    hasCTA: true,
+    prefix: 'blog__four-up'
+  },
+  fiveUp: {
+    label: '5-Up',
+    icon: Layout,
+    color: '#84cc16',
+    description: 'Heading + body + 5 images with labels + CTA',
+    hasImages: true,
+    imageCount: 5,
+    hasCTA: true,
+    prefix: 'blog__five-up'
+  },
   twoByTwo: {
     label: '2 x 2',
     icon: LayoutGrid,

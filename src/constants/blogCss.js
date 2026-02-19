@@ -422,6 +422,152 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 /* ----------------------------------------
+   4-UP SECTION
+   ---------------------------------------- */
+.blog__four-up {
+  margin-bottom: 2rem;
+}
+
+.blog__four-up__heading {
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
+}
+
+.blog__four-up__body {
+  margin-bottom: ${t.h4};
+}
+
+.blog__four-up__grid {
+  display: flex;
+  gap: 1.875rem;
+}
+
+.blog__four-up__item {
+  flex: 1;
+  margin: 0;
+  text-align: left;
+}
+
+.blog__four-up__image {
+  width: 100%;
+  max-width: 18.75rem;
+  height: auto;
+  display: block;
+}
+
+.blog__four-up__label {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: ${t.bodyLg};
+  text-align: center;
+}
+
+.blog__four-up__item .blog__four-up__cta-btn {
+  margin-top: 0.5rem;
+}
+
+.blog__four-up__cta {
+  text-align: center;
+  margin-top: 1.875rem;
+}
+
+.blog__four-up__cta-btn {
+  display: block;
+  width: 100%;
+  background-color: ${t.colorBlack};
+  color: ${t.colorWhite} !important;
+  text-align: center;
+  padding: ${t.headerFontBody};
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.0625rem;
+  transition: background-color 0.3s ease;
+}
+
+.blog__four-up__cta-btn:hover {
+  background-color: ${t.colorGrey8};
+}
+
+@media (max-width: 767px) {
+  .blog__four-up__grid {
+    flex-direction: column;
+  }
+}
+
+/* ----------------------------------------
+   5-UP SECTION
+   ---------------------------------------- */
+.blog__five-up {
+  margin-bottom: 2rem;
+}
+
+.blog__five-up__heading {
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
+}
+
+.blog__five-up__body {
+  margin-bottom: ${t.h4};
+}
+
+.blog__five-up__grid {
+  display: flex;
+  gap: 1.875rem;
+}
+
+.blog__five-up__item {
+  flex: 1;
+  margin: 0;
+  text-align: left;
+}
+
+.blog__five-up__image {
+  width: 100%;
+  max-width: 15rem;
+  height: auto;
+  display: block;
+}
+
+.blog__five-up__label {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: ${t.bodyLg};
+  text-align: center;
+}
+
+.blog__five-up__item .blog__five-up__cta-btn {
+  margin-top: 0.5rem;
+}
+
+.blog__five-up__cta {
+  text-align: center;
+  margin-top: 1.875rem;
+}
+
+.blog__five-up__cta-btn {
+  display: block;
+  width: 100%;
+  background-color: ${t.colorBlack};
+  color: ${t.colorWhite} !important;
+  text-align: center;
+  padding: ${t.headerFontBody};
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.0625rem;
+  transition: background-color 0.3s ease;
+}
+
+.blog__five-up__cta-btn:hover {
+  background-color: ${t.colorGrey8};
+}
+
+@media (max-width: 767px) {
+  .blog__five-up__grid {
+    flex-direction: column;
+  }
+}
+
+/* ----------------------------------------
    2 x 2 SECTION
    ---------------------------------------- */
 .blog__two-by-two {

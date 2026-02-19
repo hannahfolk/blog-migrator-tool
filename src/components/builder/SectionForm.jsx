@@ -2,27 +2,35 @@ import { FIGMA_BLOCKS } from '../../constants'
 import { RichTextEditor } from './RichTextEditor'
 import { HotspotEditor } from './HotspotEditor'
 import { ImageHotspots } from './ImageHotspots'
+import { ShopifyImageInput } from './ShopifyImageInput'
+import { FashionphileUrlInput } from './FashionphileUrlInput'
 
 function ImageField({ image, index, onChange, showLabel = true }) {
+  const hasSrc = Boolean(image.src)
+  const missingAlt = hasSrc && !image.alt?.trim()
+
   return (
     <div className="space-y-2 bg-zinc-800/50 rounded-lg p-3">
       <div className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
         Image {index + 1}
       </div>
-      <input
-        type="text"
+      <ShopifyImageInput
         value={image.src || ''}
-        onChange={(e) => onChange({ ...image, src: e.target.value })}
-        placeholder="Image URL"
-        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+        onChange={(src) => onChange({ ...image, src })}
+        onLocalPreview={(src, previewSrc) => onChange({ ...image, src, _previewSrc: previewSrc })}
       />
-      <input
-        type="text"
-        value={image.alt || ''}
-        onChange={(e) => onChange({ ...image, alt: e.target.value })}
-        placeholder="Alt text"
-        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
-      />
+      <div>
+        <label className="block text-[10px] font-medium text-zinc-500 mb-1">
+          Alt text {hasSrc && <span className="text-red-400">*</span>}
+        </label>
+        <input
+          type="text"
+          value={image.alt || ''}
+          onChange={(e) => onChange({ ...image, alt: e.target.value })}
+          placeholder="Alt text"
+          className={`w-full bg-zinc-900 border rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 ${missingAlt ? 'border-red-500' : 'border-zinc-700'}`}
+        />
+      </div>
       {showLabel && (
         <input
           type="text"
@@ -197,12 +205,9 @@ export function SectionForm({ section, onChange }) {
                   placeholder="Button text (e.g. Shop Now)"
                   className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
                 />
-                <input
-                  type="text"
+                <FashionphileUrlInput
                   value={section.ctas?.[i]?.href || ''}
-                  onChange={(e) => updateCta(i, 'href', e.target.value)}
-                  placeholder="Button URL (e.g. https://...)"
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+                  onChange={(href) => updateCta(i, 'href', href)}
                 />
               </div>
             ))}

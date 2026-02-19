@@ -682,8 +682,8 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     }
   }
 
-  if (['twoUp', 'threeUp', 'twoByTwo', 'threeByTwo'].includes(blockType)) {
-    const expectedCounts = { twoUp: 2, threeUp: 3, twoByTwo: 4, threeByTwo: 6 }
+  if (['twoUp', 'threeUp', 'fourUp', 'fiveUp', 'twoByTwo', 'threeByTwo'].includes(blockType)) {
+    const expectedCounts = { twoUp: 2, threeUp: 3, fourUp: 4, fiveUp: 5, twoByTwo: 4, threeByTwo: 6 }
     const expectedCount = expectedCounts[blockType]
     const links = content.links || []
 

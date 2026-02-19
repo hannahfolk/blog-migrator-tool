@@ -98,6 +98,66 @@ export const HTML_TEMPLATES = {
   </div>
 </section>`,
 
+  fourUp: `<section class="blog__four-up">
+  <h2 class="blog__four-up__heading">Section Heading</h2>
+  <div class="blog__four-up__body">
+    <p>Body copy goes here. Supports rich text formatting.</p>
+  </div>
+  <div class="blog__four-up__grid">
+    <figure class="blog__four-up__item">
+      <img class="blog__four-up__image" src="image-1.jpg" alt="Image 1">
+      <figcaption class="blog__four-up__label">Label 1</figcaption>
+    </figure>
+    <figure class="blog__four-up__item">
+      <img class="blog__four-up__image" src="image-2.jpg" alt="Image 2">
+      <figcaption class="blog__four-up__label">Label 2</figcaption>
+    </figure>
+    <figure class="blog__four-up__item">
+      <img class="blog__four-up__image" src="image-3.jpg" alt="Image 3">
+      <figcaption class="blog__four-up__label">Label 3</figcaption>
+    </figure>
+    <figure class="blog__four-up__item">
+      <img class="blog__four-up__image" src="image-4.jpg" alt="Image 4">
+      <figcaption class="blog__four-up__label">Label 4</figcaption>
+    </figure>
+  </div>
+  <div class="blog__four-up__cta">
+    <a class="blog__four-up__cta-btn" href="#">Shop Now</a>
+  </div>
+</section>`,
+
+  fiveUp: `<section class="blog__five-up">
+  <h2 class="blog__five-up__heading">Section Heading</h2>
+  <div class="blog__five-up__body">
+    <p>Body copy goes here. Supports rich text formatting.</p>
+  </div>
+  <div class="blog__five-up__grid">
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="image-1.jpg" alt="Image 1">
+      <figcaption class="blog__five-up__label">Label 1</figcaption>
+    </figure>
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="image-2.jpg" alt="Image 2">
+      <figcaption class="blog__five-up__label">Label 2</figcaption>
+    </figure>
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="image-3.jpg" alt="Image 3">
+      <figcaption class="blog__five-up__label">Label 3</figcaption>
+    </figure>
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="image-4.jpg" alt="Image 4">
+      <figcaption class="blog__five-up__label">Label 4</figcaption>
+    </figure>
+    <figure class="blog__five-up__item">
+      <img class="blog__five-up__image" src="image-5.jpg" alt="Image 5">
+      <figcaption class="blog__five-up__label">Label 5</figcaption>
+    </figure>
+  </div>
+  <div class="blog__five-up__cta">
+    <a class="blog__five-up__cta-btn" href="#">Shop Now</a>
+  </div>
+</section>`,
+
   twoByTwo: `<section class="blog__two-by-two">
   <h2 class="blog__two-by-two__heading">Section Heading</h2>
   <div class="blog__two-by-two__body">
