@@ -1,4 +1,5 @@
 import { FIGMA_BLOCKS } from '../constants'
+import { slugify } from './slugify'
 
 /**
  * Process all links in generated HTML:
@@ -9,10 +10,10 @@ import { FIGMA_BLOCKS } from '../constants'
 export function processLinks(html) {
   if (!html) return html
 
-  // 1. Rewrite blog domain to relative paths
+  // 1. Rewrite blog domain to /blogs/academy/ relative paths
   let processed = html.replace(
     /href="https?:\/\/blog\.fashionphile\.com\//gi,
-    'href="/'
+    'href="/blogs/academy/'
   )
 
   // 2. Rewrite sign-in / sign-up links
@@ -23,16 +24,39 @@ export function processLinks(html) {
     return match
   })
 
-  // 3. Add accessibility to external links (absolute http/https URLs)
+  // 3. Add accessibility to all <a> tags
   processed = processed.replace(/<a\s+([^>]*)>/gi, (match, attrs) => {
     const hrefMatch = attrs.match(/href="([^"]*)"/i)
     if (!hrefMatch) return match
     const href = hrefMatch[1]
-    if (!/^https?:\/\//i.test(href)) return match
     let newAttrs = attrs
-    if (!/target=/i.test(newAttrs)) newAttrs += ' target="_blank"'
-    if (!/rel=/i.test(newAttrs)) newAttrs += ' rel="noopener noreferrer"'
+
+    if (/^https?:\/\//i.test(href)) {
+      // External links: open in new tab with security attrs
+      if (!/target=/i.test(newAttrs)) newAttrs += ' target="_blank"'
+      if (!/rel=/i.test(newAttrs)) newAttrs += ' rel="noopener noreferrer"'
+      if (!/aria-label=/i.test(newAttrs)) {
+        // Extract link text from the full match context if possible
+        newAttrs += ' aria-label="Opens in a new tab"'
+      }
+    }
+
     return `<a ${newAttrs}>`
+  })
+
+  // 4. Fix malformed <img> src attributes (double =, missing quotes)
+  processed = processed.replace(/<img\s+[^>]*>/gi, (imgTag) => {
+    // Fix src==value= or src=value patterns (missing quotes)
+    let fixed = imgTag.replace(/\bsrc\s*=\s*=?\s*([^"'\s>]+)=?(?=[\s>\/])/gi, (m, url) => {
+      // Skip if already properly quoted
+      if (/^["']/.test(url)) return m
+      return `src="${url}"`
+    })
+    // Ensure alt attribute exists for accessibility
+    if (!/\balt\s*=/i.test(fixed)) {
+      fixed = fixed.replace(/(\s*\/?)>$/, ' alt=""$1>')
+    }
+    return fixed
   })
 
   return processed
@@ -212,14 +236,14 @@ export function generateBuilderSectionHtml(section) {
   // Author byline — simple text section
   if (section.blockType === 'authorByline') {
     const parts = []
-    parts.push(`<section class="${prefix}">`)
+    parts.push(`<div class="${prefix}">`)
     if (section.authorName?.trim()) {
       parts.push(`  <p class="${prefix}__text"><span class="${prefix}__prefix">By: </span>${escapeHtml(section.authorName.trim())}</p>`)
     }
     if (section.authorTitle?.trim()) {
       parts.push(`  <p class="${prefix}__title">${escapeHtml(section.authorTitle.trim())}</p>`)
     }
-    parts.push(`</section>`)
+    parts.push(`</div>`)
     return parts.join('\n')
   }
 
@@ -231,7 +255,7 @@ export function generateBuilderSectionHtml(section) {
 
   const parts = []
 
-  parts.push(`<section class="${prefix}">`)
+  parts.push(`<div class="${prefix}">`)
 
   // Heading — preserve the original tag level (default to h2 for backwards compat)
   if (section.heading && section.heading.trim()) {
@@ -337,7 +361,7 @@ export function generateBuilderSectionHtml(section) {
 
   }
 
-  parts.push(`</section>`)
+  parts.push(`</div>`)
 
   return processLinks(parts.join('\n'))
 }
@@ -354,7 +378,7 @@ function generateHotspotSectionHtml(section, prefix) {
   const linkCount = validItems.length
   const parts = []
 
-  parts.push(`<section class="${prefix} ${prefix}--${linkCount}-link${linkCount !== 1 ? 's' : ''}">`)
+  parts.push(`<div class="${prefix} ${prefix}--${linkCount}-link${linkCount !== 1 ? 's' : ''}">`)
   parts.push(`  <figure class="${prefix}__inner">`)
   parts.push(`    <img src="${escapeHtml(hotspotImg.src)}" alt="${escapeHtml(hotspotImg.alt || '')}" class="${prefix}__image">`)
 
@@ -366,7 +390,75 @@ function generateHotspotSectionHtml(section, prefix) {
   })
 
   parts.push(`  </figure>`)
-  parts.push(`</section>`)
+  parts.push(`</div>`)
 
   return processLinks(parts.join('\n'))
+}
+
+/**
+ * Generate grouped HTML for an array of builder sections.
+ * Sections with headingTag === 'h2' start new <section> groups.
+ */
+export function generateGroupedBuilderHtml(sections) {
+  const standaloneBTypes = new Set(['authorByline'])
+  const groups = []
+  let currentGroup = { heading: null, sections: [] }
+
+  for (const section of sections) {
+    if (standaloneBTypes.has(section.blockType)) {
+      if (currentGroup.sections.length > 0) {
+        groups.push(currentGroup)
+        currentGroup = { heading: null, sections: [] }
+      }
+      groups.push({ heading: null, sections: [section], standalone: true })
+      continue
+    }
+
+    const isH2Boundary = section.heading?.trim() && (section.headingTag || 'h2') === 'h2'
+
+    if (isH2Boundary) {
+      if (currentGroup.sections.length > 0) {
+        groups.push(currentGroup)
+      }
+      currentGroup = { heading: section.heading.trim(), sections: [section] }
+    } else {
+      currentGroup.sections.push(section)
+    }
+  }
+
+  if (currentGroup.sections.length > 0) {
+    groups.push(currentGroup)
+  }
+
+  const slugCounts = {}
+  const htmlParts = []
+
+  for (const group of groups) {
+    const innerHtml = group.sections
+      .map(s => generateBuilderSectionHtml(s))
+      .filter(Boolean)
+      .join('\n')
+
+    if (!innerHtml) continue
+
+    if (group.standalone) {
+      htmlParts.push(innerHtml)
+      continue
+    }
+
+    if (group.heading) {
+      let slug = slugify(group.heading)
+      if (slugCounts[slug]) {
+        slugCounts[slug]++
+        slug = `${slug}-${slugCounts[slug]}`
+      } else {
+        slugCounts[slug] = 1
+      }
+      htmlParts.push(`<section id="${slug}">\n${innerHtml}\n</section>`)
+    } else {
+      htmlParts.push(`<section>\n${innerHtml}\n</section>`)
+    }
+  }
+
+  return htmlParts.join('\n\n')
 }

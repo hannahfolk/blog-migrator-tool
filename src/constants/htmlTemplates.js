@@ -1,5 +1,5 @@
 export const HTML_TEMPLATES = {
-  fullWidth: `<section class="blog__full-width">
+  fullWidth: `<div class="blog__full-width">
   <h2 class="blog__full-width__heading">Section Heading</h2>
   <div class="blog__full-width__body">
     <p>Body copy goes here. The body is a rich text container that supports various formatting.</p>
@@ -8,9 +8,9 @@ export const HTML_TEMPLATES = {
   <figure class="blog__full-width__figure">
     <img class="blog__full-width__image" src="image-url.jpg" alt="Image description">
   </figure>
-</section>`,
+</div>`,
 
-  oneUp: `<section class="blog__one-up">
+  oneUp: `<div class="blog__one-up">
   <h2 class="blog__one-up__heading">Section Heading</h2>
   <div class="blog__one-up__body">
     <p>Body copy goes here. The body supports rich text formatting:</p>
@@ -26,9 +26,9 @@ export const HTML_TEMPLATES = {
     <figcaption class="blog__one-up__label">Image Label</figcaption>
     <a class="blog__one-up__cta-btn fp-font-weight--semibold" href="link-url" target="_blank" rel="noopener noreferrer">Call to Action</a>
   </figure>
-</section>`,
+</div>`,
 
-  twoUp: `<section class="blog__two-up">
+  twoUp: `<div class="blog__two-up">
   <h2 class="blog__two-up__heading">Section Heading</h2>
   <div class="blog__two-up__body">
     <p>Body copy goes here with rich text support.</p>
@@ -48,9 +48,9 @@ export const HTML_TEMPLATES = {
   <div class="blog__two-up__cta">
     <a class="blog__two-up__cta-btn" href="#">Shop Now</a>
   </div>
-</section>`,
+</div>`,
 
-  threeUp: `<section class="blog__three-up">
+  threeUp: `<div class="blog__three-up">
   <h2 class="blog__three-up__heading">Section Heading</h2>
   <div class="blog__three-up__body">
     <p>Body copy with rich text support:</p>
@@ -77,9 +77,9 @@ export const HTML_TEMPLATES = {
   <div class="blog__three-up__cta">
     <a class="blog__three-up__cta-btn" href="#">Shop Now</a>
   </div>
-</section>`,
+</div>`,
 
-  video: `<section class="blog__video">
+  video: `<div class="blog__video">
   <h2 class="blog__video__heading">Section Heading</h2>
   <div class="blog__video__body">
     <p>Body copy goes here with rich text support.</p>
@@ -96,9 +96,9 @@ export const HTML_TEMPLATES = {
       allowfullscreen>
     </iframe>
   </div>
-</section>`,
+</div>`,
 
-  fourUp: `<section class="blog__four-up">
+  fourUp: `<div class="blog__four-up">
   <h2 class="blog__four-up__heading">Section Heading</h2>
   <div class="blog__four-up__body">
     <p>Body copy goes here. Supports rich text formatting.</p>
@@ -124,9 +124,9 @@ export const HTML_TEMPLATES = {
   <div class="blog__four-up__cta">
     <a class="blog__four-up__cta-btn" href="#">Shop Now</a>
   </div>
-</section>`,
+</div>`,
 
-  fiveUp: `<section class="blog__five-up">
+  fiveUp: `<div class="blog__five-up">
   <h2 class="blog__five-up__heading">Section Heading</h2>
   <div class="blog__five-up__body">
     <p>Body copy goes here. Supports rich text formatting.</p>
@@ -156,9 +156,9 @@ export const HTML_TEMPLATES = {
   <div class="blog__five-up__cta">
     <a class="blog__five-up__cta-btn" href="#">Shop Now</a>
   </div>
-</section>`,
+</div>`,
 
-  twoByTwo: `<section class="blog__two-by-two">
+  twoByTwo: `<div class="blog__two-by-two">
   <h2 class="blog__two-by-two__heading">Section Heading</h2>
   <div class="blog__two-by-two__body">
     <p>Body copy goes here. Supports rich text formatting.</p>
@@ -184,9 +184,9 @@ export const HTML_TEMPLATES = {
   <div class="blog__two-by-two__cta">
     <a class="blog__two-by-two__cta-btn" href="#">Shop Now</a>
   </div>
-</section>`,
+</div>`,
 
-  threeByTwo: `<section class="blog__three-by-two">
+  threeByTwo: `<div class="blog__three-by-two">
   <h2 class="blog__three-by-two__heading">Section Heading</h2>
   <div class="blog__three-by-two__body">
     <p>Body copy goes here. Supports paragraphs, lists, headings, and more.</p>
@@ -220,9 +220,9 @@ export const HTML_TEMPLATES = {
   <div class="blog__three-by-two__cta">
     <a class="blog__three-by-two__cta-btn" href="#">Shop Now</a>
   </div>
-</section>`,
+</div>`,
 
-  hotspot: `<section class="blog__hotspot blog__hotspot--3-links">
+  hotspot: `<div class="blog__hotspot blog__hotspot--3-links">
   <figure class="blog__hotspot__inner">
     <img src="image-url.jpg" alt="Image description" class="blog__hotspot__image">
     <a class="blog__hotspot__item" href="#" style="left: 25%; top: 40%;">
@@ -238,14 +238,14 @@ export const HTML_TEMPLATES = {
       <span class="blog__hotspot__label">Third Item</span>
     </a>
   </figure>
-</section>`,
+</div>`,
 
-  authorByline: `<section class="blog__author-byline">
+  authorByline: `<div class="blog__author-byline">
   <p class="blog__author-byline__text"><span class="blog__author-byline__prefix">By: </span>Author Name</p>
   <p class="blog__author-byline__title">Staff Writer, FASHIONPHILE</p>
-</section>`,
+</div>`,
 
-  richText: `<section class="blog__rich-text">
+  richText: `<div class="blog__rich-text">
   <h2 class="blog__rich-text__heading">Section Heading</h2>
   <div class="blog__rich-text__body">
     <p>First paragraph with <strong>bold</strong> and <em>italic</em> text, plus <a href="#" target="_blank" rel="noopener noreferrer">links</a>.</p>
@@ -272,5 +272,5 @@ export const HTML_TEMPLATES = {
 
     <p>Final paragraph to wrap up the section.</p>
   </div>
-</section>`,
+</div>`,
 }

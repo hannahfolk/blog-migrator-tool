@@ -1,11 +1,46 @@
 import { getBestImageSrc } from './extractContent'
 
 /**
+ * Remap a heading tag for the auto migrator.
+ * - The very first heading in the article (any level) → bolded paragraph.
+ * - All subsequent headings promote one level: h3→h2, h4→h3, h5→h4, h2 stays h2.
+ * Returns { tag, isBoundary, asBoldParagraph }.
+ */
+function remapHeading(tag, headingCtx) {
+  const level = parseInt(tag[1])
+
+  // First heading of any type → bold paragraph
+  if (!headingCtx.firstHeadingSeen) {
+    headingCtx.firstHeadingSeen = true
+    return { tag: null, isBoundary: false, asBoldParagraph: true }
+  }
+
+  // All subsequent headings: promote by one level
+  if (level === 2) return { tag: 'h2', isBoundary: true, asBoldParagraph: false }
+  if (level === 3) return { tag: 'h2', isBoundary: true, asBoldParagraph: false }
+  if (level === 4) return { tag: 'h3', isBoundary: false, asBoldParagraph: false }
+  if (level === 5) return { tag: 'h4', isBoundary: false, asBoldParagraph: false }
+
+  // Fallback for h6 or anything else
+  return { tag, isBoundary: false, asBoldParagraph: false }
+}
+
+/**
  * Detect and classify sections from a WordPress .entry-content container.
  * Returns an array of section objects compatible with generateSectionHtml.
+ *
+ * headingCtx is an optional shared context object that tracks heading state
+ * across recursive calls (e.g. WPBakery text-column unwrapping).
  */
-export function detectSections(contentEl) {
+export function detectSections(contentEl, headingCtx) {
   if (!contentEl) return []
+
+  // On the initial (non-recursive) call, create heading context
+  if (!headingCtx) {
+    headingCtx = {
+      firstHeadingSeen: false,
+    }
+  }
 
   const children = Array.from(contentEl.children)
   const sections = []
@@ -50,15 +85,26 @@ export function detectSections(contentEl) {
 
     // --- Boundary: headings start new section ---
     if (['h2', 'h3', 'h4', 'h5'].includes(tag)) {
+      const result = remapHeading(tag, headingCtx)
+      if (result.asBoldParagraph) {
+        // Convert to bold paragraph instead of heading
+        const text = el.textContent.trim()
+        if (text) {
+          current.paragraphs.push({
+            text,
+            html: `<p><strong>${el.innerHTML}</strong></p>`,
+          })
+        }
+        continue
+      }
       emitSection()
-      const origLevel = parseInt(tag[1])
-      // Remap: h3 → h2, h4 → h2; h5 stays h5
-      const level = (origLevel === 3 || origLevel === 4) ? 2 : origLevel
+      const level = parseInt(result.tag[1])
       current.headings.push({
         level,
         text: el.textContent.trim(),
         html: el.innerHTML,
       })
+      current._isSectionBoundary = result.isBoundary
       continue
     }
 
@@ -101,20 +147,23 @@ export function detectSections(contentEl) {
           const wrapperEl = getFullWidthWrapperEl(el)
           if (wrapperEl && wrapperEl.querySelector('.wpb_row, .wpb_text_column')) {
             emitSection()
-            const innerSections = detectSections(wrapperEl)
+            const innerSections = detectSections(wrapperEl, headingCtx)
             innerSections.forEach(s => { s.id = `section-${++sectionCounter}` })
             sections.push(...innerSections)
             continue
           }
         }
 
-        const rowResult = processWpbRow(el)
+        const rowResult = processWpbRow(el, headingCtx)
         if (rowResult) {
           // If this row only has headings or body text, merge into accumulator
           if (rowResult.images.length === 0 && rowResult.links.length === 0 && rowResult.videos.length === 0) {
             if (rowResult.headings.length > 0) {
               emitSection()
               current.headings.push(...rowResult.headings)
+              if (rowResult.headings[0]._isSectionBoundary) {
+                current._isSectionBoundary = true
+              }
             }
             current.paragraphs.push(...rowResult.paragraphs)
             current.lists.push(...rowResult.lists)
@@ -141,6 +190,9 @@ export function detectSections(contentEl) {
             current.lists = rowResult.lists
             current.videos = rowResult.videos
             current.columnHint = rowResult.columnHint
+            if (rowResult.headings[0]?._isSectionBoundary) {
+              current._isSectionBoundary = true
+            }
             emitSection()
           }
         }
@@ -228,7 +280,7 @@ export function detectSections(contentEl) {
         const innerWrapper = el.querySelector(':scope > .wpb_wrapper')
         if (innerWrapper) {
           emitSection()
-          const innerSections = detectSections(innerWrapper)
+          const innerSections = detectSections(innerWrapper, headingCtx)
           innerSections.forEach(s => { s.id = `section-${++sectionCounter}` })
           sections.push(...innerSections)
           continue
@@ -239,11 +291,19 @@ export function detectSections(contentEl) {
       const innerImgs = extractImagesFromElement(el)
       const innerParas = extractParagraphsFromElement(el)
       const innerLinks = extractButtonsFromElement(el)
-      const innerHeadings = extractHeadingsFromElement(el)
+      const headingResult = extractHeadingsFromElement(el, headingCtx)
+      const innerHeadings = headingResult.headings
+      const boldParas = headingResult.boldParagraphs
 
       if (innerHeadings.length > 0) {
         emitSection()
         current.headings.push(...innerHeadings)
+        if (innerHeadings[0]._isSectionBoundary) {
+          current._isSectionBoundary = true
+        }
+      }
+      if (boldParas.length > 0) {
+        current.paragraphs.push(...boldParas)
       }
       if (innerImgs.length > 0) {
         innerImgs.forEach(img => handleImageBoundary(img))
@@ -403,12 +463,18 @@ export function detectSections(contentEl) {
 
     const blockType = determineBlockType(content, current.columnHint)
 
-    sections.push({
+    const section = {
       id: `section-${++sectionCounter}`,
       blockType,
       extractedContent: content,
       _columnHint: current.columnHint,
-    })
+    }
+
+    if (current._isSectionBoundary) {
+      section._isSectionBoundary = true
+    }
+
+    sections.push(section)
 
     current = createEmptyAccumulator()
   }
@@ -434,10 +500,13 @@ function getFullWidthWrapperEl(rowEl) {
  * Process a WPBakery row div.
  * Extracts images, text, buttons, and determines column layout.
  */
-function processWpbRow(rowEl) {
+function processWpbRow(rowEl, headingCtx) {
   const images = extractImagesFromElement(rowEl)
   const paragraphs = extractParagraphsFromElement(rowEl)
-  const headings = extractHeadingsFromElement(rowEl)
+  const headingResult = extractHeadingsFromElement(rowEl, headingCtx)
+  const headings = headingResult.headings
+  // Merge bold paragraphs from heading conversions
+  paragraphs.push(...headingResult.boldParagraphs)
   const links = extractButtonsFromElement(rowEl)
   const lists = extractListsFromElement(rowEl)
   const videos = extractVideosFromElement(rowEl)
@@ -670,17 +739,33 @@ function extractLinksFromElement(container) {
   return links
 }
 
-function extractHeadingsFromElement(container) {
+/**
+ * Extract headings from an element, applying heading remapping if headingCtx is provided.
+ * Returns { headings, boldParagraphs } when headingCtx is given, otherwise just headings array.
+ */
+function extractHeadingsFromElement(container, headingCtx) {
   const headings = []
+  const boldParagraphs = []
   container.querySelectorAll('h2, h3, h4, h5, h6').forEach(h => {
     const text = h.textContent.trim()
     if (text) {
-      const origLevel = parseInt(h.tagName[1])
-      // Remap: h3 → h2, h4 → h2; h5/h6 stay as-is
-      const level = (origLevel === 3 || origLevel === 4) ? 2 : origLevel
-      headings.push({ level, text, html: h.innerHTML })
+      const tag = h.tagName.toLowerCase()
+      if (headingCtx) {
+        const result = remapHeading(tag, headingCtx)
+        if (result.asBoldParagraph) {
+          boldParagraphs.push({ text, html: `<p><strong>${h.innerHTML}</strong></p>` })
+          return
+        }
+        const level = parseInt(result.tag[1])
+        headings.push({ level, text, html: h.innerHTML, _isSectionBoundary: result.isBoundary })
+      } else {
+        const origLevel = parseInt(tag[1])
+        const level = (origLevel === 3 || origLevel === 4) ? 2 : origLevel
+        headings.push({ level, text, html: h.innerHTML })
+      }
     }
   })
+  if (headingCtx) return { headings, boldParagraphs }
   return headings
 }
 

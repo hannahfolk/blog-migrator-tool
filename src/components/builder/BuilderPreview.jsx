@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { PREVIEW_CSS } from '../../constants'
-import { generateBuilderSectionHtml } from '../../utils/generateBuilderHtml'
+import { generateGroupedBuilderHtml } from '../../utils/generateBuilderHtml'
 
 function buildPreviewUrlMap(sections) {
   const map = {}
@@ -29,10 +29,7 @@ export function BuilderPreview({ sections }) {
   const previewHtml = useMemo(() => {
     if (sections.length === 0) return ''
     const urlMap = buildPreviewUrlMap(sections)
-    const html = sections
-      .map(section => generateBuilderSectionHtml(section))
-      .filter(Boolean)
-      .join('\n\n')
+    const html = generateGroupedBuilderHtml(sections)
     return replacePreviewUrls(html, urlMap)
   }, [sections])
 

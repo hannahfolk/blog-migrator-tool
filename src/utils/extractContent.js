@@ -13,6 +13,15 @@ function cleanInlineHtml(html) {
     .replace(/<\/strong>/gi, '</span>')
     .replace(/<b(?=[\s>])([^>]*)>/gi, '<span class="fp-font-weight--medium"$1>')
     .replace(/<\/b>/gi, '</span>')
+
+  // Fix inline <img> tags with malformed src attributes (double =, missing quotes)
+  cleaned = cleaned.replace(/<img\s+[^>]*>/gi, (imgTag) => {
+    return imgTag.replace(/\bsrc\s*=\s*=?\s*([^"'\s>]+)=?(?=[\s>\/])/gi, (m, url) => {
+      if (/^["']/.test(url)) return m
+      return `src="${url}"`
+    })
+  })
+
   return cleaned
 }
 
@@ -511,7 +520,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
  */
 function generateHotspotHtml(hotspot) {
   const linkCount = hotspot.items.length
-  let html = `<section class="blog__hotspot blog__hotspot--${linkCount}-link${linkCount !== 1 ? 's' : ''}">
+  let html = `<div class="blog__hotspot blog__hotspot--${linkCount}-link${linkCount !== 1 ? 's' : ''}">
   <figure class="blog__hotspot__inner">
     <img src="${hotspot.image.src}" alt="${hotspot.image.alt || ''}"${hotspot.image.title ? ` title="${hotspot.image.title}"` : ''} class="blog__hotspot__image">`
 
@@ -525,7 +534,7 @@ function generateHotspotHtml(hotspot) {
 
   html += `
   </figure>
-</section>`
+</div>`
 
   return html
 }
@@ -541,7 +550,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   // Author byline — simple text section
   if (blockType === 'authorByline') {
     const paras = content.paragraphs || []
-    let html = `<section class="${prefix}">`
+    let html = `<div class="${prefix}">`
     if (paras[0]) {
       const raw = paras[0].html || paras[0].text
       // Wrap "By:" prefix in a grey span, keep author name black
@@ -551,7 +560,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     if (paras[1]) {
       html += `\n  <p class="${prefix}__title">${paras[1].html || paras[1].text}</p>`
     }
-    html += `\n</section>`
+    html += `\n</div>`
     return html
   }
 
@@ -574,7 +583,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   }
 
   // Start building the section
-  let html = `<section class="${prefix}">`
+  let html = `<div class="${prefix}">`
 
   // Add heading only if found — use the first heading and preserve its original tag
   const heading = content.headings?.[0]
@@ -754,7 +763,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   }
 
   html += `
-</section>`
+</div>`
 
   return processLinks(html)
 }

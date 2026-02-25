@@ -1,6 +1,7 @@
 import { detectSections } from './sectionDetector'
 import { generateSectionHtml, getBestImageSrc } from './extractContent'
 import { FIGMA_BLOCKS } from '../constants/figmaBlocks'
+import { slugify } from './slugify'
 
 const PROXY_URL = '/.netlify/functions/fetch-page'
 
@@ -124,6 +125,84 @@ function isLikelyPostUrl(href, base) {
 }
 
 /**
+ * Group flat sections into wrapped <section> groups based on boundary headings.
+ * Each boundary section starts a new group wrapped in <section id="slugified-heading">.
+ * Content before the first boundary is an "intro" group with no id.
+ */
+function groupAndWrapSections(sections) {
+  // Separate author bylines — they render outside section groups
+  const standaloneBTypes = new Set(['authorByline'])
+
+  const groups = []
+  let currentGroup = { heading: null, sections: [] }
+
+  for (const section of sections) {
+    if (standaloneBTypes.has(section.blockType)) {
+      // Close current group, emit byline standalone, then continue
+      if (currentGroup.sections.length > 0) {
+        groups.push(currentGroup)
+        currentGroup = { heading: null, sections: [] }
+      }
+      groups.push({ heading: null, sections: [section], standalone: true })
+      continue
+    }
+
+    if (section._isSectionBoundary) {
+      if (currentGroup.sections.length > 0) {
+        groups.push(currentGroup)
+      }
+      const headingText = section.extractedContent?.headings?.[0]?.text || ''
+      currentGroup = { heading: headingText, sections: [section] }
+    } else {
+      currentGroup.sections.push(section)
+    }
+  }
+
+  if (currentGroup.sections.length > 0) {
+    groups.push(currentGroup)
+  }
+
+  // Generate HTML for each group
+  const slugCounts = {}
+  const htmlParts = []
+
+  for (const group of groups) {
+    const innerHtml = group.sections.map(section => {
+      const blockConfig = FIGMA_BLOCKS[section.blockType]
+      if (!blockConfig) return ''
+      return generateSectionHtml(
+        { extractedContent: section.extractedContent, hrColor: section.hrColor },
+        section.blockType,
+        blockConfig
+      )
+    }).filter(Boolean).join('\n')
+
+    if (!innerHtml) continue
+
+    // Standalone blocks (author byline) are not wrapped in <section>
+    if (group.standalone) {
+      htmlParts.push(innerHtml)
+      continue
+    }
+
+    if (group.heading) {
+      let slug = slugify(group.heading)
+      if (slugCounts[slug]) {
+        slugCounts[slug]++
+        slug = `${slug}-${slugCounts[slug]}`
+      } else {
+        slugCounts[slug] = 1
+      }
+      htmlParts.push(`<section id="${slug}">\n${innerHtml}\n</section>`)
+    } else {
+      htmlParts.push(`<section>\n${innerHtml}\n</section>`)
+    }
+  }
+
+  return htmlParts.join('\n\n')
+}
+
+/**
  * Process a single blog post page: extract title, metadata, detect sections, generate HTML.
  */
 export function processPost(postHtml, postUrl) {
@@ -241,18 +320,8 @@ export function processPost(postHtml, postUrl) {
     }
   }
 
-  // Generate HTML for each section
-  const htmlParts = sections.map(section => {
-    const blockConfig = FIGMA_BLOCKS[section.blockType]
-    if (!blockConfig) return ''
-    return generateSectionHtml(
-      { extractedContent: section.extractedContent, hrColor: section.hrColor },
-      section.blockType,
-      blockConfig
-    )
-  })
-
-  const html = htmlParts.filter(Boolean).join('\n\n')
+  // Generate HTML with section grouping
+  const html = groupAndWrapSections(sections)
 
   return {
     title, url: postUrl, sections, html,

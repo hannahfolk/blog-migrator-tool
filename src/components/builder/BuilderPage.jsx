@@ -3,7 +3,7 @@ import { AddSectionButton } from './AddSectionButton'
 import { SectionEditor } from './SectionEditor'
 import { BuilderPreview } from './BuilderPreview'
 import { BuilderOutput } from './BuilderOutput'
-import { generateBuilderSectionHtml } from '../../utils/generateBuilderHtml'
+import { generateGroupedBuilderHtml } from '../../utils/generateBuilderHtml'
 import { useLocalStorage } from '../../utils'
 import { useBuilderEnv } from '../../utils/useBuilderEnv'
 import { SHOPIFY_CDN } from '../../constants/shopifyCdn'
@@ -16,6 +16,7 @@ function createSection(blockType) {
     id: `section-${nextId++}`,
     blockType,
     heading: '',
+    headingTag: 'h2',
     body: '',
     images: [],
     ctas: [],
@@ -150,10 +151,7 @@ export function BuilderPage() {
     }
 
     setValidationError('')
-    const html = sections
-      .map(section => generateBuilderSectionHtml(section))
-      .filter(Boolean)
-      .join('\n\n')
+    const html = generateGroupedBuilderHtml(sections)
     setGeneratedHtml(html)
     setShowOutput(true)
   }

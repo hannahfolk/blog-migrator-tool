@@ -3,7 +3,7 @@ import { BLOG_CSS } from './blogCss'
 import { tokens as t } from './designTokens'
 
 export const PREVIEW_HTML = {
-  fullWidth: `<section class="blog__full-width">
+  fullWidth: `<div class="blog__full-width">
   <h2 class="blog__full-width__heading">Lorem Ipsum Dolor Sit Amet</h2>
   <div class="blog__full-width__body">
     <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
@@ -12,9 +12,9 @@ export const PREVIEW_HTML = {
   <figure class="blog__full-width__figure">
     <img class="blog__full-width__image" src="${PLACEHOLDER_IMG(1200, 500, 'Full Width Image')}" alt="Placeholder image">
   </figure>
-</section>`,
+</div>`,
 
-  oneUp: `<section class="blog__one-up">
+  oneUp: `<div class="blog__one-up">
   <h2 class="blog__one-up__heading">Consectetur Adipiscing Elit</h2>
   <div class="blog__one-up__body">
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt:</p>
@@ -30,9 +30,9 @@ export const PREVIEW_HTML = {
     <figcaption class="blog__one-up__label">Image Label Goes Here</figcaption>
     <a class="blog__one-up__cta-btn fp-font-weight--semibold" href="#">Call to Action Button</a>
   </figure>
-</section>`,
+</div>`,
 
-  twoUp: `<section class="blog__two-up">
+  twoUp: `<div class="blog__two-up">
   <h2 class="blog__two-up__heading">Sed Do Eiusmod Tempor</h2>
   <div class="blog__two-up__body">
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
@@ -52,9 +52,9 @@ export const PREVIEW_HTML = {
   <div class="blog__two-up__cta">
     <a class="blog__two-up__cta-btn" href="#">Call to Action Button</a>
   </div>
-</section>`,
+</div>`,
 
-  threeUp: `<section class="blog__three-up">
+  threeUp: `<div class="blog__three-up">
   <h2 class="blog__three-up__heading">Ut Labore Et Dolore Magna</h2>
   <div class="blog__three-up__body">
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit:</p>
@@ -81,9 +81,9 @@ export const PREVIEW_HTML = {
   <div class="blog__three-up__cta">
     <a class="blog__three-up__cta-btn" href="#">Call to Action Button</a>
   </div>
-</section>`,
+</div>`,
 
-  video: `<section class="blog__video">
+  video: `<div class="blog__video">
   <h2 class="blog__video__heading">Quis Nostrud Exercitation</h2>
   <div class="blog__video__body">
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
@@ -96,9 +96,9 @@ export const PREVIEW_HTML = {
       <span style="color:#a3a3a3;font-size:14px;">Video Embed Placeholder</span>
     </div>
   </div>
-</section>`,
+</div>`,
 
-  fourUp: `<section class="blog__four-up">
+  fourUp: `<div class="blog__four-up">
   <h2 class="blog__four-up__heading">Amet Consectetur Adipiscing</h2>
   <div class="blog__four-up__body">
     <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod tempor incididunt.</p>
@@ -124,9 +124,9 @@ export const PREVIEW_HTML = {
   <div class="blog__four-up__cta">
     <a class="blog__four-up__cta-btn" href="#">Call to Action Button</a>
   </div>
-</section>`,
+</div>`,
 
-  fiveUp: `<section class="blog__five-up">
+  fiveUp: `<div class="blog__five-up">
   <h2 class="blog__five-up__heading">Amet Consectetur Adipiscing</h2>
   <div class="blog__five-up__body">
     <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod tempor incididunt.</p>
@@ -156,9 +156,9 @@ export const PREVIEW_HTML = {
   <div class="blog__five-up__cta">
     <a class="blog__five-up__cta-btn" href="#">Call to Action Button</a>
   </div>
-</section>`,
+</div>`,
 
-  twoByTwo: `<section class="blog__two-by-two">
+  twoByTwo: `<div class="blog__two-by-two">
   <h2 class="blog__two-by-two__heading">Amet Consectetur Adipiscing</h2>
   <div class="blog__two-by-two__body">
     <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod tempor incididunt.</p>
@@ -184,9 +184,9 @@ export const PREVIEW_HTML = {
   <div class="blog__two-by-two__cta">
     <a class="blog__two-by-two__cta-btn" href="#">Call to Action Button</a>
   </div>
-</section>`,
+</div>`,
 
-  threeByTwo: `<section class="blog__three-by-two">
+  threeByTwo: `<div class="blog__three-by-two">
   <h2 class="blog__three-by-two__heading">Duis Aute Irure Dolor</h2>
   <div class="blog__three-by-two__body">
     <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit. Sed do eiusmod <a href="#" target="_blank" rel="noopener noreferrer">tempor incididunt</a> ut labore.</p>
@@ -220,9 +220,9 @@ export const PREVIEW_HTML = {
   <div class="blog__three-by-two__cta">
     <a class="blog__three-by-two__cta-btn" href="#">Call to Action Button</a>
   </div>
-</section>`,
+</div>`,
 
-  hotspot: `<section class="blog__hotspot blog__hotspot--3-links">
+  hotspot: `<div class="blog__hotspot blog__hotspot--3-links">
   <figure class="blog__hotspot__inner">
     <img src="${PLACEHOLDER_IMG(800, 500, 'Hotspot Image')}" alt="Hotspot placeholder" class="blog__hotspot__image">
     <a class="blog__hotspot__item" href="#" style="left: 25%; top: 40%;">
@@ -238,14 +238,14 @@ export const PREVIEW_HTML = {
       <span class="blog__hotspot__label">Third Item</span>
     </a>
   </figure>
-</section>`,
+</div>`,
 
-  authorByline: `<section class="blog__author-byline">
+  authorByline: `<div class="blog__author-byline">
   <p class="blog__author-byline__text"><span class="blog__author-byline__prefix">By: </span>Jane Doe</p>
   <p class="blog__author-byline__title">Staff Writer, FASHIONPHILE</p>
-</section>`,
+</div>`,
 
-  richText: `<section class="blog__rich-text">
+  richText: `<div class="blog__rich-text">
   <h2 class="blog__rich-text__heading">Excepteur Sint Occaecat</h2>
   <div class="blog__rich-text__body">
     <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Sed do eiusmod tempor incididunt ut labore et dolore <em>magna aliqua</em>. Ut enim ad minim veniam, quis nostrud <a href="#" target="_blank" rel="noopener noreferrer">exercitation link</a>.</p>
@@ -274,7 +274,7 @@ export const PREVIEW_HTML = {
 
     <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
   </div>
-</section>`,
+</div>`,
 }
 
 export const PREVIEW_CSS = `<style>${BLOG_CSS}</style>`

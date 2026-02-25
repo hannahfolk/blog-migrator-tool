@@ -141,15 +141,29 @@ export function SectionForm({ section, onChange }) {
       {/* Heading */}
       <div>
         <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
-          Section Heading <span className="normal-case font-normal text-zinc-600">(renders as h2)</span>
+          Section Heading
         </label>
-        <input
-          type="text"
-          value={section.heading || ''}
-          onChange={(e) => updateField('heading', e.target.value)}
-          placeholder="Enter heading text"
-          className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
-        />
+        <div className="flex gap-2">
+          <select
+            value={section.headingTag || 'h2'}
+            onChange={(e) => updateField('headingTag', e.target.value)}
+            className="bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500"
+          >
+            <option value="h2">H2</option>
+            <option value="h3">H3</option>
+            <option value="h4">H4</option>
+          </select>
+          <input
+            type="text"
+            value={section.heading || ''}
+            onChange={(e) => updateField('heading', e.target.value)}
+            placeholder="Enter heading text"
+            className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+        {(section.headingTag || 'h2') === 'h2' && section.heading?.trim() && (
+          <p className="text-[10px] text-zinc-500 mt-1">H2 headings start a new section group</p>
+        )}
       </div>
 
       {/* Body */}
