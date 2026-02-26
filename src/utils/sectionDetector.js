@@ -1,25 +1,58 @@
 import { getBestImageSrc } from './extractContent'
 
 /**
+ * Scan the entry-content container to determine whether the article
+ * primarily uses h3s or h4s as its main section headings.
+ * Returns 'h3' or 'h4'.
+ */
+function detectArticleHeadingStyle(contentEl) {
+  const allHeadings = contentEl.querySelectorAll('h2, h3, h4, h5, h6')
+  let h3Count = 0
+  let h4Count = 0
+  allHeadings.forEach(h => {
+    const tag = h.tagName.toLowerCase()
+    if (tag === 'h3') h3Count++
+    if (tag === 'h4') h4Count++
+  })
+  // If the article has more h3s (or equal), it's an h3 article; otherwise h4
+  return h3Count >= h4Count ? 'h3' : 'h4'
+}
+
+/**
  * Remap a heading tag for the auto migrator.
- * - The very first heading in the article (any level) → bolded paragraph.
- * - All subsequent headings promote one level: h3→h2, h4→h3, h5→h4, h2 stays h2.
+ *
+ * The first heading in the first WPBakery row → always a bolded paragraph.
+ * After that, remapping depends on the article's heading style:
+ *
+ * h3 article: h3→h2 (section boundary), h4→h3, h5→h4
+ * h4 article: h4→h2 (section boundary), h5→h4  (no h3s in output)
+ *
  * Returns { tag, isBoundary, asBoldParagraph }.
  */
 function remapHeading(tag, headingCtx) {
   const level = parseInt(tag[1])
 
-  // First heading of any type → bold paragraph
+  // First heading in the article → bold paragraph
   if (!headingCtx.firstHeadingSeen) {
     headingCtx.firstHeadingSeen = true
     return { tag: null, isBoundary: false, asBoldParagraph: true }
   }
 
-  // All subsequent headings: promote by one level
-  if (level === 2) return { tag: 'h2', isBoundary: true, asBoldParagraph: false }
-  if (level === 3) return { tag: 'h2', isBoundary: true, asBoldParagraph: false }
-  if (level === 4) return { tag: 'h3', isBoundary: false, asBoldParagraph: false }
-  if (level === 5) return { tag: 'h4', isBoundary: false, asBoldParagraph: false }
+  const style = headingCtx.articleStyle // 'h3' or 'h4'
+
+  if (style === 'h3') {
+    // h3 article: h3→h2 (boundary), h4→h3, h5→h4
+    if (level === 2) return { tag: 'h2', isBoundary: true, asBoldParagraph: false }
+    if (level === 3) return { tag: 'h2', isBoundary: true, asBoldParagraph: false }
+    if (level === 4) return { tag: 'h3', isBoundary: false, asBoldParagraph: false }
+    if (level === 5) return { tag: 'h4', isBoundary: false, asBoldParagraph: false }
+  } else {
+    // h4 article: h4→h2 (boundary), h5→h4, no h3s in output
+    if (level === 2) return { tag: 'h2', isBoundary: true, asBoldParagraph: false }
+    if (level === 3) return { tag: 'h3', isBoundary: false, asBoldParagraph: false }
+    if (level === 4) return { tag: 'h2', isBoundary: true, asBoldParagraph: false }
+    if (level === 5) return { tag: 'h4', isBoundary: false, asBoldParagraph: false }
+  }
 
   // Fallback for h6 or anything else
   return { tag, isBoundary: false, asBoldParagraph: false }
@@ -39,6 +72,7 @@ export function detectSections(contentEl, headingCtx) {
   if (!headingCtx) {
     headingCtx = {
       firstHeadingSeen: false,
+      articleStyle: detectArticleHeadingStyle(contentEl),
     }
   }
 
@@ -148,10 +182,32 @@ export function detectSections(contentEl, headingCtx) {
           if (wrapperEl && wrapperEl.querySelector('.wpb_row, .wpb_text_column')) {
             emitSection()
             const innerSections = detectSections(wrapperEl, headingCtx)
-            innerSections.forEach(s => { s.id = `section-${++sectionCounter}` })
-            sections.push(...innerSections)
+            // If recursion produced a single link-only section, attach to previous section
+            if (innerSections.length === 1 && sections.length > 0 && isLinkOnlySection(innerSections[0])) {
+              const lastSection = sections[sections.length - 1]
+              lastSection.extractedContent.links.push(...innerSections[0].extractedContent.links)
+              lastSection.blockType = determineBlockType(lastSection.extractedContent, lastSection._columnHint || 0)
+            } else {
+              innerSections.forEach(s => { s.id = `section-${++sectionCounter}` })
+              sections.push(...innerSections)
+            }
             continue
           }
+        }
+
+        // Check for hotspot container before processing normally
+        const rowHotspots = extractHotspotsFromRow(el)
+        if (rowHotspots.length > 0) {
+          associateNeighborLinks(rowHotspots, children, i, sections)
+          emitSection()
+          const hotspotContent = createEmptyContent()
+          hotspotContent.hotspots = rowHotspots
+          sections.push({
+            id: `section-${++sectionCounter}`,
+            blockType: 'fullWidth',
+            extractedContent: hotspotContent,
+          })
+          continue
         }
 
         const rowResult = processWpbRow(el, headingCtx)
@@ -254,8 +310,10 @@ export function detectSections(contentEl, headingCtx) {
         continue
       }
 
-      // Video wrapper
-      if (className.includes('wp-block-video') || className.includes('wp-block-embed')) {
+      // Video wrapper (Gutenberg blocks, Plyr player, embed-youtube, etc.)
+      if (className.includes('wp-block-video') || className.includes('wp-block-embed') ||
+          className.includes('plyr') || className.includes('embed-youtube') ||
+          className.includes('video-container') || className.includes('video-wrapper')) {
         const iframe = el.querySelector('iframe')
         const video = el.querySelector('video')
         const mediaEl = iframe || video
@@ -283,6 +341,23 @@ export function detectSections(contentEl, headingCtx) {
           const innerSections = detectSections(innerWrapper, headingCtx)
           innerSections.forEach(s => { s.id = `section-${++sectionCounter}` })
           sections.push(...innerSections)
+          continue
+        }
+      }
+
+      // Generic div: check for embedded video (iframe/video) before generic extraction
+      const embeddedVideo = el.querySelector('iframe, video')
+      if (embeddedVideo) {
+        const vSrc = embeddedVideo.getAttribute('src') || embeddedVideo.querySelector('source')?.getAttribute('src') || ''
+        if (vSrc && (vSrc.includes('youtube') || vSrc.includes('vimeo') || vSrc.includes('wistia') || embeddedVideo.tagName === 'VIDEO')) {
+          emitSection()
+          const videoContent = createEmptyContent()
+          videoContent.videos.push({ src: vSrc, title: embeddedVideo.getAttribute('title') || '' })
+          sections.push({
+            id: `section-${++sectionCounter}`,
+            blockType: 'video',
+            extractedContent: videoContent,
+          })
           continue
         }
       }
@@ -458,7 +533,7 @@ export function detectSections(contentEl, headingCtx) {
       links: current.links,
       lists: current.lists,
       videos: current.videos,
-      hotspots: [],
+      hotspots: current.hotspots || [],
     }
 
     const blockType = determineBlockType(content, current.columnHint)
@@ -575,6 +650,7 @@ function createEmptyAccumulator() {
     links: [],
     lists: [],
     videos: [],
+    hotspots: [],
     columnHint: 0,
   }
 }
@@ -591,6 +667,18 @@ function createEmptyContent() {
   }
 }
 
+function isLinkOnlySection(section) {
+  const c = section.extractedContent
+  return (
+    c.links?.length > 0 &&
+    c.images?.length === 0 &&
+    c.headings?.length === 0 &&
+    c.paragraphs?.length === 0 &&
+    c.lists?.length === 0 &&
+    c.videos?.length === 0
+  )
+}
+
 function hasContent(acc) {
   return (
     acc.headings.length > 0 ||
@@ -598,7 +686,8 @@ function hasContent(acc) {
     acc.images.length > 0 ||
     acc.links.length > 0 ||
     acc.lists.length > 0 ||
-    acc.videos.length > 0
+    acc.videos.length > 0 ||
+    acc.hotspots?.length > 0
   )
 }
 
@@ -626,8 +715,11 @@ function determineBlockType(content, columnHint) {
     if (columnHint === 5 && imageCount === 5) return 'fiveUp'
   }
 
-  // Single image: use attachment class to distinguish full-width vs one-up
+  // Single image: use layout and attachment class to distinguish full-width vs one-up
   if (imageCount === 1) {
+    // Multi-column row with text + image → always oneUp regardless of attachment class
+    if (columnHint >= 2 && (hasHeading || hasBody)) return 'oneUp'
+
     const imgClass = content.images[0]?.className || ''
     if (imgClass.includes('attachment-full')) return 'fullWidth'
     if (imgClass.includes('attachment-medium')) return 'oneUp'
@@ -677,11 +769,13 @@ function extractImagesFromElement(container) {
       const captionEl = figure?.querySelector('figcaption')
         || figure?.querySelector('[class*="caption"]')
         || img.parentElement?.closest('[class*="single_image"]')?.querySelector('figcaption')
+      const singleImageWrapper = img.closest('.wpb_single_image')
       images.push({
         src,
         alt: img.getAttribute('alt') || '',
         caption: captionEl?.textContent?.trim() || '',
         className: img.className || '',
+        blendDarken: !!singleImageWrapper,
       })
     }
   })
@@ -791,4 +885,142 @@ function extractVideosFromElement(container) {
     }
   })
   return videos
+}
+
+/**
+ * Extract hotspot data from a WPBakery row element.
+ * Looks for `thb-hotspot-container` (or generic `hotspot-container`) divs
+ * and extracts the image + positioned marker overlays.
+ * Returns an array of hotspot data objects matching the shape expected
+ * by generateHotspotHtml: { image: { src, alt, title }, items: [{ href, left, top, marker, label }] }
+ */
+function extractHotspotsFromRow(rowEl) {
+  const containers = rowEl.querySelectorAll('[class*="hotspot-container"]')
+  if (containers.length === 0) return []
+
+  const hotspots = []
+
+  containers.forEach(container => {
+    const img = container.querySelector('img')
+    if (!img) return
+    const src = getBestImageSrc(img)
+    if (!src || src.startsWith('data:')) return
+
+    // Find hotspot markers: div elements with left:/top: position styles
+    // and className matching thb-hotspot (but NOT child classes like thb-hotspot-content)
+    const markers = Array.from(container.querySelectorAll('div')).filter(el => {
+      const style = el.getAttribute('style') || ''
+      const className = el.className || ''
+      const hasPosition = /left:/.test(style) && /top:/.test(style)
+      const isHotspotMarker = (className.includes('thb-hotspot') && !className.includes('thb-hotspot-')) ||
+                              className.includes('hotspot__item')
+      return hasPosition && isHotspotMarker
+    })
+
+    if (markers.length === 0) return
+
+    const hotspotData = {
+      image: {
+        src,
+        alt: img.getAttribute('alt') || '',
+        title: img.getAttribute('title') || '',
+      },
+      items: [],
+    }
+
+    markers.forEach((marker, index) => {
+      const style = marker.getAttribute('style') || ''
+      const leftMatch = style.match(/left:\s*([\d.]+%?)/)
+      const topMatch = style.match(/top:\s*([\d.]+%?)/)
+
+      const markerContent = marker.querySelector('[class*="content"]') || marker.querySelector('[class*="marker"]')
+      const labelEl = marker.querySelector('[class*="tooltip"] h6') ||
+                      marker.querySelector('[class*="tooltip"]') ||
+                      marker.querySelector('[class*="label"]')
+
+      hotspotData.items.push({
+        href: '#',
+        left: leftMatch ? leftMatch[1] : '0%',
+        top: topMatch ? topMatch[1] : '0%',
+        marker: markerContent?.textContent?.trim() || String(index + 1),
+        label: labelEl?.textContent?.trim() || '',
+      })
+    })
+
+    if (hotspotData.items.length > 0) {
+      hotspots.push(hotspotData)
+    }
+  })
+
+  return hotspots
+}
+
+/**
+ * Associate links from a neighboring <ol> list with hotspot items.
+ * Searches backward then forward through sibling elements (up to 5 in each direction).
+ * If the <ol> was in a preceding row that already produced a section, removes that section.
+ */
+function associateNeighborLinks(hotspots, children, currentIndex, sections) {
+  let olEl = null
+  let olSiblingIndex = -1
+
+  // Search backward first
+  for (let j = currentIndex - 1; j >= Math.max(0, currentIndex - 5); j--) {
+    const ol = children[j].querySelector('ol')
+    if (ol) {
+      olEl = ol
+      olSiblingIndex = j
+      break
+    }
+  }
+
+  // If not found backward, search forward
+  if (!olEl) {
+    for (let j = currentIndex + 1; j <= Math.min(children.length - 1, currentIndex + 5); j++) {
+      const ol = children[j].querySelector('ol')
+      if (ol) {
+        olEl = ol
+        olSiblingIndex = j
+        break
+      }
+    }
+  }
+
+  if (!olEl) return
+
+  // Extract links from <ol> list items
+  const olLinks = Array.from(olEl.querySelectorAll('li')).map(li => {
+    const a = li.querySelector('a')
+    return {
+      href: a?.getAttribute('href') || '#',
+      text: a?.textContent?.trim() || li.textContent?.trim() || '',
+    }
+  })
+
+  // Associate links with hotspot items by index across all hotspots
+  let linkIndex = 0
+  hotspots.forEach(hotspot => {
+    hotspot.items.forEach(item => {
+      if (olLinks[linkIndex]) {
+        item.href = olLinks[linkIndex].href
+        if (!item.label) {
+          item.label = olLinks[linkIndex].text
+        }
+        linkIndex++
+      }
+    })
+  })
+
+  // If the <ol> was in a preceding row that already produced a section, remove it.
+  // Check if the last section is a list-only richText section from that <ol>.
+  if (olSiblingIndex < currentIndex && sections.length > 0) {
+    const lastSection = sections[sections.length - 1]
+    if (lastSection.blockType === 'richText' &&
+        lastSection.extractedContent.lists?.length > 0 &&
+        lastSection.extractedContent.headings?.length === 0 &&
+        lastSection.extractedContent.images?.length === 0 &&
+        lastSection.extractedContent.paragraphs?.length === 0) {
+      sections.pop()
+    }
+  }
 }

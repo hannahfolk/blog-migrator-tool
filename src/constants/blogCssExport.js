@@ -1,6 +1,11 @@
-import { tokens as t } from './designTokens'
-
-export const BLOG_CSS = `/* ============================================
+/**
+ * Export-ready CSS for the CSS tab.
+ * - Colors use var(--color-*) CSS custom properties
+ * - Font-sizes removed except for hotspot marker/label and author byline
+ * - Font-weights removed
+ * - Line-heights use var(--line-height-*) where applicable
+ */
+export const BLOG_CSS_EXPORT = `/* ============================================
    FASHIONPHILE BLOG SECTIONS - COMPLETE CSS
    ============================================ */
 
@@ -8,10 +13,6 @@ export const BLOG_CSS = `/* ============================================
    SHARED RICH TEXT STYLES
    These apply to all __body elements
    ---------------------------------------- */
-[class*="__body"] {
-  line-height: ${t.lineHeightLg};
-}
-
 [class*="__body"] p {
   margin-bottom: 1em;
 }
@@ -36,7 +37,7 @@ export const BLOG_CSS = `/* ============================================
 
 [class*="__body"] strong,
 [class*="__body"] b {
-  font-weight: ${t.fontWeightSemibold};
+  font-weight: var(--font-weight-bold);
 }
 
 [class*="__body"] em,
@@ -45,43 +46,31 @@ export const BLOG_CSS = `/* ============================================
 }
 
 [class*="__body"] h1 {
-  font-size: ${t.h1};
-  font-weight: ${t.fontWeightSemibold};
   margin-top: 1.5em;
   margin-bottom: 0.75em;
 }
 
 [class*="__body"] h2 {
-  font-size: ${t.h2};
-  font-weight: ${t.fontWeightSemibold};
   margin-top: 1.5em;
   margin-bottom: 0.75em;
 }
 
 [class*="__body"] h3 {
-  font-size: ${t.h3};
-  font-weight: ${t.fontWeightSemibold};
   margin-top: 1.5em;
   margin-bottom: 0.75em;
 }
 
 [class*="__body"] h4 {
-  font-size: ${t.h4};
-  font-weight: ${t.fontWeightSemibold};
   margin-top: 1.25em;
   margin-bottom: 0.5em;
 }
 
 [class*="__body"] h5 {
-  font-size: ${t.h5};
-  font-weight: ${t.fontWeightSemibold};
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
 
 [class*="__body"] h6 {
-  font-size: ${t.h6};
-  font-weight: ${t.fontWeightSemibold};
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
@@ -119,48 +108,16 @@ export const BLOG_CSS = `/* ============================================
 [class*="__body"] blockquote {
   margin: 1em 0;
   padding-left: 1em;
-  border-left: 0.1875rem solid ${t.colorGrey3};
+  border-left: 0.1875rem solid var(--color-grey-3);
   font-style: italic;
-  color: ${t.colorGrey7};
+  color: var(--color-grey-7);
 }
 
 [class*="__body"] hr {
   border: none;
-  border-top: 0.0625rem solid ${t.colorGrey2};
+  border-top: 0.0625rem solid var(--color-grey-2);
   margin: 1.5em 0;
 }
-
-.fp-font-weight--light {
-  font-weight: ${t.fontWeightLight}
-}
-
-.fp-font-weight--regular {
-  font-weight: ${t.fontWeightRegular}
-}
-
-.fp-font-weight--medium {
-  font-weight: ${t.fontWeightMedium}
-}
-
-.fp-font-weight--semibold {
-  font-weight: ${t.fontWeightSemibold}
-}
-
-.fp-font-weight--bold {
-  font-weight: ${t.fontWeightBold}
-}
-
-/* ----------------------------------------
-   HEADING SIZES BY TAG
-   The HTML tag determines the font-size,
-   regardless of which block it belongs to.
-   ---------------------------------------- */
-h1[class*="__heading"] { font-size: ${t.h1}; }
-h2[class*="__heading"] { font-size: ${t.h2}; }
-h3[class*="__heading"] { font-size: ${t.h3}; }
-h4[class*="__heading"] { font-size: ${t.h4}; }
-h5[class*="__heading"] { font-size: ${t.h5}; }
-h6[class*="__heading"] { font-size: ${t.h6}; }
 
 /* ----------------------------------------
    FULL WIDTH SECTION
@@ -170,12 +127,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__full-width__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__full-width__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__full-width__figure {
@@ -197,12 +153,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__one-up__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__one-up__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__one-up__figure {
@@ -226,17 +181,16 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__one-up__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: ${t.bodyLg};
   text-align: center;
 }
 
 .blog__one-up__cta-btn {
   display: block;
   width: 100%;
-  background-color: ${t.colorBlack};
-  color: ${t.colorWhite} !important;
+  background-color: var(--color-black);
+  color: var(--color-white) !important;
   text-align: center;
-  padding: ${t.headerFontBody};
+  padding: 0.9375rem;
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.0625rem;
@@ -245,7 +199,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__one-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
+  background-color: var(--color-grey-hover);
 }
 
 /* ----------------------------------------
@@ -256,12 +210,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__two-up__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__two-up__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__two-up__grid {
@@ -285,7 +238,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__two-up__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -301,10 +253,10 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__two-up__cta-btn {
   display: block;
   width: 100%;
-  background-color: ${t.colorBlack};
-  color: ${t.colorWhite} !important;
+  background-color: var(--color-black);
+  color: var(--color-white) !important;
   text-align: center;
-  padding: ${t.headerFontBody};
+  padding: 0.9375rem;
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.0625rem;
@@ -312,7 +264,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__two-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
+  background-color: var(--color-grey-hover);
 }
 
 @media screen and (max-width: 767px) {
@@ -329,12 +281,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__three-up__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__three-up__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__three-up__grid {
@@ -358,7 +309,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__three-up__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -374,10 +324,10 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__three-up__cta-btn {
   display: block;
   width: 100%;
-  background-color: ${t.colorBlack};
-  color: ${t.colorWhite} !important;
+  background-color: var(--color-black);
+  color: var(--color-white) !important;
   text-align: center;
-  padding: ${t.headerFontBody};
+  padding: 0.9375rem;
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.0625rem;
@@ -385,7 +335,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__three-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
+  background-color: var(--color-grey-hover);
 }
 
 @media screen and (max-width: 767px) {
@@ -402,12 +352,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__four-up__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__four-up__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__four-up__grid {
@@ -431,7 +380,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__four-up__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -447,10 +395,10 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__four-up__cta-btn {
   display: block;
   width: 100%;
-  background-color: ${t.colorBlack};
-  color: ${t.colorWhite} !important;
+  background-color: var(--color-black);
+  color: var(--color-white) !important;
   text-align: center;
-  padding: ${t.headerFontBody};
+  padding: 0.9375rem;
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.0625rem;
@@ -458,7 +406,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__four-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
+  background-color: var(--color-grey-hover);
 }
 
 @media screen and (max-width: 767px) {
@@ -475,12 +423,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__five-up__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__five-up__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__five-up__grid {
@@ -504,7 +451,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__five-up__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -520,10 +466,10 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__five-up__cta-btn {
   display: block;
   width: 100%;
-  background-color: ${t.colorBlack};
-  color: ${t.colorWhite} !important;
+  background-color: var(--color-black);
+  color: var(--color-white) !important;
   text-align: center;
-  padding: ${t.headerFontBody};
+  padding: 0.9375rem;
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.0625rem;
@@ -531,7 +477,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__five-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
+  background-color: var(--color-grey-hover);
 }
 
 @media screen and (max-width: 767px) {
@@ -548,12 +494,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__video__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__video__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__video__wrapper {
@@ -580,12 +525,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__two-by-two__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__two-by-two__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__two-by-two__grid {
@@ -607,7 +551,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__two-by-two__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: ${t.bodyLg};
   text-align: center;
 }
 
@@ -623,10 +566,10 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__two-by-two__cta-btn {
   display: block;
   width: 100%;
-  background-color: ${t.colorBlack};
-  color: ${t.colorWhite} !important;
+  background-color: var(--color-black);
+  color: var(--color-white) !important;
   text-align: center;
-  padding: ${t.headerFontBody};
+  padding: 0.9375rem;
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.0625rem;
@@ -634,7 +577,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__two-by-two__cta-btn:hover {
-  background-color: ${t.colorGrey8};
+  background-color: var(--color-grey-hover);
 }
 
 @media screen and (max-width: 767px) {
@@ -651,12 +594,11 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__three-by-two__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__three-by-two__body {
-  margin-bottom: ${t.h4};
+  margin-bottom: 1.5rem;
 }
 
 .blog__three-by-two__grid {
@@ -679,7 +621,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__three-by-two__label {
   display: block;
   margin-top: 0.5rem;
-  font-size: ${t.bodyMd};
   text-align: center;
 }
 
@@ -695,10 +636,10 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__three-by-two__cta-btn {
   display: block;
   width: 100%;
-  background-color: ${t.colorBlack};
-  color: ${t.colorWhite} !important;
+  background-color: var(--color-black);
+  color: var(--color-white) !important;
   text-align: center;
-  padding: ${t.headerFontBody};
+  padding: 0.9375rem;
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.0625rem;
@@ -706,7 +647,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__three-by-two__cta-btn:hover {
-  background-color: ${t.colorGrey8};
+  background-color: var(--color-grey-hover);
 }
 
 @media screen and (max-width: 767px) {
@@ -729,8 +670,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__rich-text__heading {
-  font-size: ${t.h4};
-  margin-bottom: ${t.h6};
+  margin-bottom: 1rem;
 }
 
 .blog__rich-text__body {
@@ -754,20 +694,18 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__author-byline__text {
-  font-size: ${t.bodyXs};
-  line-height: ${t.lineHeightLg};
+  font-size: var(--body-xs);
   margin: 0;
 }
 
 .blog__author-byline__prefix {
-  color: ${t.colorGrey6};
+  color: var(--color-grey-6);
 }
 
 .blog__author-byline__title {
-  font-size: ${t.bodyXs};
-  line-height: ${t.lineHeightLg};
+  font-size: var(--body-xs);
   margin: 0;
-  color: ${t.colorGrey6};
+  color: var(--color-grey-6);
 }
 
 /* ----------------------------------------
@@ -808,12 +746,12 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   justify-content: center;
   width: 1.875rem;
   height: 1.875rem;
-  background-color: ${t.colorWhite};
-  color: ${t.colorBlack};
+  background-color: var(--color-white);
+  color: var(--color-black);
   border-radius: 50%;
   font-family: sans-serif;
-  font-size: ${t.bodyMd};
-  box-shadow: 0 0.125rem 0.3125rem rgba(0,0,0,0.3);
+  font-size: var(--body-md);
+  box-shadow: 0 0.125rem 0.3125rem rgb(from var(--color-black) r g b / 0.3);
   transition: transform 0.2s ease;
   animation: blog-pulse 2s infinite;
 }
@@ -827,14 +765,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   bottom: 2.5rem;
   left: 50%;
   transform: translateX(-50%) translateY(0.625rem);
-  background: ${t.colorWhite};
-  color: ${t.colorGrey8};
+  background: var(--color-white);
+  color: var(--color-grey-hover);
   padding: 0.5rem 0.75rem;
   border-radius: 0.25rem;
-  font-size: ${t.bodySm};
+  font-size: var(--body-sm);
   text-transform: uppercase;
   white-space: nowrap;
-  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.15);
+  box-shadow: 0 0.25rem 0.75rem rgb(from var(--color-black) r g b / 0.15);
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
@@ -842,14 +780,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__hotspot__label::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 50%;
   margin-left: -0.3125rem;
   border-width: 0.3125rem;
   border-style: solid;
-  border-color: ${t.colorWhite} transparent transparent transparent;
+  border-color: var(--color-white) transparent transparent transparent;
 }
 
 .blog__hotspot__item:hover .blog__hotspot__label {
@@ -859,7 +797,13 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 @keyframes blog-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
-  70% { box-shadow: 0 0 0 0.625rem rgba(255, 255, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgb(from var(--color-white) r g b / 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 0.625rem rgb(from var(--color-white) r g b / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(from var(--color-white) r g b / 0);
+  }
 }`

@@ -51,7 +51,7 @@ export function ResultsStep({ results, onStartOver }) {
             Start Over
           </button>
           <button
-            onClick={() => downloadCsv(results, env)}
+            onClick={() => downloadCsv(results, env, 'blog-migration-all.csv')}
             className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
           >
             <Download size={14} />

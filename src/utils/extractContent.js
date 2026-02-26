@@ -1,6 +1,17 @@
 import { convertFontWeightToClasses, processLinks } from './generateBuilderHtml'
 
 /**
+ * Rewrite blog.fashionphile.com URLs to /blogs/academy paths.
+ */
+function rewriteBlogUrl(url) {
+  if (!url) return url
+  const match = url.match(/^https?:\/\/blog\.fashionphile\.com\/?(.*)$/i)
+  if (!match) return url
+  const path = match[1].replace(/^\/|\/$/g, '')
+  return path ? `/blogs/academy/${path}` : '/blogs/academy'
+}
+
+/**
  * Convert <strong> and <b> tags to <span class="fp-font-weight--medium">.
  * Also runs convertFontWeightToClasses for inline style conversion.
  * Used in migrator output so that bold text uses utility classes instead of semantic tags.
@@ -20,6 +31,13 @@ function cleanInlineHtml(html) {
       if (/^["']/.test(url)) return m
       return `src="${url}"`
     })
+  })
+
+  // Rewrite blog.fashionphile.com links to /blogs/academy
+  cleaned = cleaned.replace(/href="https?:\/\/blog\.fashionphile\.com\/?([^"]*)"/gi, (match, path) => {
+    const trimmed = path.replace(/^\/|\/$/g, '')
+    if (!trimmed) return 'href="/blogs/academy"'
+    return `href="/blogs/academy/${trimmed}"`
   })
 
   return cleaned
@@ -526,7 +544,7 @@ function generateHotspotHtml(hotspot) {
 
   hotspot.items.forEach((item, index) => {
     html += `
-    <a class="blog__hotspot__item" href="${item.href}" style="left: ${item.left}; top: ${item.top};">
+    <a class="blog__hotspot__item" href="${rewriteBlogUrl(item.href)}" style="left: ${item.left}; top: ${item.top};">
       <span class="blog__hotspot__marker fp-font-weight--bold">${item.marker || index + 1}</span>
       <span class="blog__hotspot__label fp-font-weight--semibold">${item.label}</span>
     </a>`
@@ -593,10 +611,10 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     const rawHtml = heading.html || ''
     const hasStrong = /<strong[\s>]/i.test(rawHtml) || /<b(?=[\s>])/i.test(rawHtml)
     const weightClass = hasStrong ? 'fp-font-weight--medium' : 'fp-font-weight--semibold'
-    // If heading had <strong>, use HTML with strong/b stripped; otherwise plain text
+    // If heading had <strong>, strip strong/b; otherwise preserve inline HTML (em, a, etc.)
     const headingContent = hasStrong
       ? rawHtml.replace(/<strong[^>]*>/gi, '').replace(/<\/strong>/gi, '').replace(/<b(?=[\s>])[^>]*>/gi, '').replace(/<\/b>/gi, '')
-      : heading.text
+      : cleanInlineHtml(rawHtml) || heading.text
     html += `
   <${tag} class="${prefix}__heading ${weightClass}">${headingContent}</${tag}>`
   }
@@ -649,6 +667,8 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   const images = content.images || []
   const hotspots = content.hotspots || []
 
+  const blendStyle = (img) => img.blendDarken ? ' style="mix-blend-mode: darken;"' : ''
+
   // For fullWidth and oneUp, prefer hotspots if available, otherwise use regular images
   if (blockType === 'fullWidth') {
     if (hotspots.length > 0) {
@@ -660,7 +680,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       const img = images[0]
       html += `
   <figure class="${prefix}__figure">
-    <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">
+    <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}"${blendStyle(img)}>
   </figure>`
     }
   }
@@ -677,14 +697,14 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       const links = content.links || []
       html += `
   <figure class="${prefix}__figure">
-    <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">`
+    <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}"${blendStyle(img)}>`
       if (captionText) {
         html += `
     <figcaption class="${prefix}__label">${captionText}</figcaption>`
       }
       if (links.length > 0) {
         html += `
-    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${links[0].href}">${links[0].text}</a>`
+    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${rewriteBlogUrl(links[0].href)}">${links[0].text}</a>`
       }
       html += `
   </figure>`
@@ -709,7 +729,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
         const captionText = img.caption || ''
         html += `
     <figure class="${prefix}__item">
-      <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">`
+      <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}"${blendStyle(img)}>`
         if (captionText) {
           html += `
       <figcaption class="${prefix}__label">${captionText}</figcaption>`
@@ -717,7 +737,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
         // Add individual CTA if we have one for each image
         if (hasIndividualCTAs && links[i]) {
           html += `
-      <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${links[i].href}">${links[i].text}</a>`
+      <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${rewriteBlogUrl(links[i].href)}">${links[i].text}</a>`
         }
         html += `
     </figure>`
@@ -732,7 +752,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       const ctaLink = links[0]
       html += `
   <div class="${prefix}__cta">
-    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${ctaLink.href}">${ctaLink.text}</a>
+    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${rewriteBlogUrl(ctaLink.href)}">${ctaLink.text}</a>
   </div>`
     }
   }

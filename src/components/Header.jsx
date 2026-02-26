@@ -1,4 +1,4 @@
-import { Zap, Wand2, Book, PenTool } from 'lucide-react'
+import { Zap, Wand2, Book, PenTool, Code } from 'lucide-react'
 
 export function Header({ activeTab, setActiveTab }) {
   return (
@@ -45,6 +45,15 @@ export function Header({ activeTab, setActiveTab }) {
               >
                 <PenTool size={16} />
                 Post Builder
+              </button>
+              <button
+                onClick={() => setActiveTab('css')}
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === 'css' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Code size={16} />
+                CSS
               </button>
             </div>
           </div>

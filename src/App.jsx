@@ -3,6 +3,7 @@ import { AutoMigratorPage } from './components/auto-migrator'
 import { MigratorPage } from './components/migrator'
 import { ReferencePage } from './components/reference'
 import { BuilderPage } from './components/builder'
+import { CssPage } from './components/CssPage'
 import { useLocalStorage } from './utils'
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         {activeMainTab === 'migrator' && <MigratorPage />}
         {activeMainTab === 'reference' && <ReferencePage />}
         {activeMainTab === 'builder' && <BuilderPage />}
+        {activeMainTab === 'css' && <CssPage />}
       </main>
     </div>
   )

@@ -1,18 +1,37 @@
 import { useState, useRef, useCallback } from 'react'
 import { useLocalStorage } from '../../utils/useLocalStorage'
-import { scrapeWordPressBlog } from '../../utils/autoScraper'
+import { scrapeWordPressBlog, fetchPage, processPost } from '../../utils/autoScraper'
 import { UrlInputStep } from './UrlInputStep'
 import { CrawlProgressStep } from './CrawlProgressStep'
 import { ResultsStep } from './ResultsStep'
+import { SingleResultStep } from './SingleResultStep'
 
 export function AutoMigratorPage() {
   const [blogUrl, setBlogUrl] = useLocalStorage('autoMigrator:blogUrl', '')
-  const [step, setStep] = useState('input') // 'input' | 'crawling' | 'results'
+  const [singleUrl, setSingleUrl] = useLocalStorage('autoMigrator:singleUrl', '')
+  const [step, setStep] = useState('input') // 'input' | 'crawling' | 'results' | 'singleResult'
   const [progress, setProgress] = useState({ phase: 'discovering', message: '' })
   const [completedPosts, setCompletedPosts] = useState([])
   const [results, setResults] = useState([])
+  const [singleResult, setSingleResult] = useState(null)
   const abortRef = useRef(null)
   const completedRef = useRef([])
+
+  const handleStartSingle = useCallback(async (url) => {
+    setStep('crawling')
+    setProgress({ phase: 'processing', message: `Fetching ${url}...`, current: 0, totalPosts: 1 })
+
+    try {
+      const { html } = await fetchPage(url)
+      setProgress({ phase: 'processing', message: 'Processing...', current: 1, totalPosts: 1 })
+      const result = processPost(html, url)
+      setSingleResult(result)
+      setStep('singleResult')
+    } catch (err) {
+      console.error('[AutoMigrator] Single article error:', err)
+      setProgress({ phase: 'error', message: err.message })
+    }
+  }, [])
 
   const handleStart = useCallback(async ({ blogUrl: url, maxPosts, delayMs }) => {
     const controller = new AbortController()
@@ -63,6 +82,7 @@ export function AutoMigratorPage() {
     setProgress({ phase: 'discovering', message: '' })
     setCompletedPosts([])
     setResults([])
+    setSingleResult(null)
   }, [])
 
   return (
@@ -72,6 +92,9 @@ export function AutoMigratorPage() {
           blogUrl={blogUrl}
           setBlogUrl={setBlogUrl}
           onStart={handleStart}
+          singleUrl={singleUrl}
+          setSingleUrl={setSingleUrl}
+          onStartSingle={handleStartSingle}
         />
       )}
 
@@ -87,6 +110,13 @@ export function AutoMigratorPage() {
       {step === 'results' && (
         <ResultsStep
           results={results.length > 0 ? results : completedPosts}
+          onStartOver={handleStartOver}
+        />
+      )}
+
+      {step === 'singleResult' && singleResult && (
+        <SingleResultStep
+          result={singleResult}
           onStartOver={handleStartOver}
         />
       )}

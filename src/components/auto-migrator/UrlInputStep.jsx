@@ -1,19 +1,27 @@
-import { Globe, Play, Settings } from 'lucide-react'
+import { Globe, Play, Settings, FileText } from 'lucide-react'
 import { useState } from 'react'
 import { normalizeUrl } from '../../utils/autoScraper'
 
-export function UrlInputStep({ blogUrl, setBlogUrl, onStart }) {
+export function UrlInputStep({ blogUrl, setBlogUrl, onStart, singleUrl, setSingleUrl, onStartSingle }) {
   const [maxPosts, setMaxPosts] = useState(600)
   const [delayMs, setDelayMs] = useState(500)
   const [showConfig, setShowConfig] = useState(false)
 
   const isValid = blogUrl.trim().length > 0
+  const isSingleValid = singleUrl.trim().length > 0
 
   function handleStart() {
     if (!isValid) return
     const url = normalizeUrl(blogUrl)
     setBlogUrl(url)
     onStart({ blogUrl: url, maxPosts, delayMs })
+  }
+
+  function handleStartSingle() {
+    if (!isSingleValid) return
+    const url = normalizeUrl(singleUrl)
+    setSingleUrl(url)
+    onStartSingle(url)
   }
 
   return (
@@ -29,6 +37,7 @@ export function UrlInputStep({ blogUrl, setBlogUrl, onStart }) {
         </p>
       </div>
 
+      {/* Bulk scrape */}
       <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-6">
         <label className="block text-sm font-medium text-zinc-300 mb-2">
           Blog URL
@@ -88,6 +97,39 @@ export function UrlInputStep({ blogUrl, setBlogUrl, onStart }) {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-3 my-6">
+        <div className="flex-1 border-t border-zinc-800" />
+        <span className="text-xs text-zinc-500 uppercase tracking-wider">or scrape a single article</span>
+        <div className="flex-1 border-t border-zinc-800" />
+      </div>
+
+      {/* Single article */}
+      <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-6">
+        <label className="block text-sm font-medium text-zinc-300 mb-2">
+          <FileText size={14} className="inline mr-1.5 -mt-0.5" />
+          Single Article
+        </label>
+        <div className="flex gap-3">
+          <input
+            type="url"
+            value={singleUrl}
+            onChange={e => setSingleUrl(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleStartSingle()}
+            placeholder="https://blog.example.com/my-article-handle"
+            className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500"
+          />
+          <button
+            onClick={handleStartSingle}
+            disabled={!isSingleValid}
+            className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold px-6 py-3 rounded-lg transition-colors"
+          >
+            <Play size={16} />
+            Migrate
+          </button>
+        </div>
       </div>
     </div>
   )
