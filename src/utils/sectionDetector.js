@@ -503,6 +503,17 @@ export function detectSections(contentEl, headingCtx) {
   // Emit any remaining accumulated content
   emitSection()
 
+  // Post-process: merge standalone CTA-only sections into the preceding section
+  for (let i = sections.length - 1; i >= 1; i--) {
+    if (isLinkOnlySection(sections[i])) {
+      const prevSection = sections[i - 1]
+      if (prevSection.blockType === 'hr') continue
+      prevSection.extractedContent.links.push(...sections[i].extractedContent.links)
+      prevSection.blockType = determineBlockType(prevSection.extractedContent, prevSection._columnHint || 0)
+      sections.splice(i, 1)
+    }
+  }
+
   return sections
 
   // --- Helper functions ---
@@ -717,8 +728,8 @@ function determineBlockType(content, columnHint) {
 
   // Single image: use layout and attachment class to distinguish full-width vs one-up
   if (imageCount === 1) {
-    // Multi-column row with text + image → always oneUp regardless of attachment class
-    if (columnHint >= 2 && (hasHeading || hasBody)) return 'oneUp'
+    // Multi-column row with single image = centering pattern → always oneUp
+    if (columnHint >= 2) return 'oneUp'
 
     const imgClass = content.images[0]?.className || ''
     if (imgClass.includes('attachment-full')) return 'fullWidth'
