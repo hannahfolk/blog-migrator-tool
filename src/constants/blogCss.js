@@ -117,11 +117,25 @@ export const BLOG_CSS = `/* ============================================
 }
 
 [class*="__body"] blockquote {
+  display: block !important;
   margin: 1em 0;
-  padding-left: 1em;
-  border-left: 0.1875rem solid ${t.colorGrey3};
-  font-style: italic;
-  color: ${t.colorGrey7};
+  padding-left: 2rem;
+  position: relative;
+  font-style: normal;
+  color: ${t.colorBlack};
+}
+
+[class*="__body"] blockquote::before {
+  content: '\\201C';
+  position: absolute;
+  left: -1rem;
+  top: -1rem;
+  font-family: 'Simplon Norm', Georgia, serif;
+  font-size: 8rem;
+  line-height: 1;
+  color: ${t.colorBlack};
+  opacity: 0.1;
+  pointer-events: none;
 }
 
 [class*="__body"] hr {

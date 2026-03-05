@@ -33,6 +33,9 @@ function cleanInlineHtml(html) {
     })
   })
 
+  // Remove empty spacer paragraphs (e.g. <p>&nbsp;</p>) from WordPress
+  cleaned = cleaned.replace(/<p[^>]*>\s*(&nbsp;|\u00A0)\s*<\/p>/gi, '')
+
   // Rewrite blog.fashionphile.com links to /blogs/academy
   cleaned = cleaned.replace(/href="https?:\/\/blog\.fashionphile\.com\/?([^"]*)"/gi, (match, path) => {
     const trimmed = path.replace(/^\/|\/$/g, '')
