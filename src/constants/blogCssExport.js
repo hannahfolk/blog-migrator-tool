@@ -109,6 +109,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   display: block !important;
   margin: 1em 0;
   padding-left: 2rem;
+  border-left: none;
   position: relative;
   font-style: normal;
   color: var(--color-black);
