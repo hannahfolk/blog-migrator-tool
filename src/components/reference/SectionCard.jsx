@@ -81,7 +81,7 @@ export function SectionCard({ id, sectionKey, section }) {
           {[
             '',
             ...(!['hr', 'authorByline', 'hotspot'].includes(sectionKey) ? ['__heading', '__body'] : []),
-            ...(sectionKey === 'fullWidth' ? ['__figure', '__image'] : []),
+            ...(sectionKey === 'fullWidth' ? ['__figure', '__image', '__cta-btn'] : []),
             ...(sectionKey === 'oneUp' ? ['__figure', '__image', '__label'] : []),
             ...(sectionKey === 'twoUp' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
             ...(sectionKey === 'threeUp' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ArrowLeft, Copy, Check } from 'lucide-react'
-import { BLOG_CSS, PREVIEW_CSS } from '../../constants'
+import { BLOG_CSS, PREVIEW_CSS, rewriteImageCdnForOutput } from '../../constants'
 import { copyToClipboard } from '../../utils'
 
 export function BuilderOutput({ generatedHtml, sectionCount, onBack }) {
@@ -9,7 +9,7 @@ export function BuilderOutput({ generatedHtml, sectionCount, onBack }) {
   const [copiedCss, setCopiedCss] = useState(false)
 
   const handleCopy = async (type) => {
-    const text = type === 'html' ? generatedHtml : BLOG_CSS
+    const text = type === 'html' ? rewriteImageCdnForOutput(generatedHtml) : BLOG_CSS
     const success = await copyToClipboard(text)
     if (success) {
       if (type === 'html') {

@@ -8,6 +8,7 @@ export const HTML_TEMPLATES = {
   <figure class="blog__full-width__figure">
     <img class="blog__full-width__image" src="image-url.jpg" alt="Image description">
   </figure>
+  <a class="blog__full-width__cta-btn fp-font-weight--semibold" href="link-url" target="_blank" rel="noopener noreferrer">Call to Action</a>
 </div>`,
 
   oneUp: `<div class="blog__one-up">

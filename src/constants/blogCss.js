@@ -189,6 +189,24 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   display: block;
 }
 
+.blog__full-width__cta-btn {
+  display: block !important;
+  width: 100%;
+  background-color: ${t.colorBlack} !important;
+  color: ${t.colorWhite} !important;
+  text-align: center;
+  padding: ${t.headerFontBody};
+  text-transform: uppercase;
+  text-decoration: none !important;
+  letter-spacing: 0.0625rem;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.blog__full-width__cta-btn:hover {
+  background-color: ${t.colorGrey8};
+}
+
 /* ----------------------------------------
    1-UP SECTION
    ---------------------------------------- */
@@ -231,14 +249,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__one-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: ${t.colorBlack};
+  background-color: ${t.colorBlack} !important;
   color: ${t.colorWhite} !important;
   text-align: center;
   padding: ${t.headerFontBody};
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
   margin-top: 0.5rem;
@@ -299,14 +317,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__two-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: ${t.colorBlack};
+  background-color: ${t.colorBlack} !important;
   color: ${t.colorWhite} !important;
   text-align: center;
   padding: ${t.headerFontBody};
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -372,14 +390,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__three-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: ${t.colorBlack};
+  background-color: ${t.colorBlack} !important;
   color: ${t.colorWhite} !important;
   text-align: center;
   padding: ${t.headerFontBody};
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -445,14 +463,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__four-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: ${t.colorBlack};
+  background-color: ${t.colorBlack} !important;
   color: ${t.colorWhite} !important;
   text-align: center;
   padding: ${t.headerFontBody};
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -518,14 +536,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__five-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: ${t.colorBlack};
+  background-color: ${t.colorBlack} !important;
   color: ${t.colorWhite} !important;
   text-align: center;
   padding: ${t.headerFontBody};
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -621,14 +639,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__two-by-two__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: ${t.colorBlack};
+  background-color: ${t.colorBlack} !important;
   color: ${t.colorWhite} !important;
   text-align: center;
   padding: ${t.headerFontBody};
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -693,14 +711,14 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__three-by-two__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: ${t.colorBlack};
+  background-color: ${t.colorBlack} !important;
   color: ${t.colorWhite} !important;
   text-align: center;
   padding: ${t.headerFontBody};
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }

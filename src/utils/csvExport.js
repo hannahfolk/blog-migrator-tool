@@ -24,7 +24,7 @@ function urlToHandle(url) {
   }
 }
 
-import { SHOPIFY_CDN } from '../constants/shopifyCdn'
+import { SHOPIFY_CDN_OUTPUT } from '../constants/shopifyCdn'
 
 /**
  * Extract the filename from a WordPress / wp.com image URL,
@@ -56,13 +56,13 @@ function isWpImageUrl(url) {
  * - staging: keeps filename as-is
  * - production: replaces dots in filename stem with underscores
  */
-function transformImageUrl(url, env) {
+export function transformImageUrl(url, env) {
   if (!isWpImageUrl(url)) return url
 
   const filename = extractWpFilename(url)
   if (!filename) return url
 
-  const base = SHOPIFY_CDN[env] || SHOPIFY_CDN.staging
+  const base = SHOPIFY_CDN_OUTPUT[env] || SHOPIFY_CDN_OUTPUT.staging
   if (env === 'production') {
     // Replace dots in the stem with underscores, keep the extension dot
     const lastDot = filename.lastIndexOf('.')
@@ -79,7 +79,7 @@ function transformImageUrl(url, env) {
 /**
  * Transform all WordPress image URLs inside an HTML string.
  */
-function transformHtmlImages(html, env) {
+export function transformHtmlImages(html, env) {
   if (!html || !env) return html
   // Match src="..." and srcset="..." attribute values
   return html.replace(

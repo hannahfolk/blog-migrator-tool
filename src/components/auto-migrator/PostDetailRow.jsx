@@ -1,12 +1,15 @@
 import { ChevronDown, ChevronRight, ExternalLink, Copy, Check } from 'lucide-react'
 import { useState } from 'react'
+import { rewriteImageCdnForOutput } from '../../constants'
+import { transformHtmlImages } from '../../utils/csvExport'
 
-export function PostDetailRow({ post, index }) {
+export function PostDetailRow({ post, index, env = 'staging' }) {
   const [expanded, setExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
 
   function handleCopy() {
-    navigator.clipboard.writeText(post.html).then(() => {
+    const outputHtml = rewriteImageCdnForOutput(transformHtmlImages(post.html, env))
+    navigator.clipboard.writeText(outputHtml).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })

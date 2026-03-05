@@ -5,10 +5,10 @@ export const FIGMA_BLOCKS = {
     label: 'Full Width',
     icon: Image,
     color: '#ec4899',
-    description: 'Hero image spanning full width',
+    description: 'Hero image spanning full width + CTA',
     hasImages: true,
     imageCount: 1,
-    hasCTA: false,
+    hasCTA: true,
     prefix: 'blog__full-width'
   },
   oneUp: {

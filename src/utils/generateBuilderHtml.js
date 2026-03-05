@@ -283,6 +283,9 @@ export function generateBuilderSectionHtml(section) {
         if (fwHotspots.length) parts.push(...generateImageHotspotHtml(fwHotspots, '    '))
         parts.push(`  </figure>`)
       }
+      if (section.ctas?.[0]?.text && section.ctas?.[0]?.href) {
+        parts.push(`  <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${escapeHtml(section.ctas[0].href)}">${escapeHtml(section.ctas[0].text)}</a>`)
+      }
       break
 
     case 'oneUp':

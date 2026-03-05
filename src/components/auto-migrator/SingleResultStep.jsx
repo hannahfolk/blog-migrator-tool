@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Copy, Check, Download, RotateCcw } from 'lucide-react'
-import { BLOG_CSS, PREVIEW_CSS } from '../../constants'
+import { BLOG_CSS, PREVIEW_CSS, rewriteImageCdnForOutput } from '../../constants'
 import { copyToClipboard } from '../../utils'
-import { downloadCsv } from '../../utils/csvExport'
+import { downloadCsv, transformHtmlImages } from '../../utils/csvExport'
 
 function getHandle(url) {
   try {
@@ -18,9 +18,17 @@ export function SingleResultStep({ result, onStartOver }) {
   const [copiedHtml, setCopiedHtml] = useState(false)
   const [copiedCss, setCopiedCss] = useState(false)
   const [env, setEnv] = useState('staging')
-  const [editableHtml, setEditableHtml] = useState(result.html || '')
+  const rawHtml = result.html || ''
+  const [editableHtml, setEditableHtml] = useState(() =>
+    rewriteImageCdnForOutput(transformHtmlImages(rawHtml, 'staging'))
+  )
   const outputPreviewRef = useRef(null)
   const handle = getHandle(result.url)
+
+  // Re-transform from raw HTML when env changes
+  useEffect(() => {
+    setEditableHtml(rewriteImageCdnForOutput(transformHtmlImages(rawHtml, env)))
+  }, [env])
 
   const handleCopy = async (type) => {
     const text = type === 'html' ? editableHtml : BLOG_CSS

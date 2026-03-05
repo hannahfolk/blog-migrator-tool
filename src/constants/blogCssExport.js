@@ -145,6 +145,24 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   display: block;
 }
 
+.blog__full-width__cta-btn {
+  display: block !important;
+  width: 100%;
+  background-color: var(--color-black) !important;
+  color: var(--color-white) !important;
+  text-align: center;
+  padding: 0.9375rem;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  letter-spacing: 0.0625rem;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.blog__full-width__cta-btn:hover {
+  background-color: var(--color-grey-hover);
+}
+
 /* ----------------------------------------
    1-UP SECTION
    ---------------------------------------- */
@@ -185,14 +203,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__one-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: var(--color-black);
+  background-color: var(--color-black) !important;
   color: var(--color-white) !important;
   text-align: center;
   padding: 0.9375rem;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
   margin-top: 0.5rem;
@@ -251,14 +269,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__two-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: var(--color-black);
+  background-color: var(--color-black) !important;
   color: var(--color-white) !important;
   text-align: center;
   padding: 0.9375rem;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -322,14 +340,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__three-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: var(--color-black);
+  background-color: var(--color-black) !important;
   color: var(--color-white) !important;
   text-align: center;
   padding: 0.9375rem;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -393,14 +411,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__four-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: var(--color-black);
+  background-color: var(--color-black) !important;
   color: var(--color-white) !important;
   text-align: center;
   padding: 0.9375rem;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -464,14 +482,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__five-up__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: var(--color-black);
+  background-color: var(--color-black) !important;
   color: var(--color-white) !important;
   text-align: center;
   padding: 0.9375rem;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -564,14 +582,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__two-by-two__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: var(--color-black);
+  background-color: var(--color-black) !important;
   color: var(--color-white) !important;
   text-align: center;
   padding: 0.9375rem;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }
@@ -634,14 +652,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__three-by-two__cta-btn {
-  display: block;
+  display: block !important;
   width: 100%;
-  background-color: var(--color-black);
+  background-color: var(--color-black) !important;
   color: var(--color-white) !important;
   text-align: center;
   padding: 0.9375rem;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.0625rem;
   transition: background-color 0.3s ease;
 }

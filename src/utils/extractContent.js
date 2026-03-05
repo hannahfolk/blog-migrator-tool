@@ -678,10 +678,15 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       })
     } else if (images.length > 0) {
       const img = images[0]
+      const links = content.links || []
       html += `
   <figure class="${prefix}__figure">
     <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}"${blendStyle(img)}>
   </figure>`
+      if (links.length > 0) {
+        html += `
+  <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${rewriteBlogUrl(links[0].href)}">${links[0].text}</a>`
+      }
     }
   }
 

@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Copy, Check } from 'lucide-react'
-import { BLOG_CSS, PREVIEW_CSS } from '../../constants'
+import { BLOG_CSS, PREVIEW_CSS, rewriteImageCdnForOutput } from '../../constants'
 import { copyToClipboard } from '../../utils'
+import { transformHtmlImages } from '../../utils/csvExport'
 
 export function OutputStep({
   selections,
@@ -13,10 +14,14 @@ export function OutputStep({
   const [activeTab, setActiveTab] = useState('html')
   const [copiedHtml, setCopiedHtml] = useState(false)
   const [copiedCss, setCopiedCss] = useState(false)
+  const [env, setEnv] = useState('staging')
   const outputPreviewRef = useRef(null)
 
+  // Transform WordPress image URLs for the current env
+  const outputHtml = rewriteImageCdnForOutput(transformHtmlImages(generatedHtml, env))
+
   const handleCopy = async (type) => {
-    const text = type === 'html' ? generatedHtml : BLOG_CSS
+    const text = type === 'html' ? outputHtml : BLOG_CSS
     const success = await copyToClipboard(text)
     if (success) {
       if (type === 'html') {
@@ -37,7 +42,23 @@ export function OutputStep({
             <button onClick={onReset} className="text-zinc-500 hover:text-white text-sm">← Start New</button>
             <button onClick={onBackToMapping} className="text-zinc-500 hover:text-white text-sm">← Back to Mapping</button>
           </div>
-          <span className="text-sm text-zinc-400">{selections.length} sections generated</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center bg-zinc-800 rounded-lg overflow-hidden text-sm">
+              <button
+                onClick={() => setEnv('staging')}
+                className={`px-3 py-1.5 font-medium transition-colors ${env === 'staging' ? 'bg-indigo-600 text-white' : 'text-zinc-400 hover:text-white'}`}
+              >
+                Staging
+              </button>
+              <button
+                onClick={() => setEnv('production')}
+                className={`px-3 py-1.5 font-medium transition-colors ${env === 'production' ? 'bg-indigo-600 text-white' : 'text-zinc-400 hover:text-white'}`}
+              >
+                Production
+              </button>
+            </div>
+            <span className="text-sm text-zinc-400">{selections.length} sections generated</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">

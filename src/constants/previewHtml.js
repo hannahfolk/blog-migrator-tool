@@ -12,6 +12,7 @@ export const PREVIEW_HTML = {
   <figure class="blog__full-width__figure">
     <img class="blog__full-width__image" src="${PLACEHOLDER_IMG(1200, 500, 'Full Width Image')}" alt="Placeholder image">
   </figure>
+  <a class="blog__full-width__cta-btn fp-font-weight--semibold" href="#">Call to Action Button</a>
 </div>`,
 
   oneUp: `<div class="blog__one-up">

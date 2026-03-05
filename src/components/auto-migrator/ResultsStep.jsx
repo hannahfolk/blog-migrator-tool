@@ -73,7 +73,7 @@ export function ResultsStep({ results, onStartOver }) {
 
         {/* Rows */}
         {results.map((post, i) => (
-          <PostDetailRow key={i} post={post} index={i} />
+          <PostDetailRow key={i} post={post} index={i} env={env} />
         ))}
 
         {results.length === 0 && (
