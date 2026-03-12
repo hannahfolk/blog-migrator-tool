@@ -223,8 +223,39 @@ export function SectionForm({ section, onChange }) {
                   value={section.ctas?.[i]?.href || ''}
                   onChange={(href) => updateCta(i, 'href', href)}
                 />
+                <div>
+                  <label className="block text-[10px] font-medium text-zinc-500 mb-1">Style</label>
+                  <select
+                    value={section.ctas?.[i]?.style || 'solid-black'}
+                    onChange={(e) => updateCta(i, 'style', e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="outline">Outline</option>
+                    <option value="solid-black">Solid Black</option>
+                    <option value="solid-white">Solid White</option>
+                    <option value="solid-pink">Solid Pink</option>
+                  </select>
+                </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Table */}
+      {section.blockType === 'table' && (
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">
+            Table HTML
+          </label>
+          <div className="space-y-2 bg-zinc-800/50 rounded-lg p-3">
+            <textarea
+              value={section.tableHtml || ''}
+              onChange={(e) => updateField('tableHtml', e.target.value)}
+              placeholder="Paste <table>...</table> HTML here"
+              rows={8}
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 font-mono"
+            />
           </div>
         </div>
       )}

@@ -102,6 +102,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
     lists: [],
     videos: [],
     hotspots: [], // Hotspot sections with image + clickable areas
+    tables: [],
     rawHtml: ''
   }
 
@@ -357,7 +358,7 @@ export function extractContentFromRect(containerEl, selectionRect) {
   })
 
   // Find all relevant elements (excluding those already in hotspots)
-  const allElements = contentEl.querySelectorAll('h1, h2, h3, h4, h5, h6, p, img, a, ul, ol, iframe, video, figure, figcaption, blockquote')
+  const allElements = contentEl.querySelectorAll('h1, h2, h3, h4, h5, h6, p, img, a, ul, ol, iframe, video, figure, figcaption, blockquote, table')
 
   // Check each element to see if its center is within the selection
   allElements.forEach(el => {
@@ -496,6 +497,11 @@ export function extractContentFromRect(containerEl, selectionRect) {
         })
       }
     }
+
+    // Tables
+    if (tagName === 'table') {
+      content.tables.push({ html: el.outerHTML })
+    }
   })
 
   // Supplemental pass: capture text from non-standard elements (span, div, etc.)
@@ -558,6 +564,20 @@ function generateHotspotHtml(hotspot) {
 </div>`
 
   return html
+}
+
+/**
+ * Clean table HTML by stripping inline styles, classes, and width attributes
+ * so the output table is clean and styled only by blog CSS.
+ */
+function cleanTableHtml(html) {
+  if (!html) return html
+  return html
+    .replace(/\s+class="[^"]*"/gi, '')
+    .replace(/\s+style="[^"]*"/gi, '')
+    .replace(/\s+width="[^"]*"/gi, '')
+    // Normalize whitespace
+    .replace(/>\s+</g, '>\n    <')
 }
 
 /**
@@ -670,7 +690,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
   const images = content.images || []
   const hotspots = content.hotspots || []
 
-  const blendStyle = (img) => img.blendDarken ? ' style="mix-blend-mode: darken;"' : ''
+
 
   // For fullWidth and oneUp, prefer hotspots if available, otherwise use regular images
   if (blockType === 'fullWidth') {
@@ -684,11 +704,11 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       const links = content.links || []
       html += `
   <figure class="${prefix}__figure">
-    <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}"${blendStyle(img)}>
+    <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">
   </figure>`
       if (links.length > 0) {
         html += `
-  <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${rewriteBlogUrl(links[0].href)}">${links[0].text}</a>`
+  <a class="${prefix}__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="${rewriteBlogUrl(links[0].href)}">${links[0].text}</a>`
       }
     }
   }
@@ -705,14 +725,14 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       const links = content.links || []
       html += `
   <figure class="${prefix}__figure">
-    <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}"${blendStyle(img)}>`
+    <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">`
       if (captionText) {
         html += `
     <figcaption class="${prefix}__label">${captionText}</figcaption>`
       }
       if (links.length > 0) {
         html += `
-    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${rewriteBlogUrl(links[0].href)}">${links[0].text}</a>`
+    <a class="${prefix}__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="${rewriteBlogUrl(links[0].href)}">${links[0].text}</a>`
       }
       html += `
   </figure>`
@@ -737,7 +757,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
         const captionText = img.caption || ''
         html += `
     <figure class="${prefix}__item">
-      <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}"${blendStyle(img)}>`
+      <img class="${prefix}__image" src="${img.src}" alt="${img.alt || ''}">`
         if (captionText) {
           html += `
       <figcaption class="${prefix}__label">${captionText}</figcaption>`
@@ -745,7 +765,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
         // Add individual CTA if we have one for each image
         if (hasIndividualCTAs && links[i]) {
           html += `
-      <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${rewriteBlogUrl(links[i].href)}">${links[i].text}</a>`
+      <a class="${prefix}__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="${rewriteBlogUrl(links[i].href)}">${links[i].text}</a>`
         }
         html += `
     </figure>`
@@ -760,7 +780,7 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
       const ctaLink = links[0]
       html += `
   <div class="${prefix}__cta">
-    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${rewriteBlogUrl(ctaLink.href)}">${ctaLink.text}</a>
+    <a class="${prefix}__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="${rewriteBlogUrl(ctaLink.href)}">${ctaLink.text}</a>
   </div>`
     }
   }
@@ -781,6 +801,17 @@ export function generateSectionHtml(selection, blockType, blockConfig) {
     </iframe>
   </div>`
     }
+  }
+
+  // Table - include table HTML
+  if (blockType === 'table') {
+    const tables = content.tables || []
+    tables.forEach(table => {
+      html += `
+  <div class="${prefix}__wrapper">
+    ${cleanTableHtml(table.html)}
+  </div>`
+    })
   }
 
   // Rich text - include hotspots if present

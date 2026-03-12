@@ -8,7 +8,7 @@ export const HTML_TEMPLATES = {
   <figure class="blog__full-width__figure">
     <img class="blog__full-width__image" src="image-url.jpg" alt="Image description">
   </figure>
-  <a class="blog__full-width__cta-btn fp-font-weight--semibold" href="link-url" target="_blank" rel="noopener noreferrer">Call to Action</a>
+  <a class="blog__full-width__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="link-url" target="_blank" rel="noopener noreferrer">Call to Action</a>
 </div>`,
 
   oneUp: `<div class="blog__one-up">
@@ -25,7 +25,7 @@ export const HTML_TEMPLATES = {
   <figure class="blog__one-up__figure">
     <img class="blog__one-up__image" src="image-url.jpg" alt="Image description">
     <figcaption class="blog__one-up__label">Image Label</figcaption>
-    <a class="blog__one-up__cta-btn fp-font-weight--semibold" href="link-url" target="_blank" rel="noopener noreferrer">Call to Action</a>
+    <a class="blog__one-up__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="link-url" target="_blank" rel="noopener noreferrer">Call to Action</a>
   </figure>
 </div>`,
 
@@ -47,7 +47,7 @@ export const HTML_TEMPLATES = {
     </figure>
   </div>
   <div class="blog__two-up__cta">
-    <a class="blog__two-up__cta-btn" href="#">Shop Now</a>
+    <a class="blog__two-up__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="#">Shop Now</a>
   </div>
 </div>`,
 
@@ -76,7 +76,7 @@ export const HTML_TEMPLATES = {
     </figure>
   </div>
   <div class="blog__three-up__cta">
-    <a class="blog__three-up__cta-btn" href="#">Shop Now</a>
+    <a class="blog__three-up__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="#">Shop Now</a>
   </div>
 </div>`,
 
@@ -123,7 +123,7 @@ export const HTML_TEMPLATES = {
     </figure>
   </div>
   <div class="blog__four-up__cta">
-    <a class="blog__four-up__cta-btn" href="#">Shop Now</a>
+    <a class="blog__four-up__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="#">Shop Now</a>
   </div>
 </div>`,
 
@@ -155,7 +155,7 @@ export const HTML_TEMPLATES = {
     </figure>
   </div>
   <div class="blog__five-up__cta">
-    <a class="blog__five-up__cta-btn" href="#">Shop Now</a>
+    <a class="blog__five-up__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="#">Shop Now</a>
   </div>
 </div>`,
 
@@ -183,7 +183,7 @@ export const HTML_TEMPLATES = {
     </figure>
   </div>
   <div class="blog__two-by-two__cta">
-    <a class="blog__two-by-two__cta-btn" href="#">Shop Now</a>
+    <a class="blog__two-by-two__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="#">Shop Now</a>
   </div>
 </div>`,
 
@@ -219,7 +219,7 @@ export const HTML_TEMPLATES = {
     </figure>
   </div>
   <div class="blog__three-by-two__cta">
-    <a class="blog__three-by-two__cta-btn" href="#">Shop Now</a>
+    <a class="blog__three-by-two__cta-btn blog-btn--solid-black fp-font-weight--semibold" href="#">Shop Now</a>
   </div>
 </div>`,
 
@@ -244,6 +244,45 @@ export const HTML_TEMPLATES = {
   authorByline: `<div class="blog__author-byline">
   <p class="blog__author-byline__text"><span class="blog__author-byline__prefix">By: </span>Author Name</p>
   <p class="blog__author-byline__title">Staff Writer, FASHIONPHILE</p>
+</div>`,
+
+  table: `<div class="blog__table">
+  <h2 class="blog__table__heading">Size Conversion Chart</h2>
+  <div class="blog__table__body">
+    <p>Use the chart below to find your size across regions.</p>
+  </div>
+  <div class="blog__table__wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>US</th>
+          <th>UK</th>
+          <th>EU</th>
+          <th>JP (cm)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>5</td>
+          <td>2</td>
+          <td>35</td>
+          <td>22</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>3</td>
+          <td>36</td>
+          <td>23</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>4</td>
+          <td>37</td>
+          <td>24</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>`,
 
   richText: `<div class="blog__rich-text">

@@ -135,10 +135,74 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 /* ----------------------------------------
+   SHARED IMAGE STYLES
+   ---------------------------------------- */
+[class*="__image"] {
+  filter: brightness(0.95);
+}
+
+/* ----------------------------------------
+   BUTTON VARIANTS
+   Default (outline): transparent bg, black border, black text
+   Solid: black, white, or pink bg with hover inversion
+   ---------------------------------------- */
+[class*="__cta-btn"] {
+  display: block !important;
+  width: 100%;
+  text-align: center;
+  padding: 0.9375rem;
+  text-transform: capitalize;
+  text-decoration: none !important;
+  letter-spacing: 0.0625rem;
+  border: 0.0625rem solid var(--color-black);
+  background-color: transparent;
+  color: var(--color-black);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+[class*="__cta-btn"]:hover {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+[class*="__cta-btn"].blog-btn--solid-black {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border-color: var(--color-black);
+}
+
+[class*="__cta-btn"].blog-btn--solid-black:hover {
+  background-color: transparent;
+  color: var(--color-black);
+}
+
+[class*="__cta-btn"].blog-btn--solid-white {
+  background-color: var(--color-white);
+  color: var(--color-black);
+  border-color: var(--color-white);
+}
+
+[class*="__cta-btn"].blog-btn--solid-white:hover {
+  background-color: transparent;
+  color: var(--color-black);
+}
+
+[class*="__cta-btn"].blog-btn--solid-pink {
+  background-color: var(--color-pink);
+  color: var(--color-white);
+  border-color: var(--color-pink);
+}
+
+[class*="__cta-btn"].blog-btn--solid-pink:hover {
+  background-color: transparent;
+  color: var(--color-black);
+}
+
+/* ----------------------------------------
    FULL WIDTH SECTION
    ---------------------------------------- */
 .blog__full-width {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__full-width__heading {
@@ -161,28 +225,15 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__full-width__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: var(--color-black) !important;
-  color: var(--color-white) !important;
-  text-align: center;
-  padding: 0.9375rem;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
   margin-top: 0.5rem;
 }
 
-.blog__full-width__cta-btn:hover {
-  background-color: var(--color-grey-hover);
-}
 
 /* ----------------------------------------
    1-UP SECTION
    ---------------------------------------- */
 .blog__one-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__one-up__heading {
@@ -194,8 +245,8 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__one-up__figure {
-  margin: 0 auto;
-  text-align: center;
+  margin: 0;
+  text-align: left;
   max-width: 50%;
 }
 
@@ -218,28 +269,15 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 .blog__one-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: var(--color-black) !important;
-  color: var(--color-white) !important;
-  text-align: center;
-  padding: 0.9375rem;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
   margin-top: 0.5rem;
 }
 
-.blog__one-up__cta-btn:hover {
-  background-color: var(--color-grey-hover);
-}
 
 /* ----------------------------------------
    2-UP SECTION
    ---------------------------------------- */
 .blog__two-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__two-up__heading {
@@ -283,22 +321,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-.blog__two-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: var(--color-black) !important;
-  color: var(--color-white) !important;
-  text-align: center;
-  padding: 0.9375rem;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__two-up__cta-btn:hover {
-  background-color: var(--color-grey-hover);
-}
 
 @media screen and (max-width: 767px) {
   .blog__two-up__grid {
@@ -310,7 +332,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    3-UP SECTION
    ---------------------------------------- */
 .blog__three-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__three-up__heading {
@@ -354,22 +376,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-.blog__three-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: var(--color-black) !important;
-  color: var(--color-white) !important;
-  text-align: center;
-  padding: 0.9375rem;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__three-up__cta-btn:hover {
-  background-color: var(--color-grey-hover);
-}
 
 @media screen and (max-width: 767px) {
   .blog__three-up__grid {
@@ -381,7 +387,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    4-UP SECTION
    ---------------------------------------- */
 .blog__four-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__four-up__heading {
@@ -425,22 +431,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-.blog__four-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: var(--color-black) !important;
-  color: var(--color-white) !important;
-  text-align: center;
-  padding: 0.9375rem;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__four-up__cta-btn:hover {
-  background-color: var(--color-grey-hover);
-}
 
 @media screen and (max-width: 767px) {
   .blog__four-up__grid {
@@ -452,7 +442,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    5-UP SECTION
    ---------------------------------------- */
 .blog__five-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__five-up__heading {
@@ -496,22 +486,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-.blog__five-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: var(--color-black) !important;
-  color: var(--color-white) !important;
-  text-align: center;
-  padding: 0.9375rem;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__five-up__cta-btn:hover {
-  background-color: var(--color-grey-hover);
-}
 
 @media screen and (max-width: 767px) {
   .blog__five-up__grid {
@@ -523,7 +497,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    VIDEO SECTION
    ---------------------------------------- */
 .blog__video {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__video__heading {
@@ -554,7 +528,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    2 x 2 SECTION
    ---------------------------------------- */
 .blog__two-by-two {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__two-by-two__heading {
@@ -596,22 +570,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-.blog__two-by-two__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: var(--color-black) !important;
-  color: var(--color-white) !important;
-  text-align: center;
-  padding: 0.9375rem;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__two-by-two__cta-btn:hover {
-  background-color: var(--color-grey-hover);
-}
 
 @media screen and (max-width: 767px) {
   .blog__two-by-two__grid {
@@ -623,7 +581,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    3 x 2 SECTION
    ---------------------------------------- */
 .blog__three-by-two {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__three-by-two__heading {
@@ -666,22 +624,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-.blog__three-by-two__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: var(--color-black) !important;
-  color: var(--color-white) !important;
-  text-align: center;
-  padding: 0.9375rem;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
 
-.blog__three-by-two__cta-btn:hover {
-  background-color: var(--color-grey-hover);
-}
 
 @media screen and (max-width: 767px) {
   .blog__three-by-two__grid {
@@ -699,7 +642,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    RICH TEXT SECTION
    ---------------------------------------- */
 .blog__rich-text {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__rich-text__heading {
@@ -708,6 +651,55 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 
 .blog__rich-text__body {
   /* Inherits shared rich text styles */
+}
+
+/* ----------------------------------------
+   TABLE SECTION
+   ---------------------------------------- */
+.blog__table {
+  margin-bottom: 2.5rem;
+}
+
+.blog__table__heading {
+  margin-bottom: 1rem;
+}
+
+.blog__table__body {
+  margin-bottom: 1.5rem;
+}
+
+.blog__table__wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.blog__table__wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.blog__table__wrapper th,
+.blog__table__wrapper td {
+  border: 0.0625rem solid var(--color-grey-2);
+  padding: 0.4375rem 0.1875rem;
+}
+
+.blog__table__wrapper th {
+  background-color: #F9EEF3;
+  color: var(--color-black);
+}
+
+.blog__table__wrapper tbody {
+  background-color: var(--color-white);
+}
+
+@media screen and (min-width: 768px) {
+  .blog__table__wrapper th,
+  .blog__table__wrapper td {
+    padding: 0.5rem 0.625rem 0.625rem;
+  }
 }
 
 /* ----------------------------------------
@@ -723,7 +715,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    AUTHOR BYLINE SECTION
    ---------------------------------------- */
 .blog__author-byline {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__author-byline__text {
@@ -747,7 +739,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 .blog__hotspot {
   width: 100%;
   max-width: 62.5rem;
-  margin: 0 auto 1.875rem;
+  margin: 0 auto 2.5rem;
   display: block;
 }
 

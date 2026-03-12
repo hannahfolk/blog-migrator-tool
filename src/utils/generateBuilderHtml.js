@@ -203,6 +203,12 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
 }
 
+function ctaBtnClass(prefix, cta) {
+  const style = cta?.style || 'solid-black'
+  const variant = style !== 'outline' ? ` blog-btn--${style}` : ''
+  return `${prefix}__cta-btn${variant} fp-font-weight--semibold`
+}
+
 function getValidHotspots(img) {
   return (img.hotspots || []).filter(h => h.href && h.label)
 }
@@ -284,7 +290,7 @@ export function generateBuilderSectionHtml(section) {
         parts.push(`  </figure>`)
       }
       if (section.ctas?.[0]?.text && section.ctas?.[0]?.href) {
-        parts.push(`  <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${escapeHtml(section.ctas[0].href)}">${escapeHtml(section.ctas[0].text)}</a>`)
+        parts.push(`  <a class="${ctaBtnClass(prefix, section.ctas[0])}" href="${escapeHtml(section.ctas[0].href)}">${escapeHtml(section.ctas[0].text)}</a>`)
       }
       break
 
@@ -298,7 +304,7 @@ export function generateBuilderSectionHtml(section) {
           parts.push(`    <figcaption class="${prefix}__label">${escapeHtml(section.images[0].label)}</figcaption>`)
         }
         if (section.ctas?.[0]?.text && section.ctas?.[0]?.href) {
-          parts.push(`    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${escapeHtml(section.ctas[0].href)}">${escapeHtml(section.ctas[0].text)}</a>`)
+          parts.push(`    <a class="${ctaBtnClass(prefix, section.ctas[0])}" href="${escapeHtml(section.ctas[0].href)}">${escapeHtml(section.ctas[0].text)}</a>`)
         }
         parts.push(`  </figure>`)
       }
@@ -326,7 +332,7 @@ export function generateBuilderSectionHtml(section) {
               parts.push(`      <figcaption class="${prefix}__label">${escapeHtml(img.label)}</figcaption>`)
             }
             if (hasPerImageCtas && ctas[i]) {
-              parts.push(`      <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${escapeHtml(ctas[i].href)}">${escapeHtml(ctas[i].text)}</a>`)
+              parts.push(`      <a class="${ctaBtnClass(prefix, ctas[i])}" href="${escapeHtml(ctas[i].href)}">${escapeHtml(ctas[i].text)}</a>`)
             }
             parts.push(`    </figure>`)
           }
@@ -336,7 +342,7 @@ export function generateBuilderSectionHtml(section) {
       // Single CTA spans full width
       if (ctas.length === 1) {
         parts.push(`  <div class="${prefix}__cta">`)
-        parts.push(`    <a class="${prefix}__cta-btn fp-font-weight--semibold" href="${escapeHtml(ctas[0].href)}">${escapeHtml(ctas[0].text)}</a>`)
+        parts.push(`    <a class="${ctaBtnClass(prefix, ctas[0])}" href="${escapeHtml(ctas[0].href)}">${escapeHtml(ctas[0].text)}</a>`)
         parts.push(`  </div>`)
       }
       break
@@ -354,6 +360,15 @@ export function generateBuilderSectionHtml(section) {
         parts.push(`      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"`)
         parts.push(`      allowfullscreen>`)
         parts.push(`    </iframe>`)
+        parts.push(`  </div>`)
+      }
+      break
+
+    case 'table':
+      if (section.tableHtml?.trim()) {
+        parts.push(`  <div class="${prefix}__wrapper">`)
+        const indentedTable = section.tableHtml.trim().split('\n').map(line => `    ${line}`).join('\n')
+        parts.push(indentedTable)
         parts.push(`  </div>`)
       }
       break

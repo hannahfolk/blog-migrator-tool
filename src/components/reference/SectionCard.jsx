@@ -23,6 +23,7 @@ export function SectionCard({ id, sectionKey, section }) {
       twoByTwo: '2 x 2 SECTION',
       threeByTwo: '3 x 2 SECTION',
       richText: 'RICH TEXT SECTION',
+      table: 'TABLE SECTION',
       hotspot: 'HOTSPOT SECTION',
       authorByline: 'AUTHOR BYLINE SECTION',
     }
@@ -90,6 +91,7 @@ export function SectionCard({ id, sectionKey, section }) {
             ...(sectionKey === 'fiveUp' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
             ...(sectionKey === 'twoByTwo' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
             ...(sectionKey === 'threeByTwo' ? ['__grid', '__item', '__image', '__label', '__cta', '__cta-btn'] : []),
+            ...(sectionKey === 'table' ? ['__wrapper'] : []),
             ...(sectionKey === 'hotspot' ? ['__inner', '__image', '__item', '__marker', '__label'] : []),
             ...(sectionKey === 'authorByline' ? ['__text', '__prefix', '__title'] : []),
           ].map((suffix, idx) => (

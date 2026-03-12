@@ -179,7 +179,7 @@ export function detectSections(contentEl, headingCtx) {
         // into the wrapper's children for better section detection.
         if (!className.includes('vc_inner')) {
           const wrapperEl = getFullWidthWrapperEl(el)
-          if (wrapperEl && wrapperEl.querySelector('.wpb_row, .wpb_text_column')) {
+          if (wrapperEl && (wrapperEl.querySelector('.wpb_row, .wpb_text_column') || wrapperEl.querySelector('table'))) {
             emitSection()
             const innerSections = detectSections(wrapperEl, headingCtx)
             // If recursion produced a single link-only section, attach to previous section
@@ -213,7 +213,7 @@ export function detectSections(contentEl, headingCtx) {
         const rowResult = processWpbRow(el, headingCtx)
         if (rowResult) {
           // If this row only has headings or body text, merge into accumulator
-          if (rowResult.images.length === 0 && rowResult.links.length === 0 && rowResult.videos.length === 0) {
+          if (rowResult.images.length === 0 && rowResult.links.length === 0 && rowResult.videos.length === 0 && (rowResult.tables || []).length === 0) {
             if (rowResult.headings.length > 0) {
               emitSection()
               current.headings.push(...rowResult.headings)
@@ -223,7 +223,7 @@ export function detectSections(contentEl, headingCtx) {
             }
             current.paragraphs.push(...rowResult.paragraphs)
             current.lists.push(...rowResult.lists)
-          } else if (rowResult.images.length === 0 && rowResult.links.length > 0) {
+          } else if (rowResult.images.length === 0 && rowResult.links.length > 0 && (rowResult.tables || []).length === 0) {
             // Row with only buttons — attach to current section or previous section
             if (hasContent(current)) {
               current.links.push(...rowResult.links)
@@ -237,7 +237,7 @@ export function detectSections(contentEl, headingCtx) {
               current.links.push(...rowResult.links)
             }
           } else {
-            // Row with images/video — emit previous and create a new section
+            // Row with images/video/tables — emit previous and create a new section
             emitSection()
             current.headings = rowResult.headings
             current.paragraphs = rowResult.paragraphs
@@ -245,6 +245,7 @@ export function detectSections(contentEl, headingCtx) {
             current.links = rowResult.links
             current.lists = rowResult.lists
             current.videos = rowResult.videos
+            current.tables = rowResult.tables || []
             current.columnHint = rowResult.columnHint
             if (rowResult.headings[0]?._isSectionBoundary) {
               current._isSectionBoundary = true
@@ -366,6 +367,7 @@ export function detectSections(contentEl, headingCtx) {
       const innerImgs = extractImagesFromElement(el)
       const innerParas = extractParagraphsFromElement(el)
       const innerLinks = extractButtonsFromElement(el)
+      const innerTables = extractTablesFromElement(el)
       const headingResult = extractHeadingsFromElement(el, headingCtx)
       const innerHeadings = headingResult.headings
       const boldParas = headingResult.boldParagraphs
@@ -385,6 +387,7 @@ export function detectSections(contentEl, headingCtx) {
       }
       current.paragraphs.push(...innerParas)
       current.links.push(...innerLinks)
+      current.tables.push(...innerTables)
       continue
     }
 
@@ -413,6 +416,12 @@ export function detectSections(contentEl, headingCtx) {
       if (img) {
         handleImageBoundary(img)
       }
+      continue
+    }
+
+    // --- <table> → standalone table section ---
+    if (tag === 'table') {
+      current.tables.push({ html: el.outerHTML })
       continue
     }
 
@@ -545,6 +554,7 @@ export function detectSections(contentEl, headingCtx) {
       lists: current.lists,
       videos: current.videos,
       hotspots: current.hotspots || [],
+      tables: current.tables || [],
     }
 
     const blockType = determineBlockType(content, current.columnHint)
@@ -596,16 +606,17 @@ function processWpbRow(rowEl, headingCtx) {
   const links = extractButtonsFromElement(rowEl)
   const lists = extractListsFromElement(rowEl)
   const videos = extractVideosFromElement(rowEl)
+  const tables = extractTablesFromElement(rowEl)
 
   if (images.length === 0 && paragraphs.length === 0 && headings.length === 0 &&
-      links.length === 0 && lists.length === 0 && videos.length === 0) {
+      links.length === 0 && lists.length === 0 && videos.length === 0 && tables.length === 0) {
     return null
   }
 
   // Determine column layout from WPBakery column classes
   const columnHint = detectColumnLayout(rowEl)
 
-  return { images, paragraphs, headings, links, lists, videos, columnHint }
+  return { images, paragraphs, headings, links, lists, videos, tables, columnHint }
 }
 
 /**
@@ -662,6 +673,7 @@ function createEmptyAccumulator() {
     lists: [],
     videos: [],
     hotspots: [],
+    tables: [],
     columnHint: 0,
   }
 }
@@ -675,6 +687,7 @@ function createEmptyContent() {
     lists: [],
     videos: [],
     hotspots: [],
+    tables: [],
   }
 }
 
@@ -698,7 +711,8 @@ function hasContent(acc) {
     acc.links.length > 0 ||
     acc.lists.length > 0 ||
     acc.videos.length > 0 ||
-    acc.hotspots?.length > 0
+    acc.hotspots?.length > 0 ||
+    acc.tables?.length > 0
   )
 }
 
@@ -713,7 +727,10 @@ function determineBlockType(content, columnHint) {
   const hasBody = content.paragraphs.length > 0 || content.lists.length > 0
   const hasVideo = content.videos.length > 0
 
+  const hasTables = content.tables?.length > 0
+
   if (hasVideo) return 'video'
+  if (hasTables) return 'table'
   if (imageCount === 0) return 'richText'
 
   // Use column hint from page builder if available
@@ -786,7 +803,6 @@ function extractImagesFromElement(container) {
         alt: img.getAttribute('alt') || '',
         caption: captionEl?.textContent?.trim() || '',
         className: img.className || '',
-        blendDarken: !!singleImageWrapper,
       })
     }
   })
@@ -885,6 +901,14 @@ function extractListsFromElement(container) {
     }
   })
   return lists
+}
+
+function extractTablesFromElement(container) {
+  const tables = []
+  container.querySelectorAll('table').forEach(el => {
+    tables.push({ html: el.outerHTML })
+  })
+  return tables
 }
 
 function extractVideosFromElement(container) {

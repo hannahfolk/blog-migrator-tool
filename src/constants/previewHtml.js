@@ -246,6 +246,37 @@ export const PREVIEW_HTML = {
   <p class="blog__author-byline__title">Staff Writer, FASHIONPHILE</p>
 </div>`,
 
+  table: `<div class="blog__table">
+  <h2 class="blog__table__heading">Women's International Shoe Size Conversion Chart</h2>
+  <div class="blog__table__body">
+    <p>Use the chart below to find your perfect size across international sizing systems.</p>
+  </div>
+  <div class="blog__table__wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>US</th>
+          <th>UK</th>
+          <th>FR</th>
+          <th>IT/EU</th>
+          <th>AU</th>
+          <th>KR (mm)</th>
+          <th>JP (cm)</th>
+          <th>MX</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>5</td><td>2</td><td>36</td><td>35</td><td>4.5</td><td>220</td><td>22</td><td>3</td></tr>
+        <tr><td>6</td><td>3</td><td>37</td><td>36</td><td>5.5</td><td>230</td><td>23</td><td>4</td></tr>
+        <tr><td>7</td><td>4</td><td>38</td><td>37</td><td>6.5</td><td>240</td><td>24</td><td>5</td></tr>
+        <tr><td>8</td><td>5</td><td>39</td><td>38</td><td>7.5</td><td>250</td><td>25</td><td>6</td></tr>
+        <tr><td>9</td><td>6</td><td>40</td><td>39</td><td>8.5</td><td>260</td><td>26</td><td>7</td></tr>
+        <tr><td>10</td><td>7</td><td>41</td><td>40</td><td>9.5</td><td>270</td><td>27</td><td>8</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>`,
+
   richText: `<div class="blog__rich-text">
   <h2 class="blog__rich-text__heading">Excepteur Sint Occaecat</h2>
   <div class="blog__rich-text__body">
@@ -305,4 +336,7 @@ hr { border: none; border-top: 0.0625rem solid ${t.colorGrey2}; margin: 1.5em 0;
 img { max-width: 100%; height: auto; }
 .row.wpb_row.row-fluid { margin-bottom: 2rem; }
 a.btn { display: inline-block; background-color: ${t.colorBlack}; color: ${t.colorWhite}; text-align: center; padding: ${t.headerFontBody}; text-transform: uppercase; text-decoration: none; letter-spacing: 0.0625rem; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 1em; text-align: center; }
+th, td { border: 1px solid ${t.colorGrey2}; padding: 7px 3px; }
+th { background-color: #F9EEF3; color: ${t.colorBlack}; font-weight: ${t.fontWeightSemibold}; }
 </style>`

@@ -1,4 +1,4 @@
-import { Image, Layout, Play, LayoutGrid, FileText, Target, Minus, PenLine } from 'lucide-react'
+import { Image, Layout, Play, LayoutGrid, FileText, Target, Minus, PenLine, Table } from 'lucide-react'
 
 export const FIGMA_BLOCKS = {
   fullWidth: {
@@ -116,6 +116,15 @@ export const FIGMA_BLOCKS = {
     hasImages: false,
     hasCTA: false,
     prefix: 'blog__divider'
+  },
+  table: {
+    label: 'Table',
+    icon: Table,
+    color: '#22d3ee',
+    description: 'Heading + body + data table',
+    hasImages: false,
+    hasCTA: false,
+    prefix: 'blog__table'
   },
   authorByline: {
     label: 'Author Byline',

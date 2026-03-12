@@ -166,6 +166,70 @@ export const BLOG_CSS = `/* ============================================
 }
 
 /* ----------------------------------------
+   SHARED IMAGE STYLES
+   ---------------------------------------- */
+[class*="__image"] {
+  filter: brightness(0.95);
+}
+
+/* ----------------------------------------
+   BUTTON VARIANTS
+   Default (outline): transparent bg, black border, black text
+   Solid: black, white, or pink bg with hover inversion
+   ---------------------------------------- */
+[class*="__cta-btn"] {
+  display: block !important;
+  width: 100%;
+  text-align: center;
+  padding: ${t.headerFontBody};
+  text-transform: capitalize;
+  text-decoration: none !important;
+  letter-spacing: 0.0625rem;
+  border: 0.0625rem solid ${t.colorBlack};
+  background-color: transparent;
+  color: ${t.colorBlack};
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+[class*="__cta-btn"]:hover {
+  background-color: ${t.colorBlack};
+  color: ${t.colorWhite};
+}
+
+[class*="__cta-btn"].blog-btn--solid-black {
+  background-color: ${t.colorBlack};
+  color: ${t.colorWhite};
+  border-color: ${t.colorBlack};
+}
+
+[class*="__cta-btn"].blog-btn--solid-black:hover {
+  background-color: transparent;
+  color: ${t.colorBlack};
+}
+
+[class*="__cta-btn"].blog-btn--solid-white {
+  background-color: ${t.colorWhite};
+  color: ${t.colorBlack};
+  border-color: ${t.colorWhite};
+}
+
+[class*="__cta-btn"].blog-btn--solid-white:hover {
+  background-color: transparent;
+  color: ${t.colorBlack};
+}
+
+[class*="__cta-btn"].blog-btn--solid-pink {
+  background-color: ${t.colorPink};
+  color: ${t.colorWhite};
+  border-color: ${t.colorPink};
+}
+
+[class*="__cta-btn"].blog-btn--solid-pink:hover {
+  background-color: transparent;
+  color: ${t.colorBlack};
+}
+
+/* ----------------------------------------
    HEADING SIZES BY TAG
    The HTML tag determines the font-size,
    regardless of which block it belongs to.
@@ -181,7 +245,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    FULL WIDTH SECTION
    ---------------------------------------- */
 .blog__full-width {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__full-width__heading {
@@ -205,28 +269,15 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__full-width__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: ${t.colorBlack} !important;
-  color: ${t.colorWhite} !important;
-  text-align: center;
-  padding: ${t.headerFontBody};
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
   margin-top: 0.5rem;
 }
 
-.blog__full-width__cta-btn:hover {
-  background-color: ${t.colorGrey8};
-}
 
 /* ----------------------------------------
    1-UP SECTION
    ---------------------------------------- */
 .blog__one-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__one-up__heading {
@@ -239,8 +290,8 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__one-up__figure {
-  margin: 0 auto;
-  text-align: center;
+  margin: 0;
+  text-align: left;
   max-width: 50%;
 }
 
@@ -264,28 +315,15 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 }
 
 .blog__one-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: ${t.colorBlack} !important;
-  color: ${t.colorWhite} !important;
-  text-align: center;
-  padding: ${t.headerFontBody};
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
   margin-top: 0.5rem;
 }
 
-.blog__one-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
-}
 
 /* ----------------------------------------
    2-UP SECTION
    ---------------------------------------- */
 .blog__two-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__two-up__heading {
@@ -331,22 +369,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   margin-top: 1.875rem;
 }
 
-.blog__two-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: ${t.colorBlack} !important;
-  color: ${t.colorWhite} !important;
-  text-align: center;
-  padding: ${t.headerFontBody};
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__two-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
-}
 
 @media screen and (max-width: 767px) {
   .blog__two-up__grid {
@@ -358,7 +380,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    3-UP SECTION
    ---------------------------------------- */
 .blog__three-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__three-up__heading {
@@ -404,22 +426,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   margin-top: 1.875rem;
 }
 
-.blog__three-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: ${t.colorBlack} !important;
-  color: ${t.colorWhite} !important;
-  text-align: center;
-  padding: ${t.headerFontBody};
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__three-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
-}
 
 @media screen and (max-width: 767px) {
   .blog__three-up__grid {
@@ -431,7 +437,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    4-UP SECTION
    ---------------------------------------- */
 .blog__four-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__four-up__heading {
@@ -477,22 +483,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   margin-top: 1.875rem;
 }
 
-.blog__four-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: ${t.colorBlack} !important;
-  color: ${t.colorWhite} !important;
-  text-align: center;
-  padding: ${t.headerFontBody};
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__four-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
-}
 
 @media screen and (max-width: 767px) {
   .blog__four-up__grid {
@@ -504,7 +494,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    5-UP SECTION
    ---------------------------------------- */
 .blog__five-up {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__five-up__heading {
@@ -550,22 +540,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   margin-top: 1.875rem;
 }
 
-.blog__five-up__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: ${t.colorBlack} !important;
-  color: ${t.colorWhite} !important;
-  text-align: center;
-  padding: ${t.headerFontBody};
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__five-up__cta-btn:hover {
-  background-color: ${t.colorGrey8};
-}
 
 @media screen and (max-width: 767px) {
   .blog__five-up__grid {
@@ -577,7 +551,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    VIDEO SECTION
    ---------------------------------------- */
 .blog__video {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__video__heading {
@@ -609,7 +583,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    2 x 2 SECTION
    ---------------------------------------- */
 .blog__two-by-two {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__two-by-two__heading {
@@ -653,22 +627,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   margin-top: 1.875rem;
 }
 
-.blog__two-by-two__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: ${t.colorBlack} !important;
-  color: ${t.colorWhite} !important;
-  text-align: center;
-  padding: ${t.headerFontBody};
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
-
-.blog__two-by-two__cta-btn:hover {
-  background-color: ${t.colorGrey8};
-}
 
 @media screen and (max-width: 767px) {
   .blog__two-by-two__grid {
@@ -680,7 +638,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    3 x 2 SECTION
    ---------------------------------------- */
 .blog__three-by-two {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__three-by-two__heading {
@@ -725,22 +683,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   margin-top: 1.875rem;
 }
 
-.blog__three-by-two__cta-btn {
-  display: block !important;
-  width: 100%;
-  background-color: ${t.colorBlack} !important;
-  color: ${t.colorWhite} !important;
-  text-align: center;
-  padding: ${t.headerFontBody};
-  text-transform: uppercase;
-  text-decoration: none !important;
-  letter-spacing: 0.0625rem;
-  transition: background-color 0.3s ease;
-}
 
-.blog__three-by-two__cta-btn:hover {
-  background-color: ${t.colorGrey8};
-}
 
 @media screen and (max-width: 767px) {
   .blog__three-by-two__grid {
@@ -758,7 +701,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    RICH TEXT SECTION
    ---------------------------------------- */
 .blog__rich-text {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__rich-text__heading {
@@ -768,6 +711,58 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 
 .blog__rich-text__body {
   /* Inherits shared rich text styles */
+}
+
+/* ----------------------------------------
+   TABLE SECTION
+   ---------------------------------------- */
+.blog__table {
+  margin-bottom: 2.5rem;
+}
+
+.blog__table__heading {
+  font-size: ${t.h4};
+  margin-bottom: ${t.h6};
+}
+
+.blog__table__body {
+  margin-bottom: ${t.h4};
+}
+
+.blog__table__wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.blog__table__wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.blog__table__wrapper th,
+.blog__table__wrapper td {
+  border: 0.0625rem solid ${t.colorGrey2};
+  padding: 0.4375rem 0.1875rem;
+  font-size: ${t.bodySm};
+}
+
+.blog__table__wrapper th {
+  background-color: #F9EEF3;
+  color: ${t.colorBlack};
+  font-weight: ${t.fontWeightSemibold};
+}
+
+.blog__table__wrapper tbody {
+  background-color: ${t.colorWhite};
+}
+
+@media screen and (min-width: 768px) {
+  .blog__table__wrapper th,
+  .blog__table__wrapper td {
+    padding: 0.5rem 0.625rem 0.625rem;
+  }
 }
 
 /* ----------------------------------------
@@ -783,7 +778,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
    AUTHOR BYLINE SECTION
    ---------------------------------------- */
 .blog__author-byline {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .blog__author-byline__text {
@@ -809,7 +804,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
 .blog__hotspot {
   width: 100%;
   max-width: 62.5rem;
-  margin: 0 auto 1.875rem;
+  margin: 0 auto 2.5rem;
   display: block;
 }
 
