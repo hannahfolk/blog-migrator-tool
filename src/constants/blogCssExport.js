@@ -116,11 +116,11 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 [class*="__body"] blockquote::before {
-  content: '\\201C';
+  content: "\\201C";
   position: absolute;
   left: -1rem;
   top: -1rem;
-  font-family: 'Simplon Norm', Georgia, serif;
+  font-family: "Simplon Norm", Georgia, serif;
   font-size: 8rem;
   line-height: var(--line-height-xs);
   color: var(--color-black);
@@ -143,24 +143,31 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 
 /* ----------------------------------------
    BUTTON VARIANTS
-   Default (outline): transparent bg, black border, black text
-   Solid: black, white, or pink bg with hover inversion
+   Base: shared layout styles only
+   Each variant explicitly defines its own colors + hover
    ---------------------------------------- */
 [class*="__cta-btn"] {
-  display: block !important;
+  display: block;
   width: 100%;
   text-align: center;
   padding: 0.9375rem;
   text-transform: capitalize;
-  text-decoration: none !important;
+  text-decoration: none;
   letter-spacing: 0.0625rem;
   border: 0.0625rem solid var(--color-black);
-  background-color: transparent;
-  color: var(--color-black);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
 }
 
-[class*="__cta-btn"]:hover {
+[class*="__cta-btn"].blog-btn--outline {
+  background-color: transparent;
+  color: var(--color-black);
+  border-color: var(--color-black);
+}
+
+[class*="__cta-btn"].blog-btn--outline:hover {
   background-color: var(--color-black);
   color: var(--color-white);
 }
@@ -228,7 +235,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 0.5rem;
 }
 
-
 /* ----------------------------------------
    1-UP SECTION
    ---------------------------------------- */
@@ -247,7 +253,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 .blog__one-up__figure {
   margin: 0;
   text-align: left;
-  max-width: 50%;
+  max-width: 100%;
 }
 
 .blog__one-up__image {
@@ -256,9 +262,9 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   display: block;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (min-width: 768px) {
   .blog__one-up__figure {
-    max-width: 100%;
+    max-width: 50%;
   }
 }
 
@@ -271,7 +277,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 .blog__one-up__cta-btn {
   margin-top: 0.5rem;
 }
-
 
 /* ----------------------------------------
    2-UP SECTION
@@ -290,7 +295,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 
 .blog__two-up__grid {
   display: flex;
+  flex-direction: column;
   gap: 1.875rem;
+}
+
+@media screen and (min-width: 768px) {
+  .blog__two-up__grid {
+    flex-direction: row;
+  }
 }
 
 .blog__two-up__item {
@@ -321,13 +333,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-
-@media screen and (max-width: 767px) {
-  .blog__two-up__grid {
-    flex-direction: column;
-  }
-}
-
 /* ----------------------------------------
    3-UP SECTION
    ---------------------------------------- */
@@ -345,7 +350,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 
 .blog__three-up__grid {
   display: flex;
+  flex-direction: column;
   gap: 1.875rem;
+}
+
+@media screen and (min-width: 768px) {
+  .blog__three-up__grid {
+    flex-direction: row;
+  }
 }
 
 .blog__three-up__item {
@@ -376,13 +388,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-
-@media screen and (max-width: 767px) {
-  .blog__three-up__grid {
-    flex-direction: column;
-  }
-}
-
 /* ----------------------------------------
    4-UP SECTION
    ---------------------------------------- */
@@ -400,7 +405,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 
 .blog__four-up__grid {
   display: flex;
+  flex-direction: column;
   gap: 1.875rem;
+}
+
+@media screen and (min-width: 768px) {
+  .blog__four-up__grid {
+    flex-direction: row;
+  }
 }
 
 .blog__four-up__item {
@@ -431,13 +443,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-
-@media screen and (max-width: 767px) {
-  .blog__four-up__grid {
-    flex-direction: column;
-  }
-}
-
 /* ----------------------------------------
    5-UP SECTION
    ---------------------------------------- */
@@ -455,7 +460,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 
 .blog__five-up__grid {
   display: flex;
+  flex-direction: column;
   gap: 1.875rem;
+}
+
+@media screen and (min-width: 768px) {
+  .blog__five-up__grid {
+    flex-direction: row;
+  }
 }
 
 .blog__five-up__item {
@@ -484,13 +496,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 .blog__five-up__cta {
   text-align: center;
   margin-top: 1.875rem;
-}
-
-
-@media screen and (max-width: 767px) {
-  .blog__five-up__grid {
-    flex-direction: column;
-  }
 }
 
 /* ----------------------------------------
@@ -541,8 +546,14 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 
 .blog__two-by-two__grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.875rem;
+}
+
+@media screen and (min-width: 768px) {
+  .blog__two-by-two__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .blog__two-by-two__item {
@@ -570,13 +581,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   margin-top: 1.875rem;
 }
 
-
-@media screen and (max-width: 767px) {
-  .blog__two-by-two__grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* ----------------------------------------
    3 x 2 SECTION
    ---------------------------------------- */
@@ -594,8 +598,20 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 
 .blog__three-by-two__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.875rem;
+}
+
+@media screen and (min-width: 480px) {
+  .blog__three-by-two__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .blog__three-by-two__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .blog__three-by-two__item {
@@ -622,20 +638,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 .blog__three-by-two__cta {
   text-align: center;
   margin-top: 1.875rem;
-}
-
-
-
-@media screen and (max-width: 767px) {
-  .blog__three-by-two__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media screen and (max-width: 479px) {
-  .blog__three-by-two__grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ----------------------------------------
@@ -686,20 +688,20 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   padding: 0.4375rem 0.1875rem;
 }
 
-.blog__table__wrapper th {
-  background-color: #F9EEF3;
-  color: var(--color-black);
-}
-
-.blog__table__wrapper tbody {
-  background-color: var(--color-white);
-}
-
 @media screen and (min-width: 768px) {
   .blog__table__wrapper th,
   .blog__table__wrapper td {
     padding: 0.5rem 0.625rem 0.625rem;
   }
+}
+
+.blog__table__wrapper th {
+  background-color: var(--color-pink-light);
+  color: var(--color-black);
+}
+
+.blog__table__wrapper tbody {
+  background-color: var(--color-white);
 }
 
 /* ----------------------------------------
