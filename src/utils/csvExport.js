@@ -150,6 +150,7 @@ const MATRIXIFY_HEADERS = [
   'Blog: Commentable',
   'Blog: Created At',
   'Metafield: seo.hidden [number_integer]',
+  'Metafield: custom.tags [list.single_line_text_field]',
 ]
 
 /**
@@ -160,7 +161,10 @@ const MATRIXIFY_HEADERS = [
 export function generateCsv(results, env = 'staging') {
   const rows = results.map((r, i) => {
     const handle = urlToHandle(r.url)
-    const tagsStr = (r.tags || []).join(', ')
+    const breadcrumbTagsStr = (r.breadcrumbTags || []).join(', ')
+    const metafieldTags = (r.tags || []).length > 0
+      ? JSON.stringify(r.tags)
+      : ''
     const published = r.html ? 'true' : 'false'
     const bodyHtml = transformHtmlImages(r.html, env)
     const imageSrc = transformImageUrl(r.imageSrc || '', env)
@@ -173,7 +177,7 @@ export function generateCsv(results, env = 'staging') {
       escapeCsvValue(r.author || ''),        // Author
       escapeCsvValue(bodyHtml),              // Body HTML
       escapeCsvValue(r.summary || ''),       // Summary HTML
-      escapeCsvValue(tagsStr),               // Tags
+      escapeCsvValue(breadcrumbTagsStr),     // Tags (from breadcrumbs)
       escapeCsvValue('MERGE'),               // Tags Command
       escapeCsvValue(r.publishedAt || ''),   // Created At
       escapeCsvValue(''),                    // Updated At
@@ -189,6 +193,7 @@ export function generateCsv(results, env = 'staging') {
       escapeCsvValue('no'),                  // Blog: Commentable
       escapeCsvValue(formatDatePST(r.publishedAt)), // Blog: Created At
       escapeCsvValue('1'),                   // Metafield: seo.hidden
+      escapeCsvValue(metafieldTags),         // Metafield: custom.tags
     ]
   })
 

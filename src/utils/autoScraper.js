@@ -235,11 +235,28 @@ export function processPost(postHtml, postUrl) {
     || timeEl?.textContent?.trim()
     || ''
 
-  // Extract tags/categories
+  // Extract tags/categories (will go into metafield: custom.tags)
   const tagEls = doc.querySelectorAll('.thb-article-tags a, .tag-links a, .post-tags a, [rel="tag"], .entry-tags a, .cat-links a, .entry-categories a')
   const tags = Array.from(new Set(
     Array.from(tagEls).map(a => a.textContent.trim()).filter(Boolean)
   ))
+
+  // Extract breadcrumb categories (will go into the Tags column)
+  const breadcrumbEl = doc.querySelector('#breadcrumbs, .woocommerce-breadcrumb, .breadcrumbs, .breadcrumb')
+  const breadcrumbTags = []
+  if (breadcrumbEl) {
+    const crumbLinks = breadcrumbEl.querySelectorAll('a')
+    // Skip the first link if it's the home/root, and skip the last breadcrumb (current page)
+    Array.from(crumbLinks).forEach(a => {
+      const href = a.getAttribute('href') || ''
+      const text = a.textContent.trim()
+      // Skip home links and empty text
+      if (!text) return
+      if (/\/(category|tag)\//i.test(href)) {
+        breadcrumbTags.push(text)
+      }
+    })
+  }
 
   // Extract featured image — scope search to article/post area to avoid sidebar images
   let imageSrc = ''
@@ -286,7 +303,7 @@ export function processPost(postHtml, postUrl) {
   if (!contentEl) {
     return {
       title, url: postUrl, sections: [], html: '', error: 'No content container found',
-      author, publishedAt, tags, imageSrc, imageAlt, summary,
+      author, publishedAt, tags, breadcrumbTags, imageSrc, imageAlt, summary,
     }
   }
 
@@ -325,7 +342,7 @@ export function processPost(postHtml, postUrl) {
 
   return {
     title, url: postUrl, sections, html,
-    author, publishedAt, tags, imageSrc, imageAlt, summary,
+    author, publishedAt, tags, breadcrumbTags, imageSrc, imageAlt, summary,
   }
 }
 
