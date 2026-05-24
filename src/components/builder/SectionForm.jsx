@@ -41,7 +41,7 @@ function ImageField({ image, index, onChange, showLabel = true }) {
         />
       )}
       <ImageHotspots
-        src={image.src || ''}
+        src={image._previewSrc || image.src || ''}
         alt={image.alt || ''}
         hotspots={image.hotspots || []}
         onChange={(hotspots) => onChange({ ...image, hotspots })}
