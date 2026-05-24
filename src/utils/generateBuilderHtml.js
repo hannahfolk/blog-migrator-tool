@@ -259,6 +259,23 @@ export function generateBuilderSectionHtml(section) {
     return `<hr class="${prefix}" style="border: none; border-top: 1px solid ${color};">`
   }
 
+  // Resale Report blocks have their own structure (no shared heading/body wrapper)
+  if (section.blockType === 'resaleHero') {
+    return generateResaleHeroHtml(section, prefix)
+  }
+  if (section.blockType === 'resaleRichText') {
+    return generateResaleRichTextHtml(section, prefix)
+  }
+  if (section.blockType === 'resaleSlider') {
+    return generateResaleSliderHtml(section, prefix)
+  }
+  if (section.blockType === 'resaleImageText') {
+    return generateResaleImageTextHtml(section, prefix)
+  }
+  if (section.blockType === 'resaleAuthor') {
+    return generateResaleAuthorHtml(section, prefix)
+  }
+
   const parts = []
 
   parts.push(`<div class="${prefix}">`)
@@ -382,6 +399,156 @@ export function generateBuilderSectionHtml(section) {
   parts.push(`</div>`)
 
   return processLinks(parts.join('\n'))
+}
+
+// ===================================================================
+// Resale Report block generators (used by the Resale Reports Builder).
+// Data shape on `section`:
+//   resaleHero       — { eyebrow, heading, images: [{ src }] }
+//   resaleRichText   — { heading, body, align: 'left'|'center', showMore: bool }
+//   resaleSlider     — { slides: [{ src, alt, rank, label, href, desc }] }
+//   resaleImageText  — { heading, body, eyebrow, listHtml, imagePosition: 'left'|'right', images: [{ src, alt }] }
+// ===================================================================
+
+function generateResaleHeroHtml(section, prefix) {
+  const bgSrc = section.images?.[0]?.src || ''
+  const styleAttr = bgSrc ? ` style="background-image: url('${escapeHtml(bgSrc)}');"` : ''
+  const eyebrow = section.eyebrow?.trim() || ''
+  const title = section.heading?.trim() || ''
+  return [
+    `<div class="${prefix}"${styleAttr}>`,
+    `  <div class="${prefix}__overlay">`,
+    eyebrow ? `    <p class="${prefix}__eyebrow">${escapeHtml(eyebrow)}</p>` : '',
+    title ? `    <h1 class="${prefix}__title">${escapeHtml(title)}</h1>` : '',
+    `  </div>`,
+    `</div>`,
+  ].filter(Boolean).join('\n')
+}
+
+let resaleToggleCounter = 0
+function generateResaleRichTextHtml(section, prefix) {
+  const align = section.align === 'center' ? ` ${prefix}--center` : ''
+  const showMore = !!section.showMore
+  const heading = section.heading?.trim() || ''
+  const headingTag = section.headingTag || 'h2'
+  const body = sanitizeBodyHtml(section.body || '')
+
+  if (!showMore) {
+    return processLinks([
+      `<div class="${prefix}${align} fp-container--full-width">`,
+      `  <div class="fp-container">`,
+      heading ? `    <${headingTag} class="${prefix}__heading">${escapeHtml(heading)}</${headingTag}>` : '',
+      `    <div class="${prefix}__body">`,
+      body,
+      `    </div>`,
+      `  </div>`,
+      `</div>`,
+    ].filter(Boolean).join('\n'))
+  }
+
+  resaleToggleCounter++
+  const toggleId = `rr-show-${resaleToggleCounter}`
+  return processLinks([
+    `<div class="${prefix}${align} ${prefix}--show-more fp-container--full-width">`,
+    `  <div class="fp-container">`,
+    heading ? `    <${headingTag} class="${prefix}__heading">${escapeHtml(heading)}</${headingTag}>` : '',
+    `    <input type="checkbox" id="${toggleId}" class="${prefix}__toggle" aria-hidden="true">`,
+    `    <div class="${prefix}__body">`,
+    body,
+    `    </div>`,
+    `    <label for="${toggleId}" class="${prefix}__more">`,
+    `      <span class="${prefix}__more-text">Show more</span>`,
+    `      <span class="${prefix}__less-text">Show less</span>`,
+    `    </label>`,
+    `  </div>`,
+    `</div>`,
+  ].filter(Boolean).join('\n'))
+}
+
+function generateResaleSliderHtml(section, prefix) {
+  const slides = (section.slides || []).filter(s => s?.src)
+  if (slides.length === 0) return ''
+
+  const items = slides.map(s => {
+    const rank = s.rank ? `${escapeHtml(String(s.rank))}. ` : ''
+    const labelHtml = s.href
+      ? `<a class="${prefix}__title-link" href="${escapeHtml(s.href)}">${escapeHtml(s.label || '')}</a>`
+      : escapeHtml(s.label || '')
+    return [
+      `    <li class="${prefix}__slide">`,
+      `      <div class="${prefix}__image-wrapper">`,
+      `        <img class="${prefix}__image" src="${escapeHtml(s.src)}" alt="${escapeHtml(s.alt || '')}">`,
+      `      </div>`,
+      `      <p class="${prefix}__title">${rank}${labelHtml}</p>`,
+      s.desc ? `      <p class="${prefix}__desc">${escapeHtml(s.desc)}</p>` : '',
+      `    </li>`,
+    ].filter(Boolean).join('\n')
+  }).join('\n')
+
+  const dots = [
+    `  <div class="${prefix}__dots" role="tablist">`,
+    ...slides.map((_, i) =>
+      `    <button type="button" class="${prefix}__dot${i === 0 ? ` ${prefix}__dot--active` : ''}" data-slide-index="${i}" aria-label="Go to slide ${i + 1}"></button>`
+    ),
+    `  </div>`,
+  ].join('\n')
+
+  return [
+    `<div class="${prefix} fp-container--full-width">`,
+    `  <div class="fp-container">`,
+    `    <ul class="${prefix}__track">`,
+    items,
+    `    </ul>`,
+    dots,
+    `  </div>`,
+    `</div>`,
+  ].join('\n')
+}
+
+function generateResaleAuthorHtml(section, prefix) {
+  const intro = sanitizeBodyHtml(section.body || '')
+  const img = section.images?.[0] || {}
+  const name = section.authorName?.trim() || ''
+  const title = section.authorTitle?.trim() || ''
+
+  return processLinks([
+    `<div class="${prefix} fp-container--full-width">`,
+    `  <div class="fp-container">`,
+    intro ? `    <div class="${prefix}__intro">\n${intro}\n    </div>` : '',
+    img.src ? `    <figure class="${prefix}__figure">` : '',
+    img.src ? `      <img class="${prefix}__avatar" src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt || '')}">` : '',
+    img.src ? `    </figure>` : '',
+    name ? `    <p class="${prefix}__name">${escapeHtml(name)}</p>` : '',
+    title ? `    <p class="${prefix}__title">${escapeHtml(title)}</p>` : '',
+    `  </div>`,
+    `</div>`,
+  ].filter(Boolean).join('\n'))
+}
+
+function generateResaleImageTextHtml(section, prefix) {
+  const positionClass = section.imagePosition === 'right' ? `${prefix}--image-right` : `${prefix}--image-left`
+  const img = section.images?.[0] || {}
+  const heading = section.heading?.trim() || ''
+  const headingTag = section.headingTag || 'h2'
+  const body = sanitizeBodyHtml(section.body || '')
+  const eyebrow = section.eyebrow?.trim() || ''
+  const list = section.listHtml?.trim() || ''
+
+  return processLinks([
+    `<div class="${prefix} ${positionClass} fp-container--full-width">`,
+    `  <div class="fp-container ${prefix}__inner">`,
+    `    <div class="${prefix}__image">`,
+    img.src ? `      <img src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt || '')}">` : '',
+    `    </div>`,
+    `    <div class="${prefix}__content">`,
+    heading ? `      <${headingTag} class="${prefix}__heading">${escapeHtml(heading)}</${headingTag}>` : '',
+    body ? `      <div class="${prefix}__body">\n${body}\n      </div>` : '',
+    eyebrow ? `      <p class="${prefix}__eyebrow">${escapeHtml(eyebrow)}</p>` : '',
+    list ? `      <div class="${prefix}__list">${list}</div>` : '',
+    `    </div>`,
+    `  </div>`,
+    `</div>`,
+  ].filter(Boolean).join('\n'))
 }
 
 function generateHotspotSectionHtml(section, prefix) {

@@ -1,4 +1,4 @@
-import { Image, Layout, Play, LayoutGrid, FileText, Target, Minus, PenLine, Table } from 'lucide-react'
+import { Image, Layout, Play, LayoutGrid, FileText, Target, Minus, PenLine, Table, Sparkles, AlignLeft, GalleryHorizontal, Columns, UserCircle } from 'lucide-react'
 
 export const FIGMA_BLOCKS = {
   fullWidth: {
@@ -134,5 +134,53 @@ export const FIGMA_BLOCKS = {
     hasImages: false,
     hasCTA: false,
     prefix: 'blog__author-byline'
+  },
+  resaleHero: {
+    label: 'RR Hero',
+    icon: Sparkles,
+    color: '#fb7185',
+    description: 'Resale Report — full-width banner with eyebrow + title overlay',
+    hasImages: true,
+    imageCount: 1,
+    hasCTA: false,
+    prefix: 'blog__resale-hero',
+  },
+  resaleRichText: {
+    label: 'RR Rich Text',
+    icon: AlignLeft,
+    color: '#60a5fa',
+    description: 'Resale Report — heading + body, optional center align and "show more" toggle',
+    hasImages: false,
+    hasCTA: false,
+    prefix: 'blog__resale-rich-text',
+  },
+  resaleSlider: {
+    label: 'RR Slider',
+    icon: GalleryHorizontal,
+    color: '#a78bfa',
+    description: 'Resale Report — horizontally-scrolling carousel of ranked items',
+    hasImages: true,
+    hasCTA: false,
+    prefix: 'blog__resale-slider',
+  },
+  resaleImageText: {
+    label: 'RR Image+Text',
+    icon: Columns,
+    color: '#34d399',
+    description: 'Resale Report — image on one side, heading/body/list on the other',
+    hasImages: true,
+    imageCount: 1,
+    hasCTA: false,
+    prefix: 'blog__resale-image-text',
+  },
+  resaleAuthor: {
+    label: 'RR Author',
+    icon: UserCircle,
+    color: '#f472b6',
+    description: 'Resale Report — circular avatar + name (with optional intro paragraph + title)',
+    hasImages: true,
+    imageCount: 1,
+    hasCTA: false,
+    prefix: 'blog__resale-author',
   },
 }

@@ -894,4 +894,6 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
   70% { box-shadow: 0 0 0 0.625rem rgba(255, 255, 255, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-}`
+}
+
+`

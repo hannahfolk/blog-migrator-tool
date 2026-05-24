@@ -3,13 +3,25 @@ import { ArrowLeft, Copy, Check } from 'lucide-react'
 import { BLOG_CSS, PREVIEW_CSS, rewriteImageCdnForOutput } from '../../constants'
 import { copyToClipboard } from '../../utils'
 
-export function BuilderOutput({ generatedHtml, sectionCount, onBack }) {
+export function BuilderOutput({
+  generatedHtml,
+  sectionCount,
+  onBack,
+  cssOverride,
+  cssLabel,
+  previewCssOverride,
+  fullBleed = false,
+}) {
   const [activeTab, setActiveTab] = useState('html')
   const [copiedHtml, setCopiedHtml] = useState(false)
   const [copiedCss, setCopiedCss] = useState(false)
 
+  const cssText = cssOverride || BLOG_CSS
+  const previewCss = previewCssOverride || PREVIEW_CSS
+  const cssBtnLabel = cssLabel || 'CSS'
+
   const handleCopy = async (type) => {
-    const text = type === 'html' ? rewriteImageCdnForOutput(generatedHtml) : BLOG_CSS
+    const text = type === 'html' ? rewriteImageCdnForOutput(generatedHtml) : cssText
     const success = await copyToClipboard(text)
     if (success) {
       if (type === 'html') {
@@ -54,7 +66,7 @@ export function BuilderOutput({ generatedHtml, sectionCount, onBack }) {
                     activeTab === 'css' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white'
                   }`}
                 >
-                  CSS
+                  {cssBtnLabel}
                 </button>
               </div>
               <button
@@ -76,7 +88,7 @@ export function BuilderOutput({ generatedHtml, sectionCount, onBack }) {
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden h-[calc(100vh-320px)]">
               <pre className="p-4 text-xs text-zinc-400 overflow-auto h-full font-mono whitespace-pre-wrap">
-                {activeTab === 'html' ? generatedHtml : BLOG_CSS}
+                {activeTab === 'html' ? generatedHtml : cssText}
               </pre>
             </div>
           </div>
@@ -85,8 +97,9 @@ export function BuilderOutput({ generatedHtml, sectionCount, onBack }) {
             <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Output Preview</h3>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden h-[calc(100vh-320px)]">
               <div
-                className="p-6 bg-white text-black overflow-auto h-full prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: PREVIEW_CSS + generatedHtml }}
+                className={`bg-white text-black overflow-auto h-full prose prose-sm max-w-none ${fullBleed ? 'pb-6' : 'p-6'}`}
+                style={{ containerType: 'inline-size' }}
+                dangerouslySetInnerHTML={{ __html: previewCss + generatedHtml }}
               />
             </div>
           </div>

@@ -2,6 +2,7 @@ import { detectSections } from './sectionDetector'
 import { generateSectionHtml, getBestImageSrc } from './extractContent'
 import { FIGMA_BLOCKS } from '../constants/figmaBlocks'
 import { slugify } from './slugify'
+import { isResaleReportUrl, isResaleReportDocument, processResaleReport } from './resaleReportProcessor'
 
 const PROXY_URL = '/.netlify/functions/fetch-page'
 
@@ -208,6 +209,12 @@ function groupAndWrapSections(sections) {
 export function processPost(postHtml, postUrl) {
   const parser = new DOMParser()
   const doc = parser.parseFromString(postHtml, 'text/html')
+
+  // Resale Report pages have a different layout (WPBakery rows directly under
+  // a .page.type-page wrapper, no .entry-content) — dispatch to a dedicated processor.
+  if (isResaleReportUrl(postUrl) || isResaleReportDocument(doc)) {
+    return processResaleReport(postHtml, postUrl)
+  }
 
   // Extract title
   const titleEl = doc.querySelector('.entry-title')

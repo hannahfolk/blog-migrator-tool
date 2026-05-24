@@ -1,0 +1,378 @@
+import { tokens as t } from './designTokens'
+
+/**
+ * Resale Report CSS — preview/internal version (uses design tokens).
+ * Companion to BLOG_CSS; only the blocks unique to Resale Reports live here:
+ *   - blog__resale-hero
+ *   - blog__resale-rich-text
+ *   - blog__resale-slider
+ *   - blog__resale-image-text
+ * Existing blocks reused by resale reports (threeUp, hotspot, etc.)
+ * stay in BLOG_CSS.
+ */
+export const RESALE_CSS = `/* ============================================
+   FASHIONPHILE RESALE REPORT — SECTIONS CSS
+   ============================================ */
+
+/* ----------------------------------------
+   LAYOUT TOKENS
+   --page-width is the global content width cap.
+   Override in your theme if needed.
+   ---------------------------------------- */
+:root {
+  --page-width: ${t.pageWidth};
+}
+
+/* ----------------------------------------
+   UNIVERSAL: any resale section that has been given an inline
+   background-color (via the auto-migrator color picker) collapses its
+   outer margins to zero so adjacent colored sections butt against each
+   other edge-to-edge. Vertical padding defaults to 4rem; the picker
+   can override via padding-top / padding-bottom inline styles.
+   ---------------------------------------- */
+[data-section-id][style*="background-color"] {
+  padding-block: 4rem;
+  margin: 0;
+}
+
+/* ----------------------------------------
+   RESALE REPORT — HERO BANNER
+   ---------------------------------------- */
+.blog__resale-hero {
+  position: relative;
+  width: 100%;
+  min-height: 22rem;
+  background-color: ${t.colorBlack};
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 2.5rem;
+}
+
+.blog__resale-hero__overlay {
+  text-align: center;
+  color: ${t.colorWhite};
+  padding: 4rem 1.5rem;
+  width: 100%;
+}
+
+.blog__resale-hero__eyebrow {
+  font-size: ${t.bodyMd};
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin: 0 0 0.75rem;
+  font-weight: ${t.fontWeightRegular};
+}
+
+.blog__resale-hero__title {
+  font-size: 3rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+  font-weight: ${t.fontWeightSemibold};
+}
+
+@media (min-width: 64rem) {
+  .blog__resale-hero { min-height: 32rem; }
+  .blog__resale-hero__title { font-size: 4.5rem; }
+}
+
+/* ----------------------------------------
+   RESALE REPORT — RICH TEXT
+   ---------------------------------------- */
+.blog__resale-rich-text {
+  width: 100%;
+  margin: 0 0 2.5rem;
+}
+
+/* When the user picks a background color via the auto-migrator color picker,
+   add generous vertical padding and remove the bottom margin so adjacent
+   colored sections butt against each other edge-to-edge. */
+.blog__resale-rich-text--center {
+  text-align: center;
+}
+
+.blog__resale-rich-text__heading {
+  font-size: ${t.h2};
+  font-weight: ${t.fontWeightSemibold};
+  margin: 0 0 1rem;
+}
+
+.blog__resale-rich-text__body p {
+  margin: 0 0 1em;
+  line-height: ${t.lineHeightLg};
+}
+
+.blog__resale-rich-text__body p:last-child {
+  margin-bottom: 0;
+}
+
+.blog__resale-rich-text__body a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.blog__resale-rich-text__toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.blog__resale-rich-text--show-more .blog__resale-rich-text__body {
+  max-height: 5.5em;
+  overflow: hidden;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  transition: max-height 0.4s ease, mask-image 0.4s ease;
+}
+
+.blog__resale-rich-text__toggle:checked ~ .blog__resale-rich-text__body {
+  max-height: 200em;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.blog__resale-rich-text__more {
+  display: inline-block;
+  margin-top: 1rem;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: ${t.bodyMd};
+  user-select: none;
+}
+
+.blog__resale-rich-text__less-text {
+  display: none;
+}
+
+.blog__resale-rich-text__toggle:checked ~ .blog__resale-rich-text__more .blog__resale-rich-text__more-text {
+  display: none;
+}
+
+.blog__resale-rich-text__toggle:checked ~ .blog__resale-rich-text__more .blog__resale-rich-text__less-text {
+  display: inline;
+}
+
+/* ----------------------------------------
+   RESALE REPORT — SLIDER (carousel)
+   ---------------------------------------- */
+.blog__resale-slider {
+  margin: 0 0 2.5rem;
+  padding: 0;
+  overflow: hidden;
+}
+
+.blog__resale-slider__track {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.blog__resale-slider__track::-webkit-scrollbar {
+  display: none;
+}
+
+.blog__resale-slider__slide {
+  flex: 0 0 calc((100% - 2rem) / 3);
+  scroll-snap-align: start;
+  text-align: center;
+  margin: 0;
+}
+
+@media (max-width: 48rem) {
+  .blog__resale-slider__slide {
+    flex: 0 0 80%;
+  }
+}
+
+.blog__resale-slider__image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: ${t.colorGrey1};
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.blog__resale-slider__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog__resale-slider__title {
+  font-size: ${t.bodyLg};
+  font-weight: ${t.fontWeightSemibold};
+  margin: 0 0 0.25rem;
+}
+
+.blog__resale-slider__title-link {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.blog__resale-slider__desc {
+  font-size: ${t.bodyMd};
+  color: ${t.colorGrey7};
+  margin: 0;
+}
+
+.blog__resale-slider__dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.blog__resale-slider__dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: ${t.colorGrey3};
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.blog__resale-slider__dot:hover {
+  background-color: ${t.colorGrey5};
+  transform: scale(1.15);
+}
+
+.blog__resale-slider__dot--active {
+  background-color: ${t.colorGrey7};
+}
+
+/* ----------------------------------------
+   RESALE REPORT — IMAGE + TEXT
+   ---------------------------------------- */
+.blog__resale-image-text {
+  width: 100%;
+  margin: 0 0 2.5rem;
+}
+
+.blog__resale-image-text__inner {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+
+@media (min-width: 48rem) {
+  .blog__resale-image-text__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+  .blog__resale-image-text--image-right .blog__resale-image-text__image {
+    order: 2;
+  }
+}
+
+.blog__resale-image-text__image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.blog__resale-image-text__heading {
+  font-size: ${t.h3};
+  font-weight: ${t.fontWeightSemibold};
+  margin: 0 0 1rem;
+}
+
+.blog__resale-image-text__body {
+  line-height: ${t.lineHeightLg};
+}
+
+.blog__resale-image-text__body p {
+  margin: 0 0 1em;
+}
+
+.blog__resale-image-text__eyebrow {
+  font-size: ${t.bodyMd};
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 1.5rem 0 0.75rem;
+  font-weight: ${t.fontWeightSemibold};
+}
+
+.blog__resale-image-text__list ol,
+.blog__resale-image-text__list ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: ${t.lineHeightLg};
+}
+
+.blog__resale-image-text__list a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* ----------------------------------------
+   RESALE REPORT — AUTHOR (circular avatar + name)
+   ---------------------------------------- */
+.blog__resale-author {
+  width: 100%;
+  margin: 2.5rem 0;
+  text-align: center;
+  line-height: ${t.lineHeightLg};
+}
+
+.blog__resale-author__intro {
+  margin-bottom: 2rem;
+}
+
+.blog__resale-author__intro p {
+  margin: 0 0 0.75em;
+}
+
+.blog__resale-author__intro p:last-child {
+  margin-bottom: 0;
+}
+
+.blog__resale-author__intro a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.blog__resale-author__figure {
+  width: 7.5rem;
+  height: 7.5rem;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: ${t.colorGrey1};
+}
+
+.blog__resale-author__avatar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog__resale-author__name {
+  font-size: ${t.bodyLg};
+  font-weight: ${t.fontWeightSemibold};
+  margin: 0;
+}
+
+.blog__resale-author__title {
+  font-size: ${t.bodyMd};
+  color: ${t.colorGrey7};
+  margin: 0.25rem 0 0;
+}`

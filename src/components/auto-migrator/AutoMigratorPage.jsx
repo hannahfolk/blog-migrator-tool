@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { useLocalStorage } from '../../utils/useLocalStorage'
 import { scrapeWordPressBlog, fetchPage, processPost } from '../../utils/autoScraper'
+import { processResaleReport } from '../../utils/resaleReportProcessor'
 import { UrlInputStep } from './UrlInputStep'
 import { CrawlProgressStep } from './CrawlProgressStep'
 import { ResultsStep } from './ResultsStep'
@@ -9,6 +10,7 @@ import { SingleResultStep } from './SingleResultStep'
 export function AutoMigratorPage() {
   const [blogUrl, setBlogUrl] = useLocalStorage('autoMigrator:blogUrl', '')
   const [singleUrl, setSingleUrl] = useLocalStorage('autoMigrator:singleUrl', '')
+  const [resaleUrl, setResaleUrl] = useLocalStorage('autoMigrator:resaleUrl', '')
   const [step, setStep] = useState('input') // 'input' | 'crawling' | 'results' | 'singleResult'
   const [progress, setProgress] = useState({ phase: 'discovering', message: '' })
   const [completedPosts, setCompletedPosts] = useState([])
@@ -29,6 +31,23 @@ export function AutoMigratorPage() {
       setStep('singleResult')
     } catch (err) {
       console.error('[AutoMigrator] Single article error:', err)
+      setProgress({ phase: 'error', message: err.message })
+    }
+  }, [])
+
+  const handleStartResale = useCallback(async (url) => {
+    setStep('crawling')
+    setProgress({ phase: 'processing', message: `Fetching ${url}...`, current: 0, totalPosts: 1 })
+
+    try {
+      const { html } = await fetchPage(url)
+      setProgress({ phase: 'processing', message: 'Processing resale report...', current: 1, totalPosts: 1 })
+      const result = processResaleReport(html, url)
+      result.isResaleReport = true
+      setSingleResult(result)
+      setStep('singleResult')
+    } catch (err) {
+      console.error('[AutoMigrator] Resale report error:', err)
       setProgress({ phase: 'error', message: err.message })
     }
   }, [])
@@ -95,6 +114,9 @@ export function AutoMigratorPage() {
           singleUrl={singleUrl}
           setSingleUrl={setSingleUrl}
           onStartSingle={handleStartSingle}
+          resaleUrl={resaleUrl}
+          setResaleUrl={setResaleUrl}
+          onStartResale={handleStartResale}
         />
       )}
 

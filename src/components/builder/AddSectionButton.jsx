@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { FIGMA_BLOCKS } from '../../constants'
 
-export function AddSectionButton({ onAdd }) {
+export function AddSectionButton({ onAdd, filter }) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
 
@@ -22,6 +22,10 @@ export function AddSectionButton({ onAdd }) {
     setIsOpen(false)
   }
 
+  const entries = filter
+    ? Object.entries(FIGMA_BLOCKS).filter(([key]) => filter(key))
+    : Object.entries(FIGMA_BLOCKS)
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -34,7 +38,7 @@ export function AddSectionButton({ onAdd }) {
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl z-30 overflow-hidden">
-          {Object.entries(FIGMA_BLOCKS).map(([key, block]) => {
+          {entries.map(([key, block]) => {
             const Icon = block.icon
             return (
               <button

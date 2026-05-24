@@ -73,6 +73,303 @@ export function SectionForm({ section, onChange }) {
   const showLabel = section.blockType !== 'fullWidth'
   const isHr = section.blockType === 'hr'
   const isAuthorByline = section.blockType === 'authorByline'
+  const isResaleHero = section.blockType === 'resaleHero'
+  const isResaleRichText = section.blockType === 'resaleRichText'
+  const isResaleSlider = section.blockType === 'resaleSlider'
+  const isResaleImageText = section.blockType === 'resaleImageText'
+  const isResaleAuthor = section.blockType === 'resaleAuthor'
+
+  if (isResaleAuthor) {
+    return (
+      <div className="space-y-4 p-4">
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+            Intro Paragraph (optional)
+          </label>
+          <RichTextEditor
+            value={section.body || ''}
+            onChange={(html) => updateField('body', html)}
+            placeholder="Optional context shown above the avatar"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">
+            Avatar Image
+          </label>
+          <ImageField
+            image={section.images?.[0] || {}}
+            index={0}
+            onChange={(img) => updateImage(0, img)}
+            showLabel={false}
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+            Name
+          </label>
+          <input
+            type="text"
+            value={section.authorName || ''}
+            onChange={(e) => updateField('authorName', e.target.value)}
+            placeholder="e.g. Sarah Ambrosius"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+            Title (optional)
+          </label>
+          <input
+            type="text"
+            value={section.authorTitle || ''}
+            onChange={(e) => updateField('authorTitle', e.target.value)}
+            placeholder="e.g. Head of Impact"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (isResaleHero) {
+    return (
+      <div className="space-y-4 p-4">
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">Eyebrow</label>
+          <input
+            type="text"
+            value={section.eyebrow || ''}
+            onChange={(e) => updateField('eyebrow', e.target.value)}
+            placeholder="e.g. 2025 ULTRA-LUXURY"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">Title</label>
+          <input
+            type="text"
+            value={section.heading || ''}
+            onChange={(e) => updateField('heading', e.target.value)}
+            placeholder="e.g. RESALE REPORT"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">Background Image</label>
+          <ImageField
+            image={section.images?.[0] || {}}
+            index={0}
+            onChange={(img) => updateImage(0, img)}
+            showLabel={false}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (isResaleRichText) {
+    return (
+      <div className="space-y-4 p-4">
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">Heading</label>
+          <div className="flex gap-2">
+            <select
+              value={section.headingTag || 'h2'}
+              onChange={(e) => updateField('headingTag', e.target.value)}
+              className="bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500"
+            >
+              <option value="h2">H2</option>
+              <option value="h3">H3</option>
+              <option value="h4">H4</option>
+            </select>
+            <input
+              type="text"
+              value={section.heading || ''}
+              onChange={(e) => updateField('heading', e.target.value)}
+              placeholder="Section heading"
+              className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">Body</label>
+          <RichTextEditor
+            value={section.body || ''}
+            onChange={(html) => updateField('body', html)}
+            placeholder="Type body content here..."
+          />
+        </div>
+        <div className="flex items-center gap-4">
+          <label className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Align</label>
+          <div className="flex gap-1 bg-zinc-800 rounded-lg p-1">
+            {['left', 'center'].map(a => (
+              <button
+                key={a}
+                onClick={() => updateField('align', a)}
+                className={`px-3 py-1 text-xs rounded-md ${
+                  (section.align || 'left') === a ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white'
+                }`}
+              >{a}</button>
+            ))}
+          </div>
+          <label className="flex items-center gap-2 ml-auto">
+            <input
+              type="checkbox"
+              checked={!!section.showMore}
+              onChange={(e) => updateField('showMore', e.target.checked)}
+              className="rounded border-zinc-700 bg-zinc-900"
+            />
+            <span className="text-xs text-zinc-300">Show more toggle</span>
+          </label>
+        </div>
+      </div>
+    )
+  }
+
+  if (isResaleImageText) {
+    return (
+      <div className="space-y-4 p-4">
+        <div className="flex items-center gap-4">
+          <label className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Image position</label>
+          <div className="flex gap-1 bg-zinc-800 rounded-lg p-1">
+            {['left', 'right'].map(p => (
+              <button
+                key={p}
+                onClick={() => updateField('imagePosition', p)}
+                className={`px-3 py-1 text-xs rounded-md ${
+                  (section.imagePosition || 'left') === p ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white'
+                }`}
+              >{p}</button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">Image</label>
+          <ImageField
+            image={section.images?.[0] || {}}
+            index={0}
+            onChange={(img) => updateImage(0, img)}
+            showLabel={false}
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">Heading</label>
+          <input
+            type="text"
+            value={section.heading || ''}
+            onChange={(e) => updateField('heading', e.target.value)}
+            placeholder="Section heading"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">Body</label>
+          <RichTextEditor
+            value={section.body || ''}
+            onChange={(html) => updateField('body', html)}
+            placeholder="Type body content here..."
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">Eyebrow (small label above list)</label>
+          <input
+            type="text"
+            value={section.eyebrow || ''}
+            onChange={(e) => updateField('eyebrow', e.target.value)}
+            placeholder="e.g. TOP-SHOPPED STYLE"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">Ranked List HTML</label>
+          <textarea
+            value={section.listHtml || ''}
+            onChange={(e) => updateField('listHtml', e.target.value)}
+            placeholder="<ol><li><a href=...>Name</a></li>...</ol>"
+            rows={5}
+            className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 font-mono"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (isResaleSlider) {
+    const slides = section.slides || []
+    const updateSlide = (i, field, value) => {
+      const next = [...slides]
+      next[i] = { ...(next[i] || {}), [field]: value }
+      onChange({ ...section, slides: next })
+    }
+    const addSlide = () => onChange({ ...section, slides: [...slides, { rank: String(slides.length + 1) }] })
+    const removeSlide = (i) => onChange({ ...section, slides: slides.filter((_, idx) => idx !== i) })
+
+    return (
+      <div className="space-y-4 p-4">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Slides ({slides.length})</label>
+          <button
+            onClick={addSlide}
+            className="bg-indigo-600 hover:bg-indigo-500 px-3 py-1 rounded text-xs font-medium"
+          >
+            + Add slide
+          </button>
+        </div>
+        {slides.map((slide, i) => (
+          <div key={i} className="bg-zinc-800/50 rounded-lg p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-zinc-400">Slide {i + 1}</span>
+              <button onClick={() => removeSlide(i)} className="text-xs text-red-400 hover:text-red-300">Remove</button>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="text"
+                value={slide.rank || ''}
+                onChange={(e) => updateSlide(i, 'rank', e.target.value)}
+                placeholder="Rank (e.g. 1)"
+                className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                value={slide.label || ''}
+                onChange={(e) => updateSlide(i, 'label', e.target.value)}
+                placeholder="Label (e.g. Speedy)"
+                className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <input
+              type="text"
+              value={slide.href || ''}
+              onChange={(e) => updateSlide(i, 'href', e.target.value)}
+              placeholder="Link href"
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm"
+            />
+            <input
+              type="text"
+              value={slide.desc || ''}
+              onChange={(e) => updateSlide(i, 'desc', e.target.value)}
+              placeholder="Description (e.g. Louis Vuitton)"
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm"
+            />
+            <input
+              type="text"
+              value={slide.src || ''}
+              onChange={(e) => updateSlide(i, 'src', e.target.value)}
+              placeholder="Image URL"
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm font-mono"
+            />
+            <input
+              type="text"
+              value={slide.alt || ''}
+              onChange={(e) => updateSlide(i, 'alt', e.target.value)}
+              placeholder="Image alt text"
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm"
+            />
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   if (isAuthorByline) {
     return (

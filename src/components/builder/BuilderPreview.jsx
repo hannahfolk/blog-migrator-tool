@@ -1,6 +1,9 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect, useRef } from 'react'
 import { PREVIEW_CSS } from '../../constants'
 import { generateGroupedBuilderHtml } from '../../utils/generateBuilderHtml'
+import { initSliders } from '../../utils/sliderInteractivity'
+
+const PROSE_RESET = '<style>.prose img,.prose figure{margin-top:0;margin-bottom:0;}</style>'
 
 function buildPreviewUrlMap(sections) {
   const map = {}
@@ -25,13 +28,21 @@ function replacePreviewUrls(html, urlMap) {
   return result
 }
 
-export function BuilderPreview({ sections }) {
+export function BuilderPreview({ sections, previewCss = PREVIEW_CSS, fullBleed = false }) {
   const previewHtml = useMemo(() => {
     if (sections.length === 0) return ''
     const urlMap = buildPreviewUrlMap(sections)
     const html = generateGroupedBuilderHtml(sections)
     return replacePreviewUrls(html, urlMap)
   }, [sections])
+
+  const previewRef = useRef(null)
+
+  // Hook up clickable / scroll-tracking dots on any resale sliders inside
+  // the preview whenever the rendered HTML changes.
+  useEffect(() => {
+    return initSliders(previewRef.current)
+  }, [previewHtml])
 
   if (sections.length === 0) {
     return (
@@ -43,8 +54,10 @@ export function BuilderPreview({ sections }) {
 
   return (
     <div
-      className="p-6 bg-white text-black overflow-auto h-full prose prose-sm max-w-none"
-      dangerouslySetInnerHTML={{ __html: '<style>.prose img,.prose figure{margin-top:0;margin-bottom:0;}</style>' + PREVIEW_CSS + previewHtml }}
+      ref={previewRef}
+      className={`bg-white text-black overflow-auto h-full prose prose-sm max-w-none ${fullBleed ? 'pb-6' : 'p-6'}`}
+      style={{ containerType: 'inline-size' }}
+      dangerouslySetInnerHTML={{ __html: PROSE_RESET + previewCss + previewHtml }}
     />
   )
 }

@@ -1,4 +1,4 @@
-import { Zap, Wand2, Book, PenTool, Code } from 'lucide-react'
+import { Zap, Wand2, Book, PenTool, Code, Sparkles } from 'lucide-react'
 
 export function Header({ activeTab, setActiveTab, onHomeClick }) {
   return (
@@ -48,6 +48,15 @@ export function Header({ activeTab, setActiveTab, onHomeClick }) {
               >
                 <PenTool size={16} />
                 Post Builder
+              </button>
+              <button
+                onClick={() => setActiveTab('resale-builder')}
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === 'resale-builder' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Sparkles size={16} />
+                Resale Reports Builder
               </button>
               <button
                 onClick={() => setActiveTab('css')}

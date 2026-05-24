@@ -833,4 +833,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   100% {
     box-shadow: 0 0 0 0 rgb(from var(--color-white) r g b / 0);
   }
-}`
+}
+
+`

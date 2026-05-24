@@ -1,5 +1,6 @@
 import { PLACEHOLDER_IMG } from '../utils/placeholderImage'
 import { BLOG_CSS } from './blogCss'
+import { RESALE_CSS } from './resaleCss'
 import { tokens as t } from './designTokens'
 
 export const PREVIEW_HTML = {
@@ -310,6 +311,58 @@ export const PREVIEW_HTML = {
 }
 
 export const PREVIEW_CSS = `<style>${BLOG_CSS}</style>`
+
+/**
+ * fp-container / fp-container--full-width — preview-only styles that mirror
+ * the user's base.css. The HTML output uses these classes on resale section
+ * wrappers. We render them in the preview but exclude them from the copyable
+ * CSS, since they already exist in the production codebase.
+ *
+ *   fp-container       → max-width 1500px, centered, responsive side padding
+ *   fp-container--full-width → no max-width, no horizontal padding (edge-to-edge)
+ *
+ * Uses @container queries (not @media) so padding responds to the preview
+ * pane's inline size rather than the browser viewport. The preview wrapper
+ * declares `container-type: inline-size` to opt into this. In production
+ * the user's base.css uses @media; this file is preview-only.
+ */
+const FP_CONTAINER_PREVIEW_CSS = `
+.fp-container {
+  width: 100%;
+  max-width: 1500px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
+}
+@container (min-width: 576px) {
+  .fp-container {
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+}
+@container (min-width: 990px) {
+  .fp-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+.fp-container--full-width {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+`
+
+// Preview CSS for Resale Report results — bundles BLOG_CSS (for shared
+// blocks like threeUp / hotspot), fp-container utilities (preview-only),
+// and RESALE_CSS for the resale-specific blocks.
+export const RESALE_PREVIEW_CSS = `<style>${BLOG_CSS}\n${FP_CONTAINER_PREVIEW_CSS}\n${RESALE_CSS}</style>`
 
 // Bare-minimum CSS for the raw input HTML preview in the Migrator.
 // Matches heading sizes, font weights, and body styles from the output CSS

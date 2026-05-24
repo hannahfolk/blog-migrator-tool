@@ -36,6 +36,9 @@ export const tokens = {
   /* Header typography */
   headerFontBody: '0.9375rem',
 
+  /* Layout */
+  pageWidth: '1500px',
+
   /* Colors */
   colorWhite: '#ffffff',
   colorBeige: '#efebea',
