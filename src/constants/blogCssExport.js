@@ -14,11 +14,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
    These apply to all __body elements
    ---------------------------------------- */
 [class*="__body"] p {
-  margin-bottom: 1em;
-}
-
-[class*="__body"] p:last-child {
-  margin-bottom: 0;
+  margin: 0;
 }
 
 [class*="__body"] a,
@@ -46,31 +42,37 @@ export const BLOG_CSS_EXPORT = `/* ============================================
 }
 
 [class*="__body"] h1 {
+  line-height: var(--line-height-md);
   margin-top: 1.5em;
   margin-bottom: 0.75em;
 }
 
 [class*="__body"] h2 {
+  line-height: var(--line-height-md);
   margin-top: 1.5em;
   margin-bottom: 0.75em;
 }
 
 [class*="__body"] h3 {
-  margin-top: 1.5em;
-  margin-bottom: 0.75em;
+  line-height: var(--line-height-md);
+  margin-top: 0;
+  margin-bottom: 0.75rem;
 }
 
 [class*="__body"] h4 {
-  margin-top: 1.25em;
-  margin-bottom: 0.5em;
+  line-height: var(--line-height-md);
+  margin-top: 0;
+  margin-bottom: 0.75rem;
 }
 
 [class*="__body"] h5 {
+  line-height: var(--line-height-md);
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
 
 [class*="__body"] h6 {
+  line-height: var(--line-height-md);
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
@@ -793,7 +795,7 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   left: 50%;
   transform: translateX(-50%) translateY(0.625rem);
   background: var(--color-white);
-  color: var(--color-grey-hover);
+  color: var(--color-black);
   padding: 0.5rem 0.75rem;
   border-radius: 0.25rem;
   font-size: var(--body-sm);

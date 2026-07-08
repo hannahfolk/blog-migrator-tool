@@ -13,11 +13,7 @@ export const BLOG_CSS = `/* ============================================
 }
 
 [class*="__body"] p {
-  margin-bottom: 1em;
-}
-
-[class*="__body"] p:last-child {
-  margin-bottom: 0;
+  margin: 0;
 }
 
 [class*="__body"] a,
@@ -47,6 +43,7 @@ export const BLOG_CSS = `/* ============================================
 [class*="__body"] h1 {
   font-size: ${t.h1};
   font-weight: ${t.fontWeightSemibold};
+  line-height: ${t.lineHeightMd};
   margin-top: 1.5em;
   margin-bottom: 0.75em;
 }
@@ -54,6 +51,7 @@ export const BLOG_CSS = `/* ============================================
 [class*="__body"] h2 {
   font-size: ${t.h2};
   font-weight: ${t.fontWeightSemibold};
+  line-height: ${t.lineHeightMd};
   margin-top: 1.5em;
   margin-bottom: 0.75em;
 }
@@ -61,20 +59,23 @@ export const BLOG_CSS = `/* ============================================
 [class*="__body"] h3 {
   font-size: ${t.h3};
   font-weight: ${t.fontWeightSemibold};
-  margin-top: 1.5em;
-  margin-bottom: 0.75em;
+  line-height: ${t.lineHeightMd};
+  margin-top: 0;
+  margin-bottom: 0.75rem;
 }
 
 [class*="__body"] h4 {
   font-size: ${t.h4};
   font-weight: ${t.fontWeightSemibold};
-  margin-top: 1.25em;
-  margin-bottom: 0.5em;
+  line-height: ${t.lineHeightMd};
+  margin-top: 0;
+  margin-bottom: 0.75rem;
 }
 
 [class*="__body"] h5 {
   font-size: ${t.h5};
   font-weight: ${t.fontWeightSemibold};
+  line-height: ${t.lineHeightMd};
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
@@ -82,6 +83,7 @@ export const BLOG_CSS = `/* ============================================
 [class*="__body"] h6 {
   font-size: ${t.h6};
   font-weight: ${t.fontWeightSemibold};
+  line-height: ${t.lineHeightMd};
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
@@ -860,7 +862,7 @@ h6[class*="__heading"] { font-size: ${t.h6}; }
   left: 50%;
   transform: translateX(-50%) translateY(0.625rem);
   background: ${t.colorWhite};
-  color: ${t.colorGrey8};
+  color: ${t.colorBlack};
   padding: 0.5rem 0.75rem;
   border-radius: 0.25rem;
   font-size: ${t.bodySm};
