@@ -184,7 +184,6 @@ export const BLOG_CSS = `/* ============================================
   width: 100%;
   text-align: center;
   padding: ${t.headerFontBody};
-  text-transform: capitalize;
   text-decoration: none;
   letter-spacing: 0.0625rem;
   border: 0.0625rem solid ${t.colorBlack};

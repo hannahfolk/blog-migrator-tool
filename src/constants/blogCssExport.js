@@ -153,7 +153,6 @@ export const BLOG_CSS_EXPORT = `/* ============================================
   width: 100%;
   text-align: center;
   padding: 0.9375rem;
-  text-transform: capitalize;
   text-decoration: none;
   letter-spacing: 0.0625rem;
   border: 0.0625rem solid var(--color-black);
